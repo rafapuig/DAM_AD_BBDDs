@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/BBDDs.iml" filepath="$PROJECT_DIR$/.idea/BBDDs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JDBC/Derby Connection/Derby Connection.iml" filepath="$PROJECT_DIR$/JDBC/Derby Connection/Derby Connection.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JDBC/SQLite/SQLite.iml" filepath="$PROJECT_DIR$/JDBC/SQLite/SQLite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JDBC/SQLite Connection/SQLite Connection.iml" filepath="$PROJECT_DIR$/JDBC/SQLite Connection/SQLite Connection.iml" />
+    </modules>
+  </component>
+</project>
