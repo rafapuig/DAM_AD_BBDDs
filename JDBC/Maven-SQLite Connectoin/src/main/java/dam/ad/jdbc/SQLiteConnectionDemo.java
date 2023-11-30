@@ -1,4 +1,4 @@
-package es.rafapuig.ad.jdbc;
+package dam.ad.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
