@@ -19,7 +19,7 @@ Edit... -> Modify Options -> Add VM options y ponerle
 
 public class DerbyConnectionDemo {
     public static void main(String[] args) throws ClassNotFoundException {
-        String dbURL = "jdbc:derby:futboljdbc2;create=true;user=app;pass_word=app";
+        String dbURL = "jdbc:derby:futbol;create=false;user=app;pass_word=app";
 
         JDBCDrivers.print();
         //JDBCDrivers.unloadDrivers();
