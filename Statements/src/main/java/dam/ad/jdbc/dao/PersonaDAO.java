@@ -1,7 +1,7 @@
 package dam.ad.jdbc.dao;
 
 import dam.ad.dao.DAO;
-import dam.ad.model.Persona;
+import dam.ad.personas.model.Persona;
 
 import javax.sql.DataSource;
 import java.sql.*;

@@ -1,8 +1,9 @@
 import dam.ad.dao.DAO;
 import dam.ad.dao.jdbc.DatabaseSchema;
-import dam.ad.jdbc.dao.hsqldb.DbPersonaDAO;
-import dam.ad.jdbc.dao.hsqldb.PersonasDatabaseSchema;
-import dam.ad.model.Persona;
+
+import dam.ad.personas.db.hsqldb.DbPersonaDAO;
+import dam.ad.personas.db.hsqldb.PersonasDatabaseSchema;
+import dam.ad.personas.model.Persona;
 import org.hsqldb.jdbc.JDBCDataSourceFactory;
 
 import javax.sql.DataSource;

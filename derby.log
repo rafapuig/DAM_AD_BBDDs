@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Sun Dec 03 10:10:40 CET 2023:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance a816c00e-018c-2ef1-aeb8-00000f2a1f28 
+on database directory C:\BBDDs\derby\futbol with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528 
+Loaded from file:/C:/Users/rapui/.m2/repository/org/apache/derby/derby/10.17.1.0/derby-10.17.1.0.jar
+java.vendor=Oracle Corporation
+java.runtime.version=21+35-2513
+user.dir=C:\dev\java\AD\BBDDs
+os.name=Windows 11
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

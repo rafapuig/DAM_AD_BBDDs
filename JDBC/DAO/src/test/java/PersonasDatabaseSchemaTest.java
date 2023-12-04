@@ -1,4 +1,4 @@
-import dam.ad.jdbc.dao.hsqldb.PersonasDatabaseSchema;
+import dam.ad.personas.db.hsqldb.PersonasDatabaseSchema;
 import org.junit.jupiter.api.Test;
 
 public class PersonasDatabaseSchemaTest {

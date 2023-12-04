@@ -30,6 +30,11 @@
             <version>RELEASE</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>es.rafapuig.dam.ad</groupId>
+            <artifactId>jdbc-DAO</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
 
     </dependencies>
 </project>
