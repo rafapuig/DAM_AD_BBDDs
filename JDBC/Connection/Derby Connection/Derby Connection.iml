@@ -10,7 +10,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../../DB/db-derby-10.17.1.0-bin/lib/derby.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../../../../../DB/db-derby-10.17.1.0-bin/lib/derby.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -19,7 +19,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../../DB/db-derby-10.17.1.0-bin/lib/derbytools.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../../../../../DB/db-derby-10.17.1.0-bin/lib/derbytools.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -28,7 +28,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../../DB/db-derby-10.17.1.0-bin/lib/derbyshared.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../../../../../DB/db-derby-10.17.1.0-bin/lib/derbyshared.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

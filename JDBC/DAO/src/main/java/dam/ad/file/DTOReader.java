@@ -32,7 +32,7 @@ public abstract class DTOReader<T> {
                 .onClose(() -> {
                     try {
                         input.close();
-                        System.out.println("Closed input stream");
+                        //System.out.println("Closed input stream");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

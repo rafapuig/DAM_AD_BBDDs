@@ -12,6 +12,9 @@
         <option value="$PROJECT_DIR$/JDBC/Metadatos/pom.xml" />
         <option value="$PROJECT_DIR$/Statements/pom.xml" />
         <option value="$PROJECT_DIR$/JDBC/DAO/pom.xml" />
+        <option value="$PROJECT_DIR$/JDBC/Connection/Maven-Derby Connection/pom.xml" />
+        <option value="$PROJECT_DIR$/JDBC/Connection/Maven-HSQLDB Connection/pom.xml" />
+        <option value="$PROJECT_DIR$/JDBC/Connection/Maven-SQLite Connectoin/pom.xml" />
       </list>
     </option>
   </component>

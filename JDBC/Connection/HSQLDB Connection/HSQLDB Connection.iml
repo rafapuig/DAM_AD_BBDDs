@@ -10,7 +10,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../../DB/hsqldb-2.7.2/hsqldb/lib/hsqldb.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../../../../../DB/hsqldb-2.7.2/hsqldb/lib/hsqldb.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

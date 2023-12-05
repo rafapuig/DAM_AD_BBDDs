@@ -1,6 +1,7 @@
 package dam.ad.futbol.db.hsqldb;
 
 import dam.ad.dao.DAO;
+import dam.ad.dao.jdbc.DataSourceFactory;
 import dam.ad.dao.jdbc.DatabaseSchema;
 import dam.ad.file.DTOReader;
 import dam.ad.futbol.file.EquipoDTOReader;
@@ -13,13 +14,12 @@ import org.hsqldb.jdbc.JDBCDataSourceFactory;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -27,80 +27,75 @@ import java.util.stream.Stream;
 
 public class DbFutbolDAODemo {
 
-    static {
+    public static void main(String[] args) throws Exception {
+
+        DataSource dataSource = DataSourceFactory.getInstance().getDataSource("jdbc/futbol");
+
+        DatabaseSchema schema = new FutbolSchema();
+
         try {
-            registerDataSource();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            createDatabaseSchema(dataSource, schema);
+
+            DAO<Equipo> equipoDAO = FutbolDAOManager.<Equipo>getDAO(Equipo.class, dataSource); // new DbEquipoDAO(dataSource);
+            DAO<Jugador> jugadorDAO = FutbolDAOManager.<Jugador>getDAO(Jugador.class, dataSource); // new DbJugadorDAO(dataSource);
+
+            loadEquipos(equipoDAO);
+            loadJugadores(jugadorDAO);
+
+            performJugadoresEquipos(equipoDAO, jugadorDAO);
+
+            //jugadorDAO.getAll().forEach(System.out::println);
+
+            //jugadorDAO.getAll().findFirst().get().getEquipoId();
+
+            /*
+            Jugador luka = getJugador(jugadorDAO, equipoDAO);
+            luka.setEquipo(equipoDAO.getById(luka.getEquipoId()).orElseThrow());
+            */
+
+            /* List<Jugador> jugadores = jugadorDAO.getAll()
+                    .peek(jugador -> jugador.setEquipo(
+                            equipoDAO.getById(jugador.getEquipoId())
+                                    .orElse(null)))
+                    .toList();
+
+            jugadores.forEach(
+                    j -> System.out.println(j.getNombre() + " " + j.getEquipo().getNombre()));
+
+
+
+            List<Equipo> equipos = equipoDAO.getAll().toList();
+
+            Map<Equipo, List<Jugador>> map = jugadores.stream()
+                    .collect(
+                            Collectors.groupingBy(Jugador::getEquipo));
+
+            map.forEach(Equipo::setJugadores);
+
+            // equipoList = map.keySet().stream().toList();
+
+            equipos
+                .forEach(e -> e.setJugadores(jugadores.stream()
+                        .filter(jugador -> jugador.getEquipoId() == e.getEquipoId())
+                        .toList()));
+
+            //map.keySet().forEach(e -> System.out.println(e + ":" + e.getJugadores()));
+
+            equipos.forEach(e -> System.out.println(e + ":" + e.getJugadores()));
+
+            //performOperationsDemo(equipoDAO);
+
+             */
+
+        } finally {
+            cleanUp(dataSource, schema);
+            shutdown(dataSource); //Para HSQLDB
         }
     }
 
-    public static void main(String[] args) throws Exception {
-
-        //registerDataSource();
-        //registerDerbyDataSource();
-        registerHSQLDBDataSource();
-
-        Context context = new InitialContext();
-        DataSource dataSource = (DataSource) context.lookup("jdbc/futbol");
-
-        DatabaseSchema schema = new FutbolSchema();
-        createDatabaseSchema(dataSource, schema);
-
-        DAO<Equipo> equipoDAO = new DbEquipoDAO(dataSource);
-        DAO<Jugador> jugadorDAO = new DbJugadorDAO(dataSource);
-
-        DTOReader<Equipo> equipoDTOReader = new EquipoDTOReader();
 
 
-        Stream<Equipo> equipos = equipoDTOReader.readFromResource("/futbol/equipos.csv");
-
-        equipos.forEach(equipoDAO::add);
-        equipos.close();
-
-        equipoDAO.getAll().forEach(System.out::println);
-
-        DTOReader<Jugador> jugadorDTOReader = new JugadorDTOReader();
-        Stream<Jugador> jugadores = jugadorDTOReader.readFromResource("/futbol/jugadores.csv");
-        jugadores.forEach(jugadorDAO::add);
-        jugadores.close();
-
-        performJugadoresEquipos(equipoDAO, jugadorDAO);
-
-        jugadorDAO.getAll().forEach(System.out::println);
-
-        //jugadorDAO.getAll().findFirst().get().getEquipoId();
-
-        Jugador luka = jugadorDAO.getById(1).orElseThrow();
-
-        List<Jugador> jugadoresList = jugadorDAO.getAll()
-                .peek(jugador -> jugador.setEquipo(
-                        equipoDAO.getById(jugador.getEquipoId()).orElse(null)))
-                .toList();
-
-        jugadoresList.forEach(
-                j -> System.out.println(j.getNombre() + " " + j.getEquipo().getNombre()));
-
-        luka.setEquipo(equipoDAO.getById(luka.getEquipoId()).orElseThrow());
-
-        List<Equipo> equipoList = equipoDAO.getAll().toList();
-
-        var map = jugadoresList.stream()
-                .collect(
-                        Collectors.groupingBy(Jugador::getEquipo));
-
-        map.forEach(Equipo::setJugadores);
-
-        equipoList = map.keySet().stream().toList();
-
-       /* equipoList
-                .forEach(e -> e.setJugadores(jugadoresList.stream()
-                        .filter(jugador -> jugador.getEquipoId() == e.getEquipoId())
-                        .toList()));*/
-
-        //map.keySet().forEach(e -> System.out.println(e + ":" + e.getJugadores()));
-
-        equipoList.forEach(e -> System.out.println(e + ":" + e.getJugadores()));
+    private static void performOperationsDemo(DAO<Equipo> equipoDAO) {
 
         Optional<Equipo> equipo = equipoDAO.getById(1);
 
@@ -122,70 +117,47 @@ public class DbFutbolDAODemo {
 
         //equipoDAO.getById(6).ifPresent(equipoDAO::delete);
 
-
         IntStream.range(6, 100)
                 .mapToObj(id -> new Equipo(id, "", ""))
                 .forEach(equipoDAO::delete);
 
         equipoDAO.getAll().forEach(System.out::println);
-
-        cleanUp(dataSource, schema);
-
-        shutdown(dataSource); //Para HSQLDB
     }
 
-    static DataSource createDataSource() throws Exception {
-        Properties properties = new Properties();
-        properties.setProperty("url", "jdbc:hsqldb:C:/BBDDs/hsqldb/futbol"); //create=true"); // ;shutdown=true");
-        properties.setProperty("user", "SA");
-        properties.setProperty("password", "");
+    private static Jugador getJugador(DAO<Jugador> jugadorDAO, DAO<Equipo> equipoDAO) {
+        Jugador luka = jugadorDAO.getAll()
+                .filter(jugador -> jugador.getNombre().startsWith("Luka"))
+                .findFirst()
+                .orElseThrow();
 
-        // No tiene Connection Pool !!!!
-        return JDBCDataSourceFactory.createDataSource(properties);
+        luka.setEquipo(equipoDAO.getById(luka.getEquipoId()).orElseThrow());
+
+        return luka;
     }
 
-    static void registerDataSource() throws Exception {
+    private static void loadJugadores(DAO<Jugador> jugadorDAO) {
+        DTOReader<Jugador> jugadorDTOReader = new JugadorDTOReader();
+        Stream<Jugador> jugadores = jugadorDTOReader
+                .readFromResource("/futbol/jugadores.csv");
+        jugadores.forEach(jugadorDAO::add);
+        jugadores.close();
 
-        //Properties props = new Properties();
-        //props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "com.sun.enterprise.naming.impl.SerialInitContextFactory");
-        //Context initialContext = new InitialContext(props);
-
-        Context initialContext = new InitialContext();
-        JDBCDataSource dataSource = new JDBCDataSource();
-        //dataSource.setDatabaseName();
-
-        dataSource.setURL("C:/BBDDs/hsqldb/futbol");
-        dataSource.setUser("SA");
-        dataSource.setPassword("");
-
-        initialContext.bind("jdbc/hsqldb/futbol", dataSource);
+        //jugadorDAO.getAll().forEach(System.out::println);
     }
 
-    static void registerHSQLDBDataSource() throws Exception {
+    private static void loadEquipos(DAO<Equipo> equipoDAO) {
+        DTOReader<Equipo> equipoDTOReader = new EquipoDTOReader();
 
-        //Properties props = new Properties();
-        //props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "com.sun.enterprise.naming.impl.SerialInitContextFactory");
-        //Context initialContext = new InitialContext(props);
+        Stream<Equipo> equipos = equipoDTOReader
+                .readFromResource("/futbol/equipos.csv");
 
-        Context initialContext = new InitialContext();
-        JDBCDataSource dataSource = new JDBCDataSource();
-        //dataSource.setDatabaseName();
+        equipos.forEach(equipoDAO::add);
+        equipos.close();
 
-        dataSource.setURL("C:/BBDDs/hsqldb/JDBCfutbol");
-        dataSource.setUser("SA");
-        dataSource.setPassword("");
-
-        initialContext.bind("jdbc/futbol", dataSource);
+        //equipoDAO.getAll().forEach(System.out::println);
     }
 
-    static void registerDerbyDataSource() throws Exception {
 
-        Context initialContext = new InitialContext();
-        EmbeddedDataSource dataSource = new EmbeddedDataSource();
-        dataSource.setDatabaseName("C:/BBDDs/derby/futbol");
-
-        initialContext.bind("jdbc/futbol", dataSource);
-    }
 
 
     static void createDatabaseSchema(DataSource dataSource, DatabaseSchema schema) {
@@ -235,36 +207,121 @@ public class DbFutbolDAODemo {
         }
     }
 
-    static void performJugadoresEquipos(DAO<Equipo> equipoDAO, DAO<Jugador> jugadorDAO) {
+
+    static void bindJugadoresEquipos(DAO<Equipo> equipoDAO, DAO<Jugador> jugadorDAO) {
         List<Equipo> equipos = equipoDAO.getAll().toList();
         List<Jugador> jugadores = jugadorDAO.getAll().toList();
 
-        var equiposMap = equipoDAO.getAll()
-                .collect(Collectors.toMap(Equipo::getEquipoId, Function.identity()));
 
-        jugadores.forEach(jugador -> jugador.setEquipo(equiposMap.get(jugador.getEquipoId())));
+    }
 
+    static void performJugadoresEquipos(DAO<Equipo> equipoDAO, DAO<Jugador> jugadorDAO) {
+
+        List<Equipo> equipos = equipoDAO.getAll().toList();
+        List<Jugador> jugadores = jugadorDAO.getAll().toList();
+
+        //También se puede cargar la lista de jugadores con el equipo
+        /*jugadores = jugadorDAO.getAll()
+                .peek(jugador -> jugador.setEquipo(
+                        equipoDAO.getById(jugador.getEquipoId())
+                                .orElse(null)))
+                .toList();*/
+
+        //Crear mapa de equipos a partir de la lista
+        Map<Integer, Equipo> equiposMap = equipos.stream()
+                .collect(Collectors
+                        .toMap(
+                                Equipo::getEquipoId, // key Integer ID del equipo
+                                Function.identity())); // value referencia al objeto Equipo
+
+        // Asignar a cada jugador la referencia al equipo en el que esta
+        jugadores
+                .forEach(jugador -> jugador.setEquipo(
+                        equiposMap.get(jugador.getEquipoId()))); //O(1) con el mapa de equipos
+
+
+        // Otra forma sin usar el equiposMap
         /*jugadores.forEach(jugador -> jugador.setEquipo(equipos.stream()
                 .filter(e -> jugador.getEquipoId() == e.getEquipoId())
                 .findAny()
                 .orElse(null)));*/
 
-        equipos.forEach(equipo -> equipo.setJugadores(jugadores.stream()
-                .filter(jugador -> jugador.getEquipo().equals(equipo))
-                .toList()));
 
+        // Establecer la coleccion de jugadores de cada equipo: equipo.setJugadores()
+
+        //Forma 1
+        /* equipos.forEach(equipo -> equipo.setJugadores(jugadores.stream()
+                .filter(jugador -> jugador.getEquipo().equals(equipo))
+                .toList())); */
+
+        // Forma 2 de establecer los jugadores de un equipo
+        /*Map<Equipo, List<Jugador>> jugadoresByEquipoMap = jugadores.stream()
+                .collect(Collectors.groupingBy(Jugador::getEquipo));
+
+        //jugadoresByEquipoMap.
+        //        forEach((equipo, jugadoresList) -> equipo.setJugadores(jugadoresList));
+
+        jugadoresByEquipoMap.
+                forEach(Equipo::setJugadores);
+
+        equipos.forEach(equipo ->
+        {
+            /*jugadoresByEquipoMap.computeIfPresent(
+                    equipo,
+                    (key, jugadoresList) -> {
+                        key.setJugadores(jugadoresList);
+                        return jugadoresList;
+                    });
+
+            jugadoresByEquipoMap.computeIfAbsent(
+                    equipo,
+                    key -> {
+                        List<Jugador> empty = List.of();
+                        key.setJugadores(empty);
+                        return empty;
+                    });
+        });*/
+
+
+        //Forma 3
+        Map<Equipo, List<Jugador>> jugadoresByEquipoMap = jugadores.stream()
+                .collect(Collectors.collectingAndThen(
+                        Collectors.groupingBy(Jugador::getEquipo),
+                        map -> {
+                            map.forEach(Equipo::setJugadores);
+                            return map;
+                        }));
+
+        equipos.stream()
+                .filter(equipo -> equipo.getJugadores() == null)
+                .forEach(equipo -> equipo.setJugadores(List.of()));
+
+
+        //Forma 4: menos eficiente
+        /*equipos
+                .forEach(equipo -> equipo.setJugadores(jugadores.stream()
+                        .filter(jugador -> jugador.getEquipoId() == equipo.getEquipoId())
+                        .toList()));*/
+
+        //Forma 5: derivada de la anterior
+        /*equipos
+                .forEach(equipo -> equipo.setJugadores(jugadores.stream()
+                        .filter(jugador -> jugador.getEquipo().equals(equipo))
+                        .toList()));*/
+
+        // Imprimir resultados
         equipos.forEach(
                 equipo -> {
                     System.out.println(equipo.getNombre());
                     equipo.getJugadores().forEach(System.out::println);
-                } );
+                });
 
+        //SALEN NULOS por no usar streams y crear una lista con cero elementos en lugar de null
         jugadores.forEach(
                 jugador ->
-                        System.out.println(jugador.getNombre() + " -> " + jugador.getEquipo().getNombre()));
-
-
-        System.out.println(equipos.get(0).getJugadores().get(0).getEquipo().getJugadores().get(0).getEquipo().getNombre());
+                        System.out.println(jugador.getNombre()
+                                           + " -> "
+                                           + jugador.getEquipo().getNombre()));
     }
 
 }

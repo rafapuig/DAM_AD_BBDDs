@@ -1,6 +1,3 @@
-import org.hsqldb.jdbc.JDBCDataSource;
-import org.hsqldb.jdbc.JDBCDataSourceFactory;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -9,14 +6,14 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 public class StatementDemo {
-    static final String HSQLDB_URL = "jdbc:hsqldb:C:/BBDDs/hsqldb/personas5;create=true";
+    static final String HSQLDB_URL = "jdbc:hsqldb:C:/BBDDs/hsqldb/personas20"; //create=true";
 
-    static Connection connection;
+    //static Connection connection;
     public static void main(String[] args) {
 
-        Connection conn = openConnection(HSQLDB_URL, "SA", "");
+        Connection conn = getConnection(HSQLDB_URL, "SA", "");
 
-        connection = conn;
+        //connection = conn;
 
         createDataBase(conn);
 
@@ -33,7 +30,7 @@ public class StatementDemo {
         closeConnection(conn);
     }
 
-    static Connection openConnection(String url, String userId, String password) {
+    static Connection getConnection(String url, String userId, String password) {
         try {
             Connection connection = DriverManager.getConnection(url, userId, password);
             connection.setAutoCommit(false);
@@ -43,8 +40,6 @@ public class StatementDemo {
         }
         return null;
     }
-
-
 
     static void closeConnection(Connection connection) {
         Objects.requireNonNull(connection);

@@ -7,6 +7,6 @@ public class EquipoDTOReader extends DTOReader<Equipo> {
     @Override
     protected Equipo read(String line) {
         String[] parts = line.split(",");
-        return new Equipo(0, parts[0], parts[1]);
+        return new Equipo(0, parts[0].trim(), parts[1].trim());
     }
 }
