@@ -17,7 +17,7 @@ public class DbJugadorDAO extends DbDAO<Jugador> {
         SQL_SELECT_BY_ID = "SELECT * FROM jugador WHERE jugadorId = ?";
         SQL_UPDATE = "UPDATE jugador SET NOMBRE = ?, PAIS = ?, NACIMIENTO=?, ESTATURA=?, PESO=?,DORSAL=?, EQUIPOID=?, CAPITAN=? WHERE jugadorId = ?";
         SQL_DELETE = "DELETE FROM jugador WHERE jugadorId = ?";
-
+        SQL_SELECT_COUNT = "SELECT COUNT(*) FROM jugador";
     }
 
     @Override

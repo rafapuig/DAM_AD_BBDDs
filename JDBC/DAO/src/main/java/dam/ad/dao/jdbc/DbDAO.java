@@ -164,4 +164,21 @@ public abstract class DbDAO<T> implements DAO<T> {
         }
     }
 
+    protected  String SQL_SELECT_COUNT;
+
+    @Override
+    public long getCount() {
+        try (Connection conn = getConnection();
+             PreparedStatement stmt =
+                     conn.prepareStatement(SQL_SELECT_COUNT)) {
+
+            ResultSet rs = stmt.executeQuery();
+
+            rs.next();
+            return rs.getLong(1);
+
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex.getMessage(), ex);
+        }
+    }
 }

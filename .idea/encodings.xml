@@ -11,7 +11,9 @@
     <file url="file://$PROJECT_DIR$/JDBC/DAO/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/JDBC/Metadatos/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/JDBC/Metadatos/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Statements/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Statements/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/JDBC/Statements/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/JDBC/Statements/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Pruebas/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Pruebas/src/main/resources" charset="UTF-8" />
   </component>
 </project>

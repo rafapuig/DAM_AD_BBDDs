@@ -15,8 +15,11 @@
         <option value="$PROJECT_DIR$/JDBC/Connection/Maven-Derby Connection/pom.xml" />
         <option value="$PROJECT_DIR$/JDBC/Connection/Maven-HSQLDB Connection/pom.xml" />
         <option value="$PROJECT_DIR$/JDBC/Connection/Maven-SQLite Connectoin/pom.xml" />
+        <option value="$PROJECT_DIR$/Pruebas/pom.xml" />
+        <option value="$PROJECT_DIR$/JDBC/Statements/pom.xml" />
       </list>
     </option>
+    <option name="workspaceImportForciblyTurnedOn" value="true" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="21" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />

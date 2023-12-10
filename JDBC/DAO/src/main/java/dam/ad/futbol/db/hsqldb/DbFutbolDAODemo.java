@@ -42,7 +42,11 @@ public class DbFutbolDAODemo {
             loadEquipos(equipoDAO);
             loadJugadores(jugadorDAO);
 
-            performJugadoresEquipos(equipoDAO, jugadorDAO);
+            System.out.println("Numero de equipos: " + equipoDAO.getCount());
+
+            equipoDAO.getAll().forEach(System.out::println);
+
+            //performJugadoresEquipos(equipoDAO, jugadorDAO);
 
             //jugadorDAO.getAll().forEach(System.out::println);
 

@@ -14,8 +14,9 @@ public class DbEquipoDAO extends DbDAO<Equipo> {
         SQL_INSERT = "INSERT INTO equipo VALUES (DEFAULT, ?, ?)";
         SQL_SELECT_ALL = "SELECT * FROM equipo";
         SQL_SELECT_BY_ID = "SELECT * FROM equipo WHERE equipoId = ?";
-        SQL_UPDATE = "UPDATE equipo SET NOMBRE = ?, PAIS = ? WHERE EQUIPOID = ?";
+        SQL_UPDATE = "UPDATE equipo SET NOMBRE = ?, PAIS = ? WHERE equipoId = ?";
         SQL_DELETE = "DELETE FROM equipo WHERE equipoId = ?";
+        SQL_SELECT_COUNT = "SELECT COUNT(*) FROM equipo";
     }
 
     @Override
