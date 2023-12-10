@@ -5,6 +5,7 @@
     <file url="file://$PROJECT_DIR$/JDBC/DAO/src/main/java/dam/ad/personas/db/hsqldb/DbPersonasDAODemo.java" dialect="HSQLDB" />
     <file url="file://$PROJECT_DIR$/JDBC/DAO/src/main/resources/PersonasSchema.sql" dialect="HSQLDB" />
     <file url="file://$PROJECT_DIR$/JDBC/DAO/src/main/resources/futbol/DatabaseSchema.sql" dialect="HSQLDB" />
+    <file url="file://$PROJECT_DIR$/Statements/src/main/java/StatementConnectedDemo.java" dialect="HSQLDB" />
     <file url="file://$PROJECT_DIR$/Statements/src/main/java/StatementDemo.java" dialect="HSQLDB" />
     <file url="file://$PROJECT_DIR$/Statements/src/main/java/StatementDemoConnected.java" dialect="HSQLDB" />
     <file url="file://$PROJECT_DIR$/Statements/src/main/java/dam/ad/jdbc/dao/PersonaDAO.java" dialect="HSQLDB" />

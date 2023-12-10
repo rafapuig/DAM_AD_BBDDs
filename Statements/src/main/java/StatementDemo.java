@@ -114,7 +114,7 @@ public class StatementDemo {
                                 estatura DECIMAL(3,2),
                                 peso INTEGER,
                                 dorsal INTEGER,
-                                equipoID INTEGER REFERENCES equipo);
+                                equipoID INTEGER REFERENCES equipo)
                             """;
                     stmt.execute(SQL_CREATE_TABLE_JUGADOR);
                     System.out.println("La tabla jugador se ha creado.");
@@ -267,14 +267,18 @@ public class StatementDemo {
     }
 
     // En este ejemplo vamos a componer el comando haciendo uso de un objeto StringJoiner
-    private static void insertJugador(int jugadorId,
-                                      String nombre,
-                                      String pais,
-                                      LocalDate nacimiento,
-                                      double estatura,
-                                      int peso,
-                                      int dorsal,
-                                      int equipoId) {
+    // Además, como se trata de un DML INSERT vamos a usar executeUpdate
+    // en lugar del generico excute para asi obtener un entero
+    // que indica el número de filas que se han insertado / modificado / borrado
+
+    private static boolean insertJugador(int jugadorId,
+                                         String nombre,
+                                         String pais,
+                                         LocalDate nacimiento,
+                                         double estatura,
+                                         int peso,
+                                         int dorsal,
+                                         int equipoId) {
         try (Connection connection = DriverManager.getConnection(HSQLDB_FUTBOL_URL)) {
 
             try (Statement stmt = connection.createStatement()) {
@@ -291,8 +295,10 @@ public class StatementDemo {
                         .toString();
 
                 try {
-                    stmt.execute(sql);
+                    int result = stmt.executeUpdate(sql);
                     System.out.println("Jugador " + nombre + " insertado");
+                    return result != 0;
+
                 } catch (SQLException ex) {
                     System.out.println("ERROR ejecutando el comando");
                     System.out.println(ex.getMessage());
@@ -306,15 +312,16 @@ public class StatementDemo {
             System.out.println("ERROR de conexión a la base de datos");
             System.out.println(e.getMessage());
         }
+        return false;
     }
 
-    private static void insertJugador(String nombre,
-                                      String pais,
-                                      LocalDate nacimiento,
-                                      double estatura,
-                                      int peso,
-                                      int dorsal,
-                                      int equipoId) {
+    private static boolean insertJugador(String nombre,
+                                         String pais,
+                                         LocalDate nacimiento,
+                                         double estatura,
+                                         int peso,
+                                         int dorsal,
+                                         int equipoId) {
         try (Connection connection = DriverManager.getConnection(HSQLDB_FUTBOL_URL)) {
 
             try (Statement stmt = connection.createStatement()) {
@@ -330,8 +337,10 @@ public class StatementDemo {
                         .toString();
 
                 try {
-                    stmt.execute(sql);
+                    int result = stmt.executeUpdate(sql);
                     System.out.println("Jugador " + nombre + " insertado");
+                    return result != 0;
+
                 } catch (SQLException ex) {
                     System.out.println("ERROR ejecutando el comando");
                     System.out.println(ex.getMessage());
@@ -345,6 +354,7 @@ public class StatementDemo {
             System.out.println("ERROR de conexión a la base de datos");
             System.out.println(e.getMessage());
         }
+        return false;
     }
 
     // En este ejemplo recuperamos e imprimimos todos los equipos (SELECT * FROM equipo)
@@ -358,7 +368,7 @@ public class StatementDemo {
                 try {
                     String sql = "SELECT * FROM equipo";
                     if (stmt.execute(sql)) { // True si devuelve un ResultSet
-                        final String format = "%3s %-35s %-4s\n";
+                        final String format = "     %3s %-35s %-4s\n";
                         System.out.printf(format, "ID", "NOMBRE", "PAIS");
 
                         ResultSet rs = stmt.getResultSet();
@@ -370,7 +380,7 @@ public class StatementDemo {
                             // Valor de la tercera columna de la fila actual como String
                             String pais = rs.getString(3);
 
-                            System.out.printf("%3s %-35s %-4s\n", equipoId, nombre, pais);
+                            System.out.printf("%4s %3s %-35s %-4s\n", rs.getRow(), equipoId, nombre, pais);
                         }
                         rs.close();
                     }
@@ -391,36 +401,38 @@ public class StatementDemo {
     }
 
     // Ahora imprimimos los jugadores
+    // Esta vez usamos el metodo executeQuery de la clase Statement
+    // Este metodo se diferencia del execute en que ya devuelve directamente el ResultSet
     static void printAllJugadores() {
         try (Connection conn = DriverManager.getConnection(HSQLDB_FUTBOL_URL)) {
             try (Statement stmt = conn.createStatement()) {
                 try {
                     String sql = "SELECT * FROM jugador";
-                    if (stmt.execute(sql)) { // True si devuelve un ResultSet
-                        final String format = "%3s %-30s %-4s %10s %8s %4s %6s\n";
-                        System.out.printf(format, "ID", "NOMBRE", "PAIS", "NACIMIENTO", "ESTATURA", "PESO", "DORSAL");
+                    // El metodo executeQuery ya devuelve directamente el ResultSet
+                    ResultSet rs = stmt.executeQuery(sql);
+                    final String format = "%3s %-30s %-4s %10s %8s %4s %6s\n";
+                    System.out.printf(format, "ID", "NOMBRE", "PAIS", "NACIMIENTO", "ESTATURA", "PESO", "DORSAL");
 
-                        ResultSet rs = stmt.getResultSet();
-                        while (rs.next()) { // Iteramos fila a fila moviendo el cursor
-                            // Valor de la primera columna de la fila actual como int
-                            int equipoId = rs.getInt(1);
-                            // Valor de la segunda columna de la fila actual como String
-                            String nombre = rs.getString(2);
-                            // Valor de la tercera columna de la fila actual como String
-                            String pais = rs.getString(3);
-                            // Valor de la comuna con nombre 'nacimiento'
-                            LocalDate nacimiento = rs.getObject("nacimiento", LocalDate.class);
-                            // Valor de la columna con nombre 'estatura' como double
-                            double estatura = rs.getDouble("estatura");
-                            // Valor de la columna peso como int
-                            int peso = rs.getInt("peso");
-                            // Valor de columna dorsal como int
-                            int dorsal = rs.getInt("dorsal");
 
-                            System.out.printf(format, equipoId, nombre, pais, nacimiento.toString(), estatura, peso, dorsal);
-                        }
-                        rs.close();
+                    while (rs.next()) { // Iteramos fila a fila moviendo el cursor
+                        // Valor de la primera columna de la fila actual como int
+                        int equipoId = rs.getInt(1);
+                        // Valor de la segunda columna de la fila actual como String
+                        String nombre = rs.getString(2);
+                        // Valor de la tercera columna de la fila actual como String
+                        String pais = rs.getString(3);
+                        // Valor de la comuna con nombre 'nacimiento'
+                        LocalDate nacimiento = rs.getObject("nacimiento", LocalDate.class);
+                        // Valor de la columna con nombre 'estatura' como double
+                        double estatura = rs.getDouble("estatura");
+                        // Valor de la columna peso como int
+                        int peso = rs.getInt("peso");
+                        // Valor de columna dorsal como int
+                        int dorsal = rs.getInt("dorsal");
+
+                        System.out.printf(format, equipoId, nombre, pais, nacimiento.toString(), estatura, peso, dorsal);
                     }
+                    rs.close();
 
                 } catch (SQLException e) {
                     System.out.println("ERROR ejecutando el comando");
