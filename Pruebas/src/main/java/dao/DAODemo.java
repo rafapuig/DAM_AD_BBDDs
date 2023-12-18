@@ -6,6 +6,7 @@ import dam.ad.dao.jdbc.DatabaseSchema;
 import dam.ad.personas.db.hsqldb.DbPersonaDAO;
 import dam.ad.personas.db.hsqldb.PersonasDatabaseSchema;
 import dam.ad.personas.model.Persona;
+import dam.ad.personas.model.Sexo;
 import org.hsqldb.jdbc.JDBCDataSourceFactory;
 
 import javax.sql.DataSource;
@@ -55,7 +56,7 @@ public class DAODemo {
                 -1,
                 "Aitor",
                 "Tilla",
-                Persona.Sexo.HOMBRE,
+                Sexo.HOMBRE,
                 LocalDate.parse("1998-01-14"),
                 1900);
 
@@ -63,10 +64,10 @@ public class DAODemo {
 
 
         personaById.ifPresent(persona -> {
-                    Persona p2 = new Persona.Builder(personaById.get())
+                    Persona p2 = Persona.builder(personaById.get())
                             .nombre("Amador")
                             .apellidos("Denador")
-                            .sexo(Persona.Sexo.MUJER)
+                            .sexo(Sexo.MUJER)
                             .nacimiento(LocalDate.parse("1992-03-27"))
                             .ingresos(1800).build();
 

@@ -1,20 +1,16 @@
 package dam.ad.futbol.db.hsqldb;
 
 import dam.ad.dao.DAO;
+import dam.ad.dao.DAOFactory;
 import dam.ad.dao.jdbc.DataSourceFactory;
 import dam.ad.dao.jdbc.DatabaseSchema;
 import dam.ad.file.DTOReader;
 import dam.ad.futbol.file.EquipoDTOReader;
+import dam.ad.futbol.file.FileEquipoDAO;
 import dam.ad.futbol.file.JugadorDTOReader;
 import dam.ad.futbol.model.Equipo;
 import dam.ad.futbol.model.Jugador;
-import org.apache.derby.jdbc.EmbeddedDataSource;
-import org.hsqldb.jdbc.JDBCDataSource;
-import org.hsqldb.jdbc.JDBCDataSourceFactory;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -29,22 +25,53 @@ public class DbFutbolDAODemo {
 
     public static void main(String[] args) throws Exception {
 
-        DataSource dataSource = DataSourceFactory.getInstance().getDataSource("jdbc/futbol");
+        DataSource dataSource = DataSourceFactory
+                .getInstance()
+                .getDataSource("jdbc/derby/futbol");
 
         DatabaseSchema schema = new FutbolSchema();
+
+        DAOFactory daoFactory = new DbFutbolDAOFactory(dataSource);
+
+        FutbolDAOManager futbolDAOManager = new FutbolDAOManager(daoFactory);
 
         try {
             createDatabaseSchema(dataSource, schema);
 
-            DAO<Equipo> equipoDAO = FutbolDAOManager.<Equipo>getDAO(Equipo.class, dataSource); // new DbEquipoDAO(dataSource);
-            DAO<Jugador> jugadorDAO = FutbolDAOManager.<Jugador>getDAO(Jugador.class, dataSource); // new DbJugadorDAO(dataSource);
+            DAO<Equipo> equipoDAO = futbolDAOManager.getEquipoDAO();
+            DAO<Jugador> jugadorDAO = futbolDAOManager.getJugadorDAO();
 
             loadEquipos(equipoDAO);
             loadJugadores(jugadorDAO);
 
             System.out.println("Numero de equipos: " + equipoDAO.getCount());
 
-            equipoDAO.getAll().forEach(System.out::println);
+            List<Equipo> equipos = equipoDAO.getAll().toList();
+            List<Jugador> jugadores = jugadorDAO.getAll().toList();
+
+            FutbolEntityManager entityManager = new FutbolEntityManager();
+
+            entityManager.setEquipos(equipos);
+            entityManager.setJugadores(jugadores);
+
+            entityManager.bindEquiposJugadores();
+
+            //printBoundEquiposJugadores(entityManager.getEquipos(), entityManager.getJugadores());
+            printBoundEquiposJugadores(equipos, jugadores);
+
+            Equipo equipo = entityManager.getEquipos().stream()
+                    .filter(e -> e.getEquipoId() == 1)
+                    .findAny().orElse(null);
+
+            assert equipo != null;
+            equipo.setPais("FRA");
+
+            equipoDAO.update(equipo);
+
+            equipoDAO.getAll().filter(e -> e.equals(equipo)).forEach(System.out::println);
+
+
+            //equipoDAO.getAll().forEach(System.out::println);
 
             //performJugadoresEquipos(equipoDAO, jugadorDAO);
 
@@ -91,12 +118,53 @@ public class DbFutbolDAODemo {
 
              */
 
+            //testBindEquiposJugadores(futbolDAOManager);
+
+            //testEquipoToJugadoresBinders(futbolDAOManager);
+
         } finally {
             cleanUp(dataSource, schema);
-            shutdown(dataSource); //Para HSQLDB
+            try {
+                shutdown(dataSource); //Para HSQLDB
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 
+    private static void testEquipoToJugadoresBinders(FutbolDAOManager futbolDAOManager) {
+        EquiposToJugadoresBinder[] binders = new EquiposToJugadoresBinder[] {
+                EquiposToJugadoresBinder::bindEquiposToJugadores1,
+                EquiposToJugadoresBinder::bindEquiposToJugadores2,
+                EquiposToJugadoresBinder::bindEquiposToJugadores3,
+                EquiposToJugadoresBinder::bindEquiposToJugadores4,
+                EquiposToJugadoresBinder::bindEquiposToJugadores5,
+                EquiposToJugadoresBinder::bindEquiposToJugadores6
+        };
+
+        Arrays.asList(binders).forEach(
+                binder -> testBindEquiposJugadores(futbolDAOManager, binder));
+
+        //testBindEquiposJugadores(futbolDAOManager, DbFutbolDAODemo::bindEquiposToJugadores1);
+        //testBindEquiposJugadores(futbolDAOManager, DbFutbolDAODemo::bindEquiposToJugadores2);
+    }
+
+
+    static void testBindEquiposJugadores(FutbolDAOManager manager) {
+        List<Equipo> equipos = manager.getEquipoDAO().getAll().toList();
+        List<Jugador> jugadores = manager.getJugadorDAO().getAll().toList();
+
+        FutbolEntityManager.bindEquiposJugadores(equipos, jugadores);
+        printBoundEquiposJugadores(equipos, jugadores);
+    }
+
+    static void testBindEquiposJugadores(FutbolDAOManager manager, EquiposToJugadoresBinder binder) {
+        List<Equipo> equipos = manager.getEquipoDAO().getAll().toList();
+        List<Jugador> jugadores = manager.getJugadorDAO().getAll().toList();
+
+        FutbolEntityManager.bindEquiposJugadores(equipos, jugadores, binder);
+        printBoundEquiposJugadores(equipos, jugadores);
+    }
 
 
     private static void performOperationsDemo(DAO<Equipo> equipoDAO) {
@@ -128,48 +196,68 @@ public class DbFutbolDAODemo {
         equipoDAO.getAll().forEach(System.out::println);
     }
 
-    private static Jugador getJugador(DAO<Jugador> jugadorDAO, DAO<Equipo> equipoDAO) {
-        Jugador luka = jugadorDAO.getAll()
+    private static Jugador getJugador(FutbolDAOManager futbolDAOManager) {
+
+        Jugador luka = futbolDAOManager.getJugadorDAO().getAll()
                 .filter(jugador -> jugador.getNombre().startsWith("Luka"))
                 .findFirst()
                 .orElseThrow();
 
-        luka.setEquipo(equipoDAO.getById(luka.getEquipoId()).orElseThrow());
+        luka.setEquipo(futbolDAOManager.getEquipoDAO()
+                .getById(luka.getEquipoId()).orElseThrow());
 
         return luka;
     }
 
-    private static void loadJugadores(DAO<Jugador> jugadorDAO) {
-        DTOReader<Jugador> jugadorDTOReader = new JugadorDTOReader();
-        Stream<Jugador> jugadores = jugadorDTOReader
-                .readFromResource("/futbol/jugadores.csv");
-        jugadores.forEach(jugadorDAO::add);
-        jugadores.close();
+    private static void loadEquipos_(DAO<Equipo> equipoDAO) {
+        DTOReader<Equipo> equipoDTOReader = new EquipoDTOReader();
 
-        //jugadorDAO.getAll().forEach(System.out::println);
+        Stream<Equipo> equipos = equipoDTOReader.read();
+        equipos.forEach(equipoDAO::add);
+        equipos.close();
+
+        new FileEquipoDAO().getAll()
+                .forEach(equipoDAO::add);
+
+        //equipoDAO.getAll().forEach(System.out::println);
     }
 
     private static void loadEquipos(DAO<Equipo> equipoDAO) {
-        DTOReader<Equipo> equipoDTOReader = new EquipoDTOReader();
+        DAO<Equipo> fileEquipoDAO = new FileEquipoDAO();
 
-        Stream<Equipo> equipos = equipoDTOReader
-                .readFromResource("/futbol/equipos.csv");
-
+        Stream<Equipo> equipos = fileEquipoDAO.getAll();
         equipos.forEach(equipoDAO::add);
         equipos.close();
 
         //equipoDAO.getAll().forEach(System.out::println);
     }
 
+    private static void loadJugadores(DAO<Jugador> jugadorDAO) {
+        DTOReader<Jugador> jugadorDTOReader = new JugadorDTOReader();
+        Stream<Jugador> jugadores = jugadorDTOReader.read();
+        jugadores.forEach(jugadorDAO::add);
+        jugadores.close();
 
+        //jugadorDAO.getAll().forEach(System.out::println);
+    }
 
 
     static void createDatabaseSchema(DataSource dataSource, DatabaseSchema schema) {
-        execute(dataSource, schema.getCreateSchema());
+        System.out.println("Creando el esquema de la base de datos...");
+        String SQLScript = schema.getCreateSchema();
+        String[] sqls = SQLScript.split(";");
+        for (String sql : sqls) {
+            execute(dataSource, sql);
+        }
+        //execute(dataSource, schema.getCreateSchema());
     }
 
     static void cleanUp(DataSource dataSource, DatabaseSchema schema) {
-        execute(dataSource, schema.getDropSchema());
+        String[] sqls = schema.getDropSchema().split(";");
+        for (String sql : sqls) {
+            execute(dataSource, sql);
+        }
+        //execute(dataSource, schema.getDropSchema());
     }
 
     static void execute(DataSource dataSource, String SQLStatement) {
@@ -187,6 +275,7 @@ public class DbFutbolDAODemo {
         } catch (SQLException e) {
             try {
                 System.out.println("Desahaciendo la transaccion:\n" + e.getMessage());
+                assert connection != null;
                 connection.rollback();
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
@@ -194,6 +283,7 @@ public class DbFutbolDAODemo {
 
         } finally {
             try {
+                assert connection != null;
                 connection.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -202,6 +292,7 @@ public class DbFutbolDAODemo {
     }
 
     static void shutdown(DataSource dataSource) throws SQLException {
+        System.out.println("Apagando la base de datos...");
 
         try (Connection connection = dataSource.getConnection();
              Statement stmt = connection.createStatement()) {
@@ -211,13 +302,6 @@ public class DbFutbolDAODemo {
         }
     }
 
-
-    static void bindJugadoresEquipos(DAO<Equipo> equipoDAO, DAO<Jugador> jugadorDAO) {
-        List<Equipo> equipos = equipoDAO.getAll().toList();
-        List<Jugador> jugadores = jugadorDAO.getAll().toList();
-
-
-    }
 
     static void performJugadoresEquipos(DAO<Equipo> equipoDAO, DAO<Jugador> jugadorDAO) {
 
@@ -251,7 +335,7 @@ public class DbFutbolDAODemo {
                 .orElse(null)));*/
 
 
-        // Establecer la coleccion de jugadores de cada equipo: equipo.setJugadores()
+        // Establecer la colección de jugadores de cada equipo: equipo.setJugadores()
 
         //Forma 1
         /* equipos.forEach(equipo -> equipo.setJugadores(jugadores.stream()
@@ -313,6 +397,23 @@ public class DbFutbolDAODemo {
                         .filter(jugador -> jugador.getEquipo().equals(equipo))
                         .toList()));*/
 
+        // Imprimir resultados
+        equipos.forEach(
+                equipo -> {
+                    System.out.println(equipo.getNombre());
+                    equipo.getJugadores().forEach(System.out::println);
+                });
+
+        //SALEN NULOS por no usar streams y crear una lista con cero elementos en lugar de null
+        jugadores.forEach(
+                jugador ->
+                        System.out.println(jugador.getNombre()
+                                           + " -> "
+                                           + jugador.getEquipo().getNombre()));
+    }
+
+
+    static void printBoundEquiposJugadores(List<Equipo> equipos, List<Jugador> jugadores) {
         // Imprimir resultados
         equipos.forEach(
                 equipo -> {

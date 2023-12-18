@@ -4,6 +4,7 @@ import dam.ad.dao.jdbc.DbDAO;
 import dam.ad.futbol.model.Jugador;
 
 import javax.sql.DataSource;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,7 +27,8 @@ public class DbJugadorDAO extends DbDAO<Jugador> {
           resultSet.getInt(1),
           resultSet.getString(2),
           resultSet.getString(3),
-          resultSet.getObject(4, LocalDate.class),
+          //resultSet.getObject(4, LocalDate.class),
+                resultSet.getDate(4).toLocalDate(),
           resultSet.getDouble(5),
           resultSet.getInt(6),
           resultSet.getInt(7),
@@ -39,7 +41,8 @@ public class DbJugadorDAO extends DbDAO<Jugador> {
     protected void setAddStatementParams(PreparedStatement stmt, Jugador jugador) throws SQLException {
         stmt.setString(1, jugador.getNombre());
         stmt.setString(2, jugador.getPais());
-        stmt.setObject(3, jugador.getNacimiento());
+        //stmt.setObject(3, jugador.getNacimiento());
+        stmt.setDate(3, Date.valueOf(jugador.getNacimiento()));
         stmt.setDouble(4, jugador.getEstatura());
         stmt.setInt(5, jugador.getPeso());
         stmt.setInt(6, jugador.getDorsal());

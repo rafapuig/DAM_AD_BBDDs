@@ -6,16 +6,16 @@ import java.time.LocalDate;
 
 // En esta demo vamos a reutilizar la misma instancia de conexión durante toda la ejecución
 // En lugar de componer las sentencias SQL mediante concatenación de String
-// usaremos las SQL con parámetros
+// usaremos las SQL con parámetros mediante el uso de la interfaz PreparedStatement
 
 public class PreparedStatementDemo {
 
-    //URL de conexion a la BBDD futbol de HSQLDB
+    //URL de conexión a la BBDD futbol de HSQLDB
     static final String HSQLDB_FUTBOL_URL =
             "jdbc:hsqldb:file:C:/BBDDs/hsqldb/futbol;ifexists=true";
 
     public static void main(String[] args) {
-        Connection connection = null;
+        Connection connection = null;   //La vamos a reutilizar, pasándola a todos los métodos
         try {
             connection = openConnection(HSQLDB_FUTBOL_URL, "SA", "");
 
@@ -43,8 +43,8 @@ public class PreparedStatementDemo {
             }
 
         } finally {
-            shutdown(connection);
-            closeConnection(connection);
+            shutdown(connection);   // Apagar el motor de la base de datos
+            closeConnection(connection);    //Cerrar la conexión
         }
     }
 
@@ -105,10 +105,12 @@ public class PreparedStatementDemo {
     }
 
     static void createTableEquipo(Connection connection) {
+        System.out.println("Creando la tabla equipo...");
         executeStatement(connection, SQLStatements.SQL_CREATE_TABLE_EQUIPO);
     }
 
     static void createTableJugador(Connection connection) {
+        System.out.println("Creando la tabla jugador...");
         executeStatement(connection, SQLStatements.SQL_CREATE_TABLE_JUGADOR);
     }
 
@@ -148,10 +150,18 @@ public class PreparedStatementDemo {
 
             try {
                 stmt.executeUpdate();
-                ResultSet rs = stmt.getGeneratedKeys();
-                rs.next();
-                System.out.println("Insertado equipo " + nombre + " con ID=" + rs.getInt(1));
-                rs.close();
+                try(ResultSet rs = stmt.getGeneratedKeys()) {
+                    if(rs.next()) {
+                        System.out.println("Insertado equipo " +
+                                           nombre +
+                                           " con ID=" +
+                                           rs.getInt(1));
+                    }
+
+                    rs.close(); //Con un try-with-resources el close no es necesario hacerlo explicito
+                } catch (SQLException e) {
+                    throw new RuntimeException("ERROR obteniendo las claves generadas", e);
+                }
 
             } catch (SQLException e) {
                 throw new RuntimeException("ERROR insertando equipo", e);

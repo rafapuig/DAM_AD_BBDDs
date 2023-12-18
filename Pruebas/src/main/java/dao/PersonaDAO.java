@@ -2,6 +2,7 @@ package dao;
 
 import dam.ad.dao.DAO;
 import dam.ad.personas.model.Persona;
+import dam.ad.personas.model.Sexo;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -26,7 +27,7 @@ public class PersonaDAO implements DAO<Persona> {
                 rs.getInt("personaId"),
                 rs.getString("nombre"),
                 rs.getString("apellidos"),
-                rs.getObject("sexo", Persona.Sexo.class),
+                rs.getObject("sexo", Sexo.class),
                 (LocalDate) rs.getObject("nacimiento", LocalDate.class),
                 rs.getDouble("ingresos")
         );

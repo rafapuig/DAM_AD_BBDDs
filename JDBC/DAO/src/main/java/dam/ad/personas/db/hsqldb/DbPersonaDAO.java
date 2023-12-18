@@ -2,6 +2,7 @@ package dam.ad.personas.db.hsqldb;
 
 import dam.ad.dao.jdbc.DbDAO;
 import dam.ad.personas.model.Persona;
+import dam.ad.personas.model.Sexo;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
@@ -35,7 +36,7 @@ public class DbPersonaDAO extends DbDAO<Persona> {
                 resultSet.getInt("personaId"),
                 resultSet.getString("nombre"),
                 resultSet.getString("apellidos"),
-                Persona.Sexo.fromInicial(resultSet.getString("sexo")),
+                Sexo.fromInicial(resultSet.getString("sexo")),
                 resultSet.getObject("nacimiento", LocalDate.class),
                 resultSet.getDouble("ingresos")
         );

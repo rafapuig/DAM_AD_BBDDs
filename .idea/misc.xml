@@ -17,6 +17,7 @@
         <option value="$PROJECT_DIR$/JDBC/Connection/Maven-SQLite Connectoin/pom.xml" />
         <option value="$PROJECT_DIR$/Pruebas/pom.xml" />
         <option value="$PROJECT_DIR$/JDBC/Statements/pom.xml" />
+        <option value="$PROJECT_DIR$/JDBC/Connection/Maven-SQLite Connection/pom.xml" />
       </list>
     </option>
     <option name="workspaceImportForciblyTurnedOn" value="true" />

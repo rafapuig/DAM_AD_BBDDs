@@ -4,16 +4,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 public abstract class DTOReader<T> {
 
-    public Stream<T> readFromResource(String name) {
+    protected abstract URL getURL();
+
+    public Stream<T> read() {
         try {
             InputStream is = Objects.requireNonNull(
-                            DTOReader.class.
-                            getResource(name))
+                            getURL())
                     .openStream();
 
             return read(is);

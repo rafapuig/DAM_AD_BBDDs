@@ -3,6 +3,7 @@ package dam.ad.personas.db.hsqldb;
 import dam.ad.dao.DAO;
 import dam.ad.dao.jdbc.DatabaseSchema;
 import dam.ad.personas.model.Persona;
+import dam.ad.personas.model.Sexo;
 import org.hsqldb.jdbc.JDBCDataSourceFactory;
 
 import javax.sql.DataSource;
@@ -130,47 +131,47 @@ public class DbPersonasDAODemo {
         System.out.println("Generando un sample de personas...");
         return Stream.of(
                 new Persona(1, "Armando", "Bronca Segura",
-                        Persona.Sexo.HOMBRE,
+                        Sexo.HOMBRE,
                         LocalDate.of(1970, Month.AUGUST, 3),
                         2500),
                 new Persona(2, "Belen", "Tilla",
-                        Persona.Sexo.MUJER,
+                        Sexo.MUJER,
                         LocalDate.of(1983, Month.DECEMBER, 6),
                         2100),
                 new Persona(3, "Esther", "Malgin",
-                        Persona.Sexo.MUJER,
+                        Sexo.MUJER,
                         LocalDate.of(1988, Month.JULY, 4),
                         1800),
                 new Persona(4, "Amador", "Denador",
-                        Persona.Sexo.HOMBRE,
+                        Sexo.HOMBRE,
                         LocalDate.of(1994, Month.DECEMBER, 24),
                         1600),
                 new Persona(5, "Aitor", "Tilla",
-                        Persona.Sexo.HOMBRE,
+                        Sexo.HOMBRE,
                         LocalDate.of(2001, Month.JANUARY, 7),
                         1300),
                 new Persona(6, "Sandra", "Matica",
-                        Persona.Sexo.MUJER,
+                        Sexo.MUJER,
                         LocalDate.of(1977, Month.FEBRUARY, 19),
                         1500),
                 new Persona(7, "Victor", "Nado",
-                        Persona.Sexo.HOMBRE,
+                        Sexo.HOMBRE,
                         LocalDate.of(1998, Month.JUNE, 30),
                         2400),
                 new Persona(8, "Pedro", "Gado",
-                        Persona.Sexo.HOMBRE,
+                        Sexo.HOMBRE,
                         LocalDate.of(2002, Month.APRIL, 23),
                         1100),
                 new Persona(9, "Vanesa", "Tánica",
-                        Persona.Sexo.MUJER,
+                        Sexo.MUJER,
                         LocalDate.of(2000, Month.JANUARY, 6),
                         1200),
                 new Persona(10, "Marta", "Baco",
-                        Persona.Sexo.MUJER,
+                        Sexo.MUJER,
                         LocalDate.of(1982, Month.JULY, 8),
                         1700),
                 new Persona(11, "Consuelo", "Tería",
-                        Persona.Sexo.MUJER,
+                        Sexo.MUJER,
                         LocalDate.of(1967, Month.APRIL, 6),
                         1900)
 
@@ -249,7 +250,7 @@ public class DbPersonasDAODemo {
     private static Stream<Persona> getMujeresIngresosSuperior1500(DAO<Persona> personaDAO) {
         return personaDAO.getAll()
                 .filter(persona -> persona.getIngresos() > 1500)
-                .filter(persona -> persona.getSexo().equals(Persona.Sexo.MUJER));
+                .filter(persona -> persona.getSexo().equals(Sexo.MUJER));
     }
 
     private static void printMujeresIngresosSuperior1500(DAO<Persona> personaDAO) {
@@ -267,7 +268,7 @@ public class DbPersonasDAODemo {
     private static Persona addNewPersona(DAO<Persona> personaDAO) {
 
         Persona persona = new Persona(0, "Perico", "Palotes",
-                Persona.Sexo.HOMBRE, LocalDate.parse("1977-02-10"), 2300);
+                Sexo.HOMBRE, LocalDate.parse("1977-02-10"), 2300);
         System.out.println("Añadiendo persona " + persona.getNombre());
 
         personaDAO.add(persona);
@@ -281,7 +282,7 @@ public class DbPersonasDAODemo {
         //Persona modificada = persona.with().apellidos("XXX").ingresos(4000).build();
         persona.setNombre("Pepita");
         persona.setApellidos("Grillo");
-        persona.setSexo(Persona.Sexo.MUJER);
+        persona.setSexo(Sexo.MUJER);
         persona.setIngresos(2600);
 
         System.out.println("Actualizando persona " + persona.getNombre());
@@ -293,7 +294,7 @@ public class DbPersonasDAODemo {
     private static void borrarHombres(DAO<Persona> personaDAO) {
         System.out.println("Filtrando personas, borrando hombres...");
         personaDAO.getAll()
-                .filter(p -> p.getSexo() == Persona.Sexo.HOMBRE)
+                .filter(p -> p.getSexo() == Sexo.HOMBRE)
                 .forEach(personaDAO::delete);
 
         printPersonas(personaDAO);

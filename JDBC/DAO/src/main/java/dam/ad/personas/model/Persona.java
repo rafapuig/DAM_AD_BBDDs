@@ -12,29 +12,6 @@ public class Persona {
     private LocalDate nacimiento;
     private double ingresos;
 
-    public enum Sexo {
-        HOMBRE("H"),
-        MUJER("M");
-
-        private final String inicial;
-
-        Sexo(String inicial) {
-            this.inicial = inicial;
-        }
-
-        public static Sexo fromInicial(String inicial) {
-            return switch (inicial) {
-                case "H" -> HOMBRE;
-                case "M" -> MUJER;
-                default -> throw new IllegalStateException("Unexpected value: " + inicial);
-            };
-        }
-
-        public String getInicial() {
-            return inicial;
-        }
-    }
-
     public Persona(int personaId, String nombre, String apellidos, Sexo sexo, LocalDate nacimiento, double ingresos) {
         //System.out.println("Creando persona...");
         this.personaId = personaId;
@@ -115,6 +92,11 @@ public class Persona {
     @Override
     public int hashCode() {
         return Objects.hash(personaId);
+    }
+
+
+    public static Builder builder(Persona persona) {
+        return new Builder(persona);
     }
 
     public static final class Builder {

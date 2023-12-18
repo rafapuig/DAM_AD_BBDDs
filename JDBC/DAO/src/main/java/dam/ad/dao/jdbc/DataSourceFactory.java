@@ -16,7 +16,7 @@ public class DataSourceFactory {
         try {
             System.out.println("Registering data source...");
             //registerDataSource();
-            //registerDerbyDataSource();
+            registerDerbyDataSource();
             registerHSQLDBDataSource();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -51,14 +51,10 @@ public class DataSourceFactory {
     }
 
     static void registerHSQLDBDataSource() throws Exception {
-
-        //Properties props = new Properties();
-        //props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "com.sun.enterprise.naming.impl.SerialInitContextFactory");
-        //Context initialContext = new InitialContext(props);
+        System.out.println("Registrando JDBC BD Futbol en HSQLDB...");
 
         Context initialContext = new InitialContext();
         JDBCDataSource dataSource = new JDBCDataSource();
-        //dataSource.setDatabaseName();
 
         dataSource.setURL("C:/BBDDs/hsqldb/JDBCfutbol");
         dataSource.setUser("SA");
@@ -68,12 +64,13 @@ public class DataSourceFactory {
     }
 
     static void registerDerbyDataSource() throws Exception {
+        System.out.println("Registrando JDBC BD Futbol en Apache Derby...");
 
         Context initialContext = new InitialContext();
         EmbeddedDataSource dataSource = new EmbeddedDataSource();
         dataSource.setDatabaseName("C:/BBDDs/derby/futbol");
 
-        initialContext.bind("jdbc/futbol", dataSource);
+        initialContext.bind("jdbc/derby/futbol", dataSource);
     }
 
 

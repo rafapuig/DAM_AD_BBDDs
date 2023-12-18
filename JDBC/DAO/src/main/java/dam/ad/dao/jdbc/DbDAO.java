@@ -8,8 +8,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public abstract class DbDAO<T> implements DAO<T> {
-    protected final DataSource dataSource;
 
+    protected final DataSource dataSource;
 
     public DbDAO(DataSource dataSource) {
         this.dataSource = dataSource;
