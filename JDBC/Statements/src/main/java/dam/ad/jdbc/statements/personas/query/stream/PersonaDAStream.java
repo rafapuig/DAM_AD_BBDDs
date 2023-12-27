@@ -21,8 +21,19 @@ public class PersonaDAStream extends PersonaDAQuery {
         super(connection);
     }
 
+    Persona createPersona(ResultSet rs) throws SQLException {
+        return new Persona(
+                rs.getInt(1),
+                rs.getString("nombre"),
+                rs.getString("apellidos"),
+                Sexo.fromInicial(rs.getString("sexo")),
+                rs.getDate("nacimiento").toLocalDate(),
+                rs.getDouble("ingresos")
+        );
+    }
 
-    public Stream<Persona> getPersonasAsStream(
+
+    public Stream<Persona> getPersonasAsStream1(
             String sql,
             Consumer<PreparedStatement> paramSetter) {
 
@@ -33,21 +44,17 @@ public class PersonaDAStream extends PersonaDAQuery {
             try {
                 ResultSet rs = stmt.executeQuery();
 
+                DTOMapper<Persona> dtoMapper = resultSet -> new Persona(
+                        rs.getInt(1),
+                        rs.getString("nombre"),
+                        rs.getString("apellidos"),
+                        Sexo.fromInicial(rs.getString("sexo")),
+                        rs.getDate("nacimiento").toLocalDate(),
+                        rs.getDouble("ingresos")
+                );
 
-
-                return new ResultSetStream<>(Generators.getStreamGenerator(), rs, new DTOMapper<Persona>() {
-                    @Override
-                    public Persona apply(ResultSet resultSet) throws SQLException {
-                        return new Persona(
-                                rs.getInt(1),
-                                rs.getString("nombre"),
-                                rs.getString("apellidos"),
-                                Sexo.fromInicial(rs.getString("sexo")),
-                                rs.getDate("nacimiento").toLocalDate(),
-                                rs.getDouble("ingresos")
-                        );
-                    }
-                });
+                return new ResultSetStream<>(
+                        Generators.getStreamGenerator(rs, dtoMapper, true));
 
             } catch (SQLException e) {
                 throw new RuntimeException("ERROR ejecutando el comando SQL:" + sql, e);
@@ -58,7 +65,7 @@ public class PersonaDAStream extends PersonaDAQuery {
 
     }
 
-    PersonaDTOMapper personaDTOMapper = new PersonaDTOMapper();
+
 
     public Stream<Persona> getPersonasAsStream2(
             String sql,
@@ -70,7 +77,8 @@ public class PersonaDAStream extends PersonaDAQuery {
 
             try {
                 ResultSet rs = stmt.executeQuery();
-                return new ResultSetStream<>(Generators.getStreamGenerator(), rs, this.personaDTOMapper);
+                DTOMapper<Persona> dtoMapper = resultSet -> createPersona(resultSet);
+                return new ResultSetStream<>(Generators.getStreamGenerator(rs, dtoMapper, true));
 
             } catch (SQLException e) {
                 throw new RuntimeException("ERROR ejecutando el comando SQL:" + sql, e);
@@ -81,16 +89,47 @@ public class PersonaDAStream extends PersonaDAQuery {
 
     }
 
-
-
     public Stream<Persona> getPersonasAsStream3(
             String sql,
             Consumer<PreparedStatement> paramSetter) {
-        return JDBCQuery.query(connection, sql, paramSetter, this.personaDTOMapper, true);
+
+        return JDBCQuery.query(
+                connection,
+                sql,
+                paramSetter,
+                resultSet -> createPersona(resultSet),
+                true);
+    }
+
+
+    public Stream<Persona> getPersonasAsStream4(
+            String sql,
+            Consumer<PreparedStatement> paramSetter) {
+
+        return JDBCQuery.query(
+                connection,
+                sql,
+                paramSetter,
+                new PersonaDTOMapper(),
+                true);
+    }
+
+
+
+    public Stream<Persona> getPersonasAsStream(
+            String sql,
+            Consumer<PreparedStatement> paramSetter) {
+
+        return JDBCQuery.query(
+                connection,
+                sql,
+                paramSetter,
+                this::createPersona,
+                true);
     }
 
     public Stream<Persona> getPersonasAsStream(String sql) {
-        return JDBCQuery.query(connection, sql, null, this.personaDTOMapper, true);
+        return getPersonasAsStream(sql, null);
     }
 
 }

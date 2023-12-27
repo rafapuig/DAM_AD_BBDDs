@@ -1,8 +1,9 @@
 package dam.ad.stream;
 
+import dam.ad.jdbc.query.DTOMapper;
+import dam.ad.jdbc.stream.generation.StreamGenerator;
 import dam.ad.jdbc.stream.generation.ThrowingFunction;
 import dam.ad.jdbc.stream.generation.Generators;
-import dam.ad.jdbc.stream.generation.StreamGenerator;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,11 +16,9 @@ public class StreamUtil {
             boolean lazy) throws SQLException {
 
         StreamGenerator<T> streamGenerator =
-                Generators.getStreamGenerator(
-                        lazy ? Generators.Yield.LAZY : Generators.Yield.EAGER);
+                Generators.getStreamGenerator(rs, (DTOMapper<T>) dtoMapper, lazy);
 
-        Stream<T> stream =
-                streamGenerator.generate(rs, dtoMapper);
+        Stream<T> stream = streamGenerator.generate();
 
         //System.out.println("Llamando a cerrar resultSet...");
         if(!lazy) streamGenerator.close(rs);

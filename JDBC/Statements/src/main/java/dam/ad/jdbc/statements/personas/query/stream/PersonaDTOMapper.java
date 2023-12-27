@@ -7,7 +7,7 @@ import dam.ad.personas.model.Sexo;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class PersonaDTOMapper extends DTOMapper<Persona> {
+public class PersonaDTOMapper implements DTOMapper<Persona> {
     @Override
     public Persona apply(ResultSet rs) throws SQLException {
         return new Persona(

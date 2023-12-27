@@ -1,10 +1,16 @@
 package dam.ad.jdbc.stream.generation;
 
+import dam.ad.jdbc.query.DTOMapper;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.stream.Stream;
 
-public final class EagerStreamGenerator<T> implements StreamGenerator<T> {
+public final class EagerStreamGenerator<T> extends StreamGenerator<T> implements IStreamGenerator<T> {
+
+    public EagerStreamGenerator(ResultSet resultSet, DTOMapper<T> dtoMapper) {
+        super(resultSet, dtoMapper);
+    }
 
     /**
      * Genera un Stream mediante un Stream.Builder
@@ -29,5 +35,15 @@ public final class EagerStreamGenerator<T> implements StreamGenerator<T> {
         //builder.build().map(t -> Try.of(() -> dtoMapper.apply(rs)));
         close(rs);
         return builder.build();
+    }
+
+    @Override
+    public Stream<T> generate() {
+        try {
+            return generate(resultSet, dtoMapper);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

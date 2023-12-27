@@ -1,8 +1,9 @@
 package dam.ad.jdbc.query;
 
 import dam.ad.jdbc.stream.generation.Generators;
-import dam.ad.stream.StreamAdapter;
 import dam.ad.jdbc.stream.generation.StreamGenerator;
+import dam.ad.stream.StreamAdapter;
+import dam.ad.jdbc.stream.generation.IStreamGenerator;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,9 +18,9 @@ public class ResultSetStream<T> extends StreamAdapter<T> {
         this(Generators.getStreamGenerator(Generators.Yield.LAZY), rs, dtoMapper);
     }*/
 
-    public ResultSetStream(StreamGenerator<T> generator, ResultSet rs, DTOMapper<T> dtoMapper) {
-        super(generate(generator, rs, dtoMapper));
-        this.resultSet = rs;
+    public ResultSetStream(StreamGenerator<T> generator) {
+        super(generator.generate());
+        this.resultSet = generator.getResultSet();
     }
 
     /**
@@ -30,56 +31,6 @@ public class ResultSetStream<T> extends StreamAdapter<T> {
         super(stream);
         this.resultSet = resultSetStream.resultSet;
     }
-
-
-    private static <T> Stream<T> generate(
-            StreamGenerator<T> generator, ResultSet rs, DTOMapper<T> dtoMapper) {
-
-        try {
-            return generator.generate(rs, dtoMapper);
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    private static <T> Stream<T> generate(ResultSet rs, DTOMapper<T> dtoMapper) {
-
-        StreamGenerator<T> streamGenerator =
-                Generators.getStreamGenerator(Generators.Yield.LAZY);
-
-        return generate(streamGenerator, rs, dtoMapper);
-
-
-        /*Spliterator<T> spliterator = new Spliterators.AbstractSpliterator<>(
-                Long.MAX_VALUE,
-                Spliterator.ORDERED
-        ) {
-            @Override
-            public boolean tryAdvance(Consumer<? super T> action) {
-                try {
-                    if (!rs.next()) return false;
-                    action.accept(dtoMapper.apply(rs));
-                    return true;
-                } catch (SQLException e) {
-                    throw new RuntimeException("Cannot advance spliterator", e);
-                }
-            }
-        };
-
-        //return StreamSupport.stream(spliterator, false);
-        //.onClose(() -> close(rs));
-
-        Stream<T> resultSetStream = StreamSupport.stream(spliterator, false)
-                .onClose(()-> close(rs));
-
-        return Stream.of(resultSetStream, Stream.<T>empty())
-                .flatMap(stream -> stream); //flatMap auto-cierra los streams internos*/
-
-
-    }
-
 
     /**
      * Usarla implica que se continúa con un Stream especifico de tipo ResultSetStream

@@ -1,17 +1,34 @@
 package dam.ad.jdbc.stream.generation;
 
+import dam.ad.jdbc.query.DTOMapper;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.stream.Stream;
 
+public abstract class StreamGenerator<T> {
+    ResultSet resultSet;
+    DTOMapper<T> dtoMapper;
 
-public interface StreamGenerator<T> {
-    Stream<T> generate(ResultSet rs, ThrowingFunction<ResultSet, T, SQLException> dtoMapper) throws SQLException;
+    public ResultSet getResultSet() {
+        return resultSet;
+    }
+
+    public DTOMapper<T> getDtoMapper() {
+        return dtoMapper;
+    }
+
+    public StreamGenerator(ResultSet resultSet, DTOMapper<T> dtoMapper) {
+        this.resultSet = resultSet;
+        this.dtoMapper = dtoMapper;
+    }
+
+    public abstract Stream<T> generate();
 
     /**
      * Cierra un ResultSet, se debe llamar cuando ya hemos acabado de leer los datos que contenía
      */
-    default void close(ResultSet resultSet) {
+    public void close(ResultSet resultSet) {
         try {
             System.out.println("StreamGenerator: Cerrando resultSet...");
             if (!resultSet.isClosed()) {
@@ -24,5 +41,4 @@ public interface StreamGenerator<T> {
             throw new RuntimeException(ex.getMessage(), ex);
         }
     }
-
 }

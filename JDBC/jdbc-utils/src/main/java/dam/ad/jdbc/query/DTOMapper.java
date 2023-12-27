@@ -5,7 +5,8 @@ import dam.ad.jdbc.stream.generation.ThrowingFunction;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public abstract class DTOMapper<T> implements ThrowingFunction<ResultSet,T, SQLException> {
+@FunctionalInterface
+public interface DTOMapper<T> extends ThrowingFunction<ResultSet, T, SQLException> {
     @Override
-    public abstract T apply(ResultSet resultSet) throws SQLException;
+    T apply(ResultSet resultSet) throws SQLException;
 }

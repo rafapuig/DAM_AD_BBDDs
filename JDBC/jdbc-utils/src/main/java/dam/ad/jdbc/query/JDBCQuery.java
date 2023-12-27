@@ -2,7 +2,6 @@ package dam.ad.jdbc.query;
 
 import dam.ad.jdbc.JDBCUtil;
 import dam.ad.jdbc.stream.generation.Generators;
-import dam.ad.stream.StreamUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -49,7 +48,7 @@ public class JDBCQuery {
             try {
                 ResultSet rs = stmt.executeQuery();
 
-                return new ResultSetStream<>(Generators.getStreamGenerator(lazy), rs, dtoMapper);
+                return new ResultSetStream<>(Generators.getStreamGenerator(rs, dtoMapper, lazy));
 
             } catch (SQLException e) {
                 throw new RuntimeException("ERROR ejecutando el comando SQL:" + sql, e);

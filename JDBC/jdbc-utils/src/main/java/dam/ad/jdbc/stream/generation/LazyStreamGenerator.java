@@ -1,12 +1,19 @@
 package dam.ad.jdbc.stream.generation;
 
+import dam.ad.jdbc.query.DTOMapper;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Spliterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public final class LazyStreamGenerator<T> implements StreamGenerator<T> {
+public final class LazyStreamGenerator<T> extends StreamGenerator<T> implements IStreamGenerator<T> {
+
+    public LazyStreamGenerator(ResultSet resultSet, DTOMapper<T> dtoMapper) {
+        super(resultSet, dtoMapper);
+    }
+
     @Override
     public Stream<T> generate(
             ResultSet rs, ThrowingFunction<ResultSet, T, SQLException> dtoMapper) {
@@ -20,4 +27,8 @@ public final class LazyStreamGenerator<T> implements StreamGenerator<T> {
                 .flatMap(stream -> stream); //flatMap auto-cierra los streams internos
     }
 
+    @Override
+    public Stream<T> generate() {
+        return generate(this.getResultSet(), this.getDtoMapper());
+    }
 }
