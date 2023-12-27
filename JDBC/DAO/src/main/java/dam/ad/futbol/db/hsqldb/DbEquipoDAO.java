@@ -1,7 +1,8 @@
 package dam.ad.futbol.db.hsqldb;
 
 import dam.ad.dao.jdbc.DbDAO;
-import dam.ad.futbol.model.Equipo;
+import dam.ad.model.futbol.Equipo;
+
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;

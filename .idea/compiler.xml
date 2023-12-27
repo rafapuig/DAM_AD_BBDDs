@@ -8,10 +8,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="jdbc.maven.derby-connection" />
+        <module name="ResultSets" />
         <module name="Pruebas" />
         <module name="jdbc.statements" />
+        <module name="data-access" />
         <module name="jdbc.maven.HSQLDB-Connection" />
         <module name="jdbc.maven.sqlite-connection" />
+        <module name="jdbc-utils" />
+        <module name="futbol-model" />
         <module name="jdbc.Metadatos" />
         <module name="jdbc-DAO" />
       </profile>

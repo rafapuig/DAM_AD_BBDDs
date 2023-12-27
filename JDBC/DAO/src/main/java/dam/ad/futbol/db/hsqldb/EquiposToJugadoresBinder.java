@@ -1,7 +1,7 @@
 package dam.ad.futbol.db.hsqldb;
 
-import dam.ad.futbol.model.Equipo;
-import dam.ad.futbol.model.Jugador;
+import dam.ad.model.futbol.Equipo;
+import dam.ad.model.futbol.Jugador;
 
 import java.util.List;
 import java.util.Map;

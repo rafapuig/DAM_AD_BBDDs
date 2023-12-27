@@ -1,14 +1,14 @@
 package dam.ad.futbol.db.hsqldb;
 
 import dam.ad.dao.jdbc.DbDAO;
-import dam.ad.futbol.model.Jugador;
+import dam.ad.model.futbol.Jugador;
+
 
 import javax.sql.DataSource;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 
 public class DbJugadorDAO extends DbDAO<Jugador> {
     public DbJugadorDAO(DataSource dataSource) {

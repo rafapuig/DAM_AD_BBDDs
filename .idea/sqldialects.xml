@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/68c9c410-0587-437b-9568-38bc2147ed4e/console.sql" dialect="HSQLDB" />
     <file url="file://$PROJECT_DIR$/JDBC/DAO/src/main/java/dam/ad/futbol/db/hsqldb/DbFutbolDAODemo.java" dialect="HSQLDB" />
     <file url="file://$PROJECT_DIR$/JDBC/DAO/src/main/java/dam/ad/personas/db/hsqldb/DbPersonasDAODemo.java" dialect="HSQLDB" />
     <file url="file://$PROJECT_DIR$/JDBC/DAO/src/main/resources/PersonasSchema.sql" dialect="HSQLDB" />
     <file url="file://$PROJECT_DIR$/JDBC/DAO/src/main/resources/futbol/DatabaseSchema.sql" dialect="HSQLDB" />
-    <file url="file://$PROJECT_DIR$/JDBC/Statements/src/main/java/dam/ad/jdbc/statements/PreparedStatementDemo.java" dialect="HSQLDB" />
+    <file url="file://$PROJECT_DIR$/JDBC/ResultSets/src/main/resources/PersonasDB/script.sql" dialect="HSQLDB" />
     <file url="file://$PROJECT_DIR$/JDBC/Statements/src/main/java/dam/ad/jdbc/statements/StatementDemo.java" dialect="HSQLDB" />
     <file url="file://$PROJECT_DIR$/JDBC/Statements/src/main/java/dam/ad/jdbc/statements/exercises/StatementConnected.java" dialect="HSQLDB" />
-    <file url="file://$PROJECT_DIR$/JDBC/Statements/src/main/java/dam/ad/jdbc/statements/futbol/FutbolDataAccess.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/JDBC/Statements/src/main/java/dam/ad/jdbc/statements/prepared/PreparedStatementDemo.java" dialect="HSQLDB" />
+    <file url="file://$PROJECT_DIR$/JDBC/data-access/src/main/java/futbol/FutbolDataAccess.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/Pruebas/src/main/java/dao/PersonaDAO.java" dialect="HSQLDB" />
   </component>
 </project>

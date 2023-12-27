@@ -1,8 +1,9 @@
 import dam.ad.file.DTOReader;
 import dam.ad.futbol.file.EquipoDTOReader;
 import dam.ad.futbol.file.JugadorDTOReader;
-import dam.ad.futbol.model.Equipo;
-import dam.ad.futbol.model.Jugador;
+
+import dam.ad.model.futbol.Equipo;
+import dam.ad.model.futbol.Jugador;
 import org.junit.jupiter.api.Test;
 
 import java.util.stream.Stream;

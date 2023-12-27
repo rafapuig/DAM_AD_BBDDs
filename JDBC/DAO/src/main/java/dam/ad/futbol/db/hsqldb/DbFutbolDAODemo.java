@@ -8,8 +8,9 @@ import dam.ad.file.DTOReader;
 import dam.ad.futbol.file.EquipoDTOReader;
 import dam.ad.futbol.file.FileEquipoDAO;
 import dam.ad.futbol.file.JugadorDTOReader;
-import dam.ad.futbol.model.Equipo;
-import dam.ad.futbol.model.Jugador;
+import dam.ad.model.futbol.Equipo;
+import dam.ad.model.futbol.Jugador;
+
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -27,7 +28,7 @@ public class DbFutbolDAODemo {
 
         DataSource dataSource = DataSourceFactory
                 .getInstance()
-                .getDataSource("jdbc/derby/futbol");
+                .getDataSource("jdbc/futbol");
 
         DatabaseSchema schema = new FutbolSchema();
 
@@ -123,7 +124,7 @@ public class DbFutbolDAODemo {
             //testEquipoToJugadoresBinders(futbolDAOManager);
 
         } finally {
-            cleanUp(dataSource, schema);
+            //cleanUp(dataSource, schema);
             try {
                 shutdown(dataSource); //Para HSQLDB
             } catch (Exception e) {

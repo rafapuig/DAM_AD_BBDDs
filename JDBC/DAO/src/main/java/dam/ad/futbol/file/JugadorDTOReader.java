@@ -1,7 +1,8 @@
 package dam.ad.futbol.file;
 
 import dam.ad.file.DTOReader;
-import dam.ad.futbol.model.Jugador;
+import dam.ad.model.futbol.Jugador;
+
 
 import java.net.URL;
 import java.time.LocalDate;

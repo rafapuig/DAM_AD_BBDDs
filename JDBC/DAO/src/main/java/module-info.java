@@ -3,8 +3,9 @@ module dam.ad.jdbc.DAO {
     requires org.hsqldb;
     requires java.naming;
     requires org.apache.derby.tools;
+    requires futbol.model;
 
-    exports dam.ad.futbol.model;
     exports dam.ad.futbol.file;
     exports dam.ad.file;
+    exports dam.ad.personas.model;
 }

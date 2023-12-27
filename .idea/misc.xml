@@ -18,6 +18,11 @@
         <option value="$PROJECT_DIR$/Pruebas/pom.xml" />
         <option value="$PROJECT_DIR$/JDBC/Statements/pom.xml" />
         <option value="$PROJECT_DIR$/JDBC/Connection/Maven-SQLite Connection/pom.xml" />
+        <option value="$PROJECT_DIR$/JDBC/jdbc-utils/pom.xml" />
+        <option value="$PROJECT_DIR$/data-access/pom.xml" />
+        <option value="$PROJECT_DIR$/futbol-model/pom.xml" />
+        <option value="$PROJECT_DIR$/JDBC/data-access/pom.xml" />
+        <option value="$PROJECT_DIR$/JDBC/ResultSets/pom.xml" />
       </list>
     </option>
     <option name="workspaceImportForciblyTurnedOn" value="true" />

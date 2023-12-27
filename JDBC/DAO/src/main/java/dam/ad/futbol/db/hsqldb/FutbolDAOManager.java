@@ -2,10 +2,8 @@ package dam.ad.futbol.db.hsqldb;
 
 import dam.ad.dao.DAO;
 import dam.ad.dao.DAOFactory;
-import dam.ad.futbol.model.Equipo;
-import dam.ad.futbol.model.Jugador;
-
-import javax.sql.DataSource;
+import dam.ad.model.futbol.Equipo;
+import dam.ad.model.futbol.Jugador;
 
 public class FutbolDAOManager {
     DAOFactory factory;

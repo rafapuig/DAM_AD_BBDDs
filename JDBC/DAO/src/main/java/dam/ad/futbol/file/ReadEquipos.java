@@ -1,6 +1,7 @@
 package dam.ad.futbol.file;
 
-import dam.ad.futbol.model.Equipo;
+
+import dam.ad.model.futbol.Equipo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
