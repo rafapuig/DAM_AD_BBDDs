@@ -1,8 +1,9 @@
 package dao.hsqldb;
 
 import dam.ad.dao.jdbc.DbDAOConnected;
-import model.Persona;
-import dam.ad.personas.model.Sexo;
+import dam.ad.model.personas.Persona;
+import dam.ad.model.personas.Sexo;
+
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -36,7 +37,7 @@ public class DbPersonaDAOConnected extends DbDAOConnected<Persona> {
                 resultSet.getString("apellidos"),
                 Sexo.fromInicial(resultSet.getString("sexo")),
                 resultSet.getObject("nacimiento", LocalDate.class),
-                resultSet.getDouble("ingresos")
+                resultSet.getFloat("ingresos")
         );
     }
 

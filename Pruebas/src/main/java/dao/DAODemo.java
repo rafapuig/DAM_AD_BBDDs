@@ -70,7 +70,7 @@ public class DAODemo {
                             .apellidos("Denador")
                             .sexo(Sexo.MUJER)
                             .nacimiento(LocalDate.parse("1992-03-27"))
-                            .ingresos(1800).build();
+                            .ingresos(1800.0f).build();
 
                     personaDAO.update(p2);
                 }
