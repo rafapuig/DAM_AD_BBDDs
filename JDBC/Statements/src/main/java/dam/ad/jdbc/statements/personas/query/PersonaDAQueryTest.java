@@ -4,7 +4,7 @@ import dam.ad.jdbc.statements.personas.PersonaDATest;
 
 import java.sql.*;
 
-public class QueryPersonaDATest {
+public class PersonaDAQueryTest {
     static final String URL = "jdbc:hsqldb:C:/BBDDs/hsqldb/personas";
 
     public static void main(String[] args) {
@@ -14,7 +14,7 @@ public class QueryPersonaDATest {
             PersonaDAQuery personaDA = new PersonaDAQuery(connection);
 
             PersonaDATest.createTablePersona(personaDA);
-            PersonaDATest.insertSamplePersonas(personaDA);
+            PersonaDATest.testInsertPersonas(personaDA);
 
             testQueryPersonasBySexo(personaDA);
 

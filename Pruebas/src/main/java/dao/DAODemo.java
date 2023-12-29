@@ -3,10 +3,11 @@ package dao;
 import dam.ad.dao.DAO;
 import dam.ad.dao.jdbc.DatabaseSchema;
 
+import dam.ad.model.personas.Persona;
+import dam.ad.model.personas.Sexo;
 import dam.ad.personas.db.hsqldb.DbPersonaDAO;
 import dam.ad.personas.db.hsqldb.PersonasDatabaseSchema;
-import dam.ad.personas.model.Persona;
-import dam.ad.personas.model.Sexo;
+
 import org.hsqldb.jdbc.JDBCDataSourceFactory;
 
 import javax.sql.DataSource;
@@ -58,7 +59,7 @@ public class DAODemo {
                 "Tilla",
                 Sexo.HOMBRE,
                 LocalDate.parse("1998-01-14"),
-                1900);
+                1900.0f);
 
         personaDAO.add(newPersona);
 

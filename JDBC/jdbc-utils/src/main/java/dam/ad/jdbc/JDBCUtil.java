@@ -70,5 +70,32 @@ public class JDBCUtil {
                     "ERROR cerrando la conexión con la base de datos", e);
         }
     }
+
+    public static void setAutoCommit(Connection connection, boolean autoCommit) {
+        if(connection == null) return;
+        try {
+            connection.setAutoCommit(autoCommit);
+        } catch (SQLException e) {
+            throw new RuntimeException("ERROR estableciendo el auto-commit", e);
+        }
+    }
+
+    public static void commit(Connection connection) {
+        if(connection == null) return;
+        try {
+            connection.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException("ERROR realizando el commit", e);
+        }
+    }
+
+    public static void rollback(Connection connection) {
+        if(connection == null) return;
+        try {
+            connection.rollback();
+        } catch (SQLException e) {
+            throw new RuntimeException("ERROR realizando el rollback", e);
+        }
+    }
 }
 

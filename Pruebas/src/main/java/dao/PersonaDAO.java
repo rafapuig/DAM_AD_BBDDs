@@ -1,7 +1,7 @@
 package dao;
 
 import dam.ad.dao.DAO;
-import dam.ad.personas.model.Persona;
+import model.Persona;
 import dam.ad.personas.model.Sexo;
 
 import javax.sql.DataSource;

@@ -13,6 +13,7 @@
         <module name="jdbc.statements" />
         <module name="data-access" />
         <module name="jdbc.maven.HSQLDB-Connection" />
+        <module name="personas-model" />
         <module name="jdbc.maven.sqlite-connection" />
         <module name="jdbc-utils" />
         <module name="futbol-model" />

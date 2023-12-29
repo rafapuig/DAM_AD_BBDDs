@@ -23,3 +23,4 @@ INSERT INTO persona VALUES (DEFAULT, 'Vanesa', 'Tanica', 'M', '2000-01-06', 1200
 INSERT INTO persona VALUES (DEFAULT, 'Marta', 'Baco', 'M', '1970-08-03', 1700);
 INSERT INTO persona VALUES (DEFAULT, 'Consuelo', 'Tería', 'M', '1992-07-08', 1900);
 INSERT INTO persona VALUES (DEFAULT, 'Mercedes', 'Pacio', 'M', '1970-08-03', 2400);
+INSERT INTO persona VALUES (DEFAULT, 'Lorenzo', 'Penco', 'H', '1968-03-12', 1900);

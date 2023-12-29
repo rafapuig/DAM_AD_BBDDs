@@ -3,13 +3,14 @@ package dam.ad.jdbc.statements.personas.query.stream;
 import dam.ad.jdbc.query.ResultSetStream;
 
 import dam.ad.jdbc.statements.personas.SQLs;
-import dam.ad.jdbc.statements.personas.consumers.PersonaDAConsumers;
-import dam.ad.personas.model.Persona;
-import dam.ad.personas.model.Sexo;
+import dam.ad.jdbc.statements.personas.consumers.PersonaDAConsumer;
+import dam.ad.jdbc.statements.personas.consumers.PersonaDAThrowingConsumers;
+import dam.ad.model.personas.Persona;
+import dam.ad.model.personas.Sexo;
+
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.stream.Stream;
 
 public class QueryStreamPersonaDATest {
@@ -90,7 +91,7 @@ public class QueryStreamPersonaDATest {
         Stream<Persona> personas =
                 personaDA.getPersonasAsStream(
                         SQLs.SELECT_PERSONAS_BY_SEXO,
-                        PersonaDAConsumers.sexoHombreParamSetter);
+                        PersonaDAThrowingConsumers.sexoHombreParamSetterNoEx::accept);
 
         personas.forEach(System.out::println);  //Este foreach es de la clase ResultStream y cierra el resultset
 
@@ -102,7 +103,7 @@ public class QueryStreamPersonaDATest {
         Stream<Persona> personas =
                 personaDA.getPersonasAsStream(
                         SQLs.SELECT_PERSONAS_BY_SEXO,
-                        PersonaDAConsumers.sexoHombreParamSetter);
+                        PersonaDAConsumer.sexoHombreParamSetter::accept);
 
         personas.forEach(System.out::println);  //Este foreach es de la clase ResultStream y cierra el resultset
 
@@ -134,14 +135,8 @@ public class QueryStreamPersonaDATest {
 
         try (Stream<Persona> personas = personaDA.getPersonasAsStream(
                 SQLs.SELECT_PERSONAS_BY_NACIMIENTO,
-                stmt -> {
-                    try {
-                        stmt.setDate(1,
-                                Date.valueOf(LocalDate.of(1960, 1, 1)));
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                })) {
+                stmt -> stmt.setDate(1, Date.valueOf(
+                        LocalDate.of(1960, 1, 1))))) {
             personas.forEach(System.out::println);
         }
     }
@@ -156,16 +151,10 @@ public class QueryStreamPersonaDATest {
 
         personas.close();*/
 
-        personaDA.getPersonasAsStream2(
+        personaDA.getPersonasAsStream(
                         SQLs.SELECT_PERSONAS_BY_NACIMIENTO,
-                        stmt -> {
-                            try {
-                                stmt.setDate(1,
-                                        Date.valueOf(LocalDate.of(1900, 1, 1)));
-                            } catch (SQLException e) {
-                                throw new RuntimeException(e);
-                            }
-                        })
+                        stmt -> stmt.setDate(1, Date.valueOf(
+                                LocalDate.of(1900, 1, 1))))
                 //.filter(persona -> persona.getIngresos()>3000)
                 //.limit(2)
                 .forEach(System.out::println);

@@ -32,24 +32,6 @@ public class FutbolDataAccessDemo {
         }
     }
 
-    static void testGetAllJugadoresListMap(FutbolDataAccess fda) {
-
-        DTOSupplier<Jugador> jugadorDTOSupplier;
-
-        jugadorDTOSupplier = () -> fda.getAllJugadores(true);
-
-        var map = jugadorDTOSupplier.asMap(Jugador::getJugadorId);
-
-        map.forEach((key, value) -> {
-            System.out.println(key + "=" + value);
-        });
-
-        try (Stream<Jugador> stream = jugadorDTOSupplier.getStream()) {
-
-            stream.forEach(System.out::println);
-        }
-    }
-
     private static void testGetAllEquipos(FutbolDataAccess fda) {
         // Obtener un Stream<Equipo> con el que procesar los datos con origen de la BD
         try (Stream<Equipo> equipos = fda.getAllEquipos()) {
@@ -116,5 +98,25 @@ public class FutbolDataAccessDemo {
             jugadores.forEach(System.out::println);
         } // Auto llamada a jugadores.close();
     }
+
+
+    static void testGetAllJugadoresListMap(FutbolDataAccess fda) {
+
+        DTOSupplier<Jugador> jugadorDTOSupplier;
+
+        jugadorDTOSupplier = () -> fda.getAllJugadores(true);
+
+        var map = jugadorDTOSupplier.asMap(Jugador::getJugadorId);
+
+        map.forEach((key, value) -> {
+            System.out.println(key + "=" + value);
+        });
+
+        try (Stream<Jugador> stream = jugadorDTOSupplier.getStream()) {
+
+            stream.forEach(System.out::println);
+        }
+    }
+
 
 }

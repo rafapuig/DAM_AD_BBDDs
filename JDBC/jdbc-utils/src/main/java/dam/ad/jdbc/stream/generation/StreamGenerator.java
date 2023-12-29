@@ -25,6 +25,8 @@ public abstract class StreamGenerator<T> {
 
     public abstract Stream<T> generate();
 
+    public abstract Stream<T> generate(ResultSet resultSet, DTOMapper<T> dtoMapper) throws SQLException;
+
     /**
      * Cierra un ResultSet, se debe llamar cuando ya hemos acabado de leer los datos que contenía
      */

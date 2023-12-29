@@ -1,5 +1,8 @@
 package dam.ad.jdbc.stream.generation;
 
+import dam.ad.jdbc.query.DTOMapper;
+import dam.ad.jdbc.stream.ThrowingFunction;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Spliterator;
@@ -11,7 +14,7 @@ public class ResultSetLazySpliterator<T> extends Spliterators.AbstractSpliterato
     ThrowingFunction<ResultSet, T, SQLException> dtoMapper;
 
     protected ResultSetLazySpliterator(
-            ResultSet resultSet, ThrowingFunction<ResultSet, T, SQLException> dtoMapper) {
+            ResultSet resultSet, DTOMapper<T> dtoMapper) {
 
         super(
                 Long.MAX_VALUE,     //Al no saber el tamaño pasamos Long.MAX_VALUE

@@ -4,9 +4,11 @@ import dam.ad.jdbc.statements.personas.PersonaDATest;
 import dam.ad.jdbc.statements.personas.PersonasPrinter;
 import dam.ad.jdbc.statements.personas.SQLs;
 
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.function.Consumer;
+
 
 public class PersonaDAConsumersTest {
     static final String URL = "jdbc:hsqldb:C:/BBDDs/hsqldb/personas";
@@ -15,21 +17,21 @@ public class PersonaDAConsumersTest {
         try {
             Connection connection = DriverManager.getConnection(URL);
 
-            PersonaDAConsumers personaDA = new PersonaDAConsumers(connection);
+            PersonaDAConsumer personaDA = new PersonaDAConsumer(connection);
 
             PersonaDATest.createTablePersona(personaDA);
-            PersonaDATest.insertSamplePersonas(personaDA);
+            PersonaDATest.testInsertPersonas(personaDA);
 
             testGetPersonasByParamSetter(personaDA);
 
             PersonaDATest.printPersonasPorSexo(personaDA);
-            PersonaDATest.printPersonasNacidas(personaDA);
+            PersonaDATest.printPersonasNacidasAfter(personaDA);
 
             testConsumeResultSet(personaDA);
             testQueryPersonas(personaDA);
 
 
-            PersonaDATest.testDeletePersonas(personaDA);
+            connection.close();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -37,30 +39,23 @@ public class PersonaDAConsumersTest {
     }
 
 
-    static void testConsumeResultSet(PersonaDAConsumers personaDA) {
-        System.out.println("Imprimiendo todas las personas...");
 
-        new PersonasPrinter().accept(personaDA.getAllPersonas());
-
-    }
-
-
-    static void testGetPersonasByParamSetter(PersonaDAConsumers personaDA) {
+    static void testGetPersonasByParamSetter(PersonaDAConsumer personaDA) {
 
         System.out.println("Imprimiendo Hombres....");
         PersonasPrinter.printPersonas(
                 personaDA.getPersonas(
                         SQLs.SELECT_PERSONAS_BY_SEXO,
-                        PersonaDAConsumers.sexoHombreParamSetter));
+                        PersonaDAConsumer.sexoHombreParamSetter));
 
         System.out.println("Imprimiendo Mujeres....");
         PersonasPrinter.printPersonas(
                 personaDA.getPersonas(
                         SQLs.SELECT_PERSONAS_BY_SEXO,
-                        PersonaDAConsumers.sexoMujerParamSetter));
+                        PersonaDAConsumer.sexoMujerParamSetter));
     }
 
-    static void testQueryPersonas(PersonaDAConsumers personaDA) {
+    static void testQueryPersonas(PersonaDAConsumer personaDA) {
 
         LocalDate date = LocalDate.of(1970, 1, 1);
 
@@ -82,6 +77,12 @@ public class PersonaDAConsumersTest {
                 printResults);
     }
 
+    static void testConsumeResultSet(PersonaDAConsumer personaDA) {
+        System.out.println("Imprimiendo todas las personas...");
+
+        new PersonasPrinter().accept(personaDA.getAllPersonas());
+
+    }
 
 
 }

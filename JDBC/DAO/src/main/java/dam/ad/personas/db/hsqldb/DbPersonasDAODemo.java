@@ -2,8 +2,9 @@ package dam.ad.personas.db.hsqldb;
 
 import dam.ad.dao.DAO;
 import dam.ad.dao.jdbc.DatabaseSchema;
-import dam.ad.personas.model.Persona;
-import dam.ad.personas.model.Sexo;
+
+import dam.ad.model.personas.Persona;
+import dam.ad.model.personas.Sexo;
 import org.hsqldb.jdbc.JDBCDataSourceFactory;
 
 import javax.sql.DataSource;
@@ -133,47 +134,47 @@ public class DbPersonasDAODemo {
                 new Persona(1, "Armando", "Bronca Segura",
                         Sexo.HOMBRE,
                         LocalDate.of(1970, Month.AUGUST, 3),
-                        2500),
+                        2500.0f),
                 new Persona(2, "Belen", "Tilla",
                         Sexo.MUJER,
                         LocalDate.of(1983, Month.DECEMBER, 6),
-                        2100),
+                        2100.0f),
                 new Persona(3, "Esther", "Malgin",
                         Sexo.MUJER,
                         LocalDate.of(1988, Month.JULY, 4),
-                        1800),
+                        1800.0f),
                 new Persona(4, "Amador", "Denador",
                         Sexo.HOMBRE,
                         LocalDate.of(1994, Month.DECEMBER, 24),
-                        1600),
+                        1600.0f),
                 new Persona(5, "Aitor", "Tilla",
                         Sexo.HOMBRE,
                         LocalDate.of(2001, Month.JANUARY, 7),
-                        1300),
+                        1300.0f),
                 new Persona(6, "Sandra", "Matica",
                         Sexo.MUJER,
                         LocalDate.of(1977, Month.FEBRUARY, 19),
-                        1500),
+                        1500.0f),
                 new Persona(7, "Victor", "Nado",
                         Sexo.HOMBRE,
                         LocalDate.of(1998, Month.JUNE, 30),
-                        2400),
+                        2400.0f),
                 new Persona(8, "Pedro", "Gado",
                         Sexo.HOMBRE,
                         LocalDate.of(2002, Month.APRIL, 23),
-                        1100),
+                        1100.0f),
                 new Persona(9, "Vanesa", "Tánica",
                         Sexo.MUJER,
                         LocalDate.of(2000, Month.JANUARY, 6),
-                        1200),
+                        1200.0f),
                 new Persona(10, "Marta", "Baco",
                         Sexo.MUJER,
                         LocalDate.of(1982, Month.JULY, 8),
-                        1700),
+                        1700.0f),
                 new Persona(11, "Consuelo", "Tería",
                         Sexo.MUJER,
                         LocalDate.of(1967, Month.APRIL, 6),
-                        1900)
+                        1900.0f)
 
         ).toList();
     }
@@ -268,7 +269,7 @@ public class DbPersonasDAODemo {
     private static Persona addNewPersona(DAO<Persona> personaDAO) {
 
         Persona persona = new Persona(0, "Perico", "Palotes",
-                Sexo.HOMBRE, LocalDate.parse("1977-02-10"), 2300);
+                Sexo.HOMBRE, LocalDate.parse("1977-02-10"), 2300.0f);
         System.out.println("Añadiendo persona " + persona.getNombre());
 
         personaDAO.add(persona);
@@ -283,7 +284,7 @@ public class DbPersonasDAODemo {
         persona.setNombre("Pepita");
         persona.setApellidos("Grillo");
         persona.setSexo(Sexo.MUJER);
-        persona.setIngresos(2600);
+        persona.setIngresos(2600.0f);
 
         System.out.println("Actualizando persona " + persona.getNombre());
         personaDAO.update(persona);
@@ -313,7 +314,7 @@ public class DbPersonasDAODemo {
     private static void incrementarIngresos(DAO<Persona> personaDAO) {
         System.out.println("Incrementando ingresos...");
         personaDAO.getAll()
-                .peek(p -> p.setIngresos(p.getIngresos() * 1.05))
+                .peek(p -> p.setIngresos(p.getIngresos() * 1.05f))
                 .forEach(personaDAO::update);
 
         printPersonas(personaDAO);

@@ -23,6 +23,7 @@
         <option value="$PROJECT_DIR$/futbol-model/pom.xml" />
         <option value="$PROJECT_DIR$/JDBC/data-access/pom.xml" />
         <option value="$PROJECT_DIR$/JDBC/ResultSets/pom.xml" />
+        <option value="$PROJECT_DIR$/personas-model/pom.xml" />
       </list>
     </option>
     <option name="workspaceImportForciblyTurnedOn" value="true" />

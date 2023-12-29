@@ -3,12 +3,15 @@ package dam.ad.jdbc.stream.generation;
 import dam.ad.jdbc.query.DTOMapper;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Spliterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public final class LazyStreamGenerator<T> extends StreamGenerator<T> implements IStreamGenerator<T> {
+public final class LazyStreamGenerator<T> extends StreamGenerator<T> {
+
+    public LazyStreamGenerator() {
+        super(null, null);
+    }
 
     public LazyStreamGenerator(ResultSet resultSet, DTOMapper<T> dtoMapper) {
         super(resultSet, dtoMapper);
@@ -16,7 +19,7 @@ public final class LazyStreamGenerator<T> extends StreamGenerator<T> implements 
 
     @Override
     public Stream<T> generate(
-            ResultSet rs, ThrowingFunction<ResultSet, T, SQLException> dtoMapper) {
+            ResultSet rs, DTOMapper<T> dtoMapper) {
 
         Spliterator<T> spliterator = new ResultSetLazySpliterator<>(rs, dtoMapper);
 

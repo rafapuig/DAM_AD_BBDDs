@@ -1,4 +1,4 @@
-package dam.ad.personas.model;
+package dam.ad.model.personas;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -10,9 +10,9 @@ public class Persona {
     private String apellidos;
     private Sexo sexo;
     private LocalDate nacimiento;
-    private double ingresos;
+    private Float ingresos; //Es un wrapper porque puede ser null
 
-    public Persona(int personaId, String nombre, String apellidos, Sexo sexo, LocalDate nacimiento, double ingresos) {
+    public Persona(int personaId, String nombre, String apellidos, Sexo sexo, LocalDate nacimiento, Float ingresos) {
         //System.out.println("Creando persona...");
         this.personaId = personaId;
         this.nombre = nombre;
@@ -62,11 +62,11 @@ public class Persona {
         this.nacimiento = nacimiento;
     }
 
-    public double getIngresos() {
+    public Float getIngresos() {
         return ingresos;
     }
 
-    public void setIngresos(double ingresos) {
+    public void setIngresos(Float ingresos) {
         this.ingresos = ingresos;
     }
 
@@ -105,7 +105,7 @@ public class Persona {
         private String apellidos;
         Sexo sexo;
         private LocalDate nacimiento;
-        private double ingresos;
+        private Float ingresos;
 
         public Builder(Persona persona) {
             this.personaId = persona.personaId;
@@ -136,7 +136,7 @@ public class Persona {
             return this;
         }
 
-        public Builder ingresos(double ingresos) {
+        public Builder ingresos(Float ingresos) {
             this.ingresos = ingresos;
             return this;
         }

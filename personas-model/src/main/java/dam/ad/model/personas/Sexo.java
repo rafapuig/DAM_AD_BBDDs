@@ -1,4 +1,4 @@
-package dam.ad.personas.model;
+package dam.ad.model.personas;
 
 public enum Sexo {
     HOMBRE("H"),

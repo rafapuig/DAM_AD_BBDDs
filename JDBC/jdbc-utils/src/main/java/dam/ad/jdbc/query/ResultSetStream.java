@@ -23,6 +23,48 @@ public class ResultSetStream<T> extends StreamAdapter<T> {
         this.resultSet = generator.getResultSet();
     }
 
+    /*public ResultSetStream(StreamGenerator<T> generator, ResultSet resultSet, DTOMapper<T> dtoMapper) {
+        super(generateStream(generator, resultSet, dtoMapper));
+        this.resultSet = generator.getResultSet();
+    }*/
+
+    public ResultSetStream(ResultSet rs, DTOMapper<T> dtoMapper, Generators.Yield yieldType) {
+        super(generateStream(rs, dtoMapper, yieldType));
+        this.resultSet = rs;
+    }
+
+    private static <T> Stream<T> generateStream(ResultSet rs, DTOMapper<T> dtoMapper, Generators.Yield yieldType) {
+        try {
+            StreamGenerator<T> streamGenerator = Generators.getStreamGenerator(yieldType);
+            return streamGenerator.generate(rs, dtoMapper);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Dado que no podemos escribir un bloque try en llamada al constructor de la superclase
+     * y que llamar al generator.generate(ResultSet, DTOMapper) provoca excepciones
+     * Definimos este metodo para intermediar y capturar la excepción
+     */
+    /*static <T> Stream<T> generateStream(StreamGenerator<T> generator, ResultSet resultSet, DTOMapper<T> dtoMapper) {
+        try {
+
+            return generator.generate(resultSet, dtoMapper);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }*/
+
+    /*Stream<T> generateStream(ResultSet resultSet, DTOMapper<T> dtoMapper, Generators.Yield yieldType) {
+        try {
+            StreamGenerator<T> streamGenerator = Generators.getStreamGenerator(yieldType);
+            return streamGenerator.generate(resultSet, dtoMapper);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }*/
+
     /**
      * Se llama a este constructor cada vez que se aplica un operador intermedio
      * Cada operador intermedio devuelve un nuevo objeto Stream, no modifica el estado del Stream

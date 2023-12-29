@@ -1,6 +1,7 @@
 package dam.ad.jdbc.query;
 
-import dam.ad.jdbc.stream.generation.ThrowingFunction;
+
+import dam.ad.jdbc.stream.ThrowingFunction;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

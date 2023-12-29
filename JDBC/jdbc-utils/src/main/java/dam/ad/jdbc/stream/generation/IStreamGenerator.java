@@ -1,6 +1,7 @@
 package dam.ad.jdbc.stream.generation;
 
 import dam.ad.jdbc.query.DTOMapper;
+import dam.ad.jdbc.stream.ThrowingFunction;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,7 +16,7 @@ public interface IStreamGenerator<T> {
 
     public DTOMapper<T> getDtoMapper();
 
-    Stream<T> generate(ResultSet rs, ThrowingFunction<ResultSet, T, SQLException> dtoMapper) throws SQLException;
+    Stream<T> generate(ResultSet rs, DTOMapper<T> dtoMapper) throws SQLException;
 
     /**
      * Cierra un ResultSet, se debe llamar cuando ya hemos acabado de leer los datos que contenía

@@ -1,13 +1,27 @@
 package dam.ad.jdbc.statements.personas.query.stream;
 
 import dam.ad.jdbc.query.DTOMapper;
-import dam.ad.personas.model.Persona;
-import dam.ad.personas.model.Sexo;
+import dam.ad.model.personas.Persona;
+import dam.ad.model.personas.Sexo;
+
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 public class PersonaDTOMapper implements DTOMapper<Persona> {
+
+    private static LocalDate getNacimiento(ResultSet rs) throws SQLException {
+        rs.getDate("nacimiento");
+        if (rs.wasNull()) return null;
+        return rs.getDate("nacimiento").toLocalDate();
+    }
+
+    private static Float getIngresos(ResultSet rs) throws SQLException {
+        Float ingresos = rs.getFloat("ingresos");
+        if (rs.wasNull()) ingresos = null;
+        return ingresos;
+    }
     @Override
     public Persona apply(ResultSet rs) throws SQLException {
         return new Persona(
@@ -15,8 +29,8 @@ public class PersonaDTOMapper implements DTOMapper<Persona> {
                 rs.getString("nombre"),
                 rs.getString("apellidos"),
                 Sexo.fromInicial(rs.getString("sexo")),
-                rs.getDate("nacimiento").toLocalDate(),
-                rs.getDouble("ingresos")
+                getNacimiento(rs),
+                getIngresos(rs)
         );
     }
 }

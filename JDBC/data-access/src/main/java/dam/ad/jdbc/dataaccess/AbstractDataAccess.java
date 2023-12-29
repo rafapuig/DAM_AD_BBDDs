@@ -19,6 +19,18 @@ public class AbstractDataAccess implements AutoCloseable {
         return this.connection;
     }
 
+    public void setAutoCommit(boolean autoCommit) {
+        JDBCUtil.setAutoCommit(getConnection(), autoCommit);
+    }
+
+    public void commit() {
+        JDBCUtil.commit(getConnection());
+    }
+
+    public void rollback() {
+        JDBCUtil.rollback(getConnection());
+    }
+
     @Override
     public void close() {
         closeConnection();

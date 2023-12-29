@@ -1,7 +1,7 @@
 package dao.hsqldb;
 
 import dam.ad.dao.jdbc.DbDAOConnected;
-import dam.ad.personas.model.Persona;
+import model.Persona;
 import dam.ad.personas.model.Sexo;
 
 import javax.sql.DataSource;
