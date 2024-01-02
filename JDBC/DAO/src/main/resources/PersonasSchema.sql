@@ -1,7 +1,0 @@
-CREATE TABLE IF NOT EXISTS persona (
-    personaID INTEGER GENERATED ALWAYS AS IDENTITY(START WITH 1) PRIMARY KEY,
-    nombre VARCHAR(20) NOT NULL,
-    apellidos VARCHAR(30) NOT NULL,
-    sexo CHAR(1) NOT NULL,
-    nacimiento DATE,
-    ingresos REAL);

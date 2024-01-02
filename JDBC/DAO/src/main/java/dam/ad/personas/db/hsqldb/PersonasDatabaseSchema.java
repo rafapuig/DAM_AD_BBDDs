@@ -7,25 +7,26 @@ import java.net.URL;
 import java.util.Objects;
 
 public class PersonasDatabaseSchema implements DatabaseSchema {
-
     String sqlCreateTablePersona;
 
     public PersonasDatabaseSchema() {
 
-        InputStream input = null;
-        try {
-            URL url = this.getClass().getResource("/PersonasSchema.sql");
-            //System.out.println(url);
+        URL url = this.getClass().getResource("/personas/PersonasSchema.sql");
 
-            input = Objects.requireNonNull(url).openStream();
+        this.sqlCreateTablePersona =  DatabaseSchema.super.initCreateSchemaScript(url);
+    }
 
-        InputStreamReader isr = new InputStreamReader(input);
-        BufferedReader br = new BufferedReader(isr);
+    @Override
+    public String initCreateSchemaScript(URL url) {
+        System.out.println("Version de reemplazo en la case PersonaDatabaseSchema");
+        try (InputStream input = Objects.requireNonNull(url).openStream();
+             InputStreamReader isr = new InputStreamReader(input);
+             BufferedReader br = new BufferedReader(isr)) {
 
-        sqlCreateTablePersona = br.lines()
-                .reduce("",
-                        (text, line) -> text + line + "\n",
-                        String::concat);
+            return br.lines()
+                    .reduce("",
+                            (text, line) -> text + line + "\n",
+                            String::concat);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -35,9 +36,7 @@ public class PersonasDatabaseSchema implements DatabaseSchema {
     @Override
     public String getCreateSchema() {
 
-
         return sqlCreateTablePersona;
-
 
         /*return """
             CREATE TABLE IF NOT EXISTS persona(

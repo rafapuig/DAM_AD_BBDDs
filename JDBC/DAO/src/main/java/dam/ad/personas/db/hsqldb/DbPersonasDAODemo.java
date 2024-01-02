@@ -4,6 +4,7 @@ import dam.ad.dao.DAO;
 import dam.ad.dao.jdbc.DatabaseSchema;
 
 import dam.ad.model.personas.Persona;
+import dam.ad.model.personas.Personas;
 import dam.ad.model.personas.Sexo;
 import org.hsqldb.jdbc.JDBCDataSourceFactory;
 
@@ -73,8 +74,6 @@ public class DbPersonasDAODemo {
         printPersonas(personaDAO.getAll());
 
 
-
-
         System.out.println("Borrando datos...");
         cleanUp(dataSource);
 
@@ -128,60 +127,8 @@ public class DbPersonasDAODemo {
         }
     }
 
-    static List<Persona> generateSamplePersonas() {
-        System.out.println("Generando un sample de personas...");
-        return Stream.of(
-                new Persona(1, "Armando", "Bronca Segura",
-                        Sexo.HOMBRE,
-                        LocalDate.of(1970, Month.AUGUST, 3),
-                        2500.0f),
-                new Persona(2, "Belen", "Tilla",
-                        Sexo.MUJER,
-                        LocalDate.of(1983, Month.DECEMBER, 6),
-                        2100.0f),
-                new Persona(3, "Esther", "Malgin",
-                        Sexo.MUJER,
-                        LocalDate.of(1988, Month.JULY, 4),
-                        1800.0f),
-                new Persona(4, "Amador", "Denador",
-                        Sexo.HOMBRE,
-                        LocalDate.of(1994, Month.DECEMBER, 24),
-                        1600.0f),
-                new Persona(5, "Aitor", "Tilla",
-                        Sexo.HOMBRE,
-                        LocalDate.of(2001, Month.JANUARY, 7),
-                        1300.0f),
-                new Persona(6, "Sandra", "Matica",
-                        Sexo.MUJER,
-                        LocalDate.of(1977, Month.FEBRUARY, 19),
-                        1500.0f),
-                new Persona(7, "Victor", "Nado",
-                        Sexo.HOMBRE,
-                        LocalDate.of(1998, Month.JUNE, 30),
-                        2400.0f),
-                new Persona(8, "Pedro", "Gado",
-                        Sexo.HOMBRE,
-                        LocalDate.of(2002, Month.APRIL, 23),
-                        1100.0f),
-                new Persona(9, "Vanesa", "Tánica",
-                        Sexo.MUJER,
-                        LocalDate.of(2000, Month.JANUARY, 6),
-                        1200.0f),
-                new Persona(10, "Marta", "Baco",
-                        Sexo.MUJER,
-                        LocalDate.of(1982, Month.JULY, 8),
-                        1700.0f),
-                new Persona(11, "Consuelo", "Tería",
-                        Sexo.MUJER,
-                        LocalDate.of(1967, Month.APRIL, 6),
-                        1900.0f)
-
-        ).toList();
-    }
-
-
     static void addPersonas(DAO<Persona> personaDAO) {
-        generateSamplePersonas()
+        Personas.generateSamplePersonas()
                 .stream()
                 .peek(persona -> System.out.println("Añadiendo a " + persona.getNombre() + " " + persona.getApellidos()))
                 .forEach(personaDAO::add);
@@ -302,7 +249,7 @@ public class DbPersonasDAODemo {
     }
 
     private static void borrarPersonas(DAO<Persona> personaDAO) {
-        System.out.println("Borrando personas...");
+        System.out.println("Borrando personas...1,2,7,10");
         personaDAO.getById(1).ifPresent(personaDAO::delete);
         personaDAO.getById(2).ifPresent(personaDAO::delete);
         personaDAO.getById(7).ifPresent(personaDAO::delete);

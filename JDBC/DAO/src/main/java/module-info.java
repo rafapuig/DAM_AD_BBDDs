@@ -5,6 +5,7 @@ module dam.ad.jdbc.DAO {
     requires org.apache.derby.tools;
     requires futbol.model;
     requires personas.model;
+    requires jdbc.utils;
 
     exports dam.ad.futbol.file;
     exports dam.ad.file;

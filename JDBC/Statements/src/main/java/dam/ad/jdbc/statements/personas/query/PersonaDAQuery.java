@@ -3,7 +3,6 @@ package dam.ad.jdbc.statements.personas.query;
 import dam.ad.jdbc.query.JDBCQuery;
 import dam.ad.jdbc.statements.personas.PersonasPrinter;
 import dam.ad.jdbc.statements.personas.SQLs;
-import dam.ad.jdbc.statements.personas.consumers.PersonaDAConsumer;
 import dam.ad.jdbc.statements.personas.consumers.PersonaDAThrowingConsumers;
 import dam.ad.jdbc.stream.ThrowingConsumer;
 

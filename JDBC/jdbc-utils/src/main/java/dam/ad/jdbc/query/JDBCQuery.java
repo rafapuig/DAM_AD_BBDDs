@@ -4,10 +4,7 @@ import dam.ad.jdbc.JDBCUtil;
 import dam.ad.jdbc.stream.SQLThrowingConsumer;
 import dam.ad.jdbc.stream.generation.Generators;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -17,8 +14,61 @@ import java.util.stream.Stream;
  * o bien devuelven un Stream<T> donde T es un DTO (Data Transfer Object), en la práctica
  * una clase POJO que cuanta con los mismos campos que los campos de la entidad en la tabla
  * de la base de datos
+ * <p>
+ * Además, JDBCQuery permite realizar operaciones DML insert, update o delete mediante otros
+ * dos métodos: insert (para recuperar valores auto-numéricos) y update en el resto de escenarios
  */
 public class JDBCQuery {
+
+    /**
+     * Método para enviar un comando SQL que realice una operación de actualización sobre
+     * la base de datos cuando esta operación genere claves auto-numéricas
+     * Por tanto, su uso será típicamente para una inserción de una nueva fila
+     * cuando se haya definido una columna con valor generado auto-numérico
+     * Dicho valor es el entero devuelto al llamador
+     *
+     * @param connection
+     * @param sql         comando SQL que será un INSERT
+     * @param paramSetter
+     * @return El valor auto-numérico generado para la fila insertada
+     */
+    public static int insert(
+            Connection connection,
+            String sql,
+            SQLThrowingConsumer<PreparedStatement> paramSetter) {
+
+        try (PreparedStatement stmt = connection
+                .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            if (paramSetter != null) paramSetter.accept(stmt);
+
+            try {
+                if (stmt.executeUpdate() != 0) {
+                    ResultSet generatedKeys = stmt.getGeneratedKeys();
+                    generatedKeys.next();
+                    return generatedKeys.getInt(1);
+                }
+
+            } catch (SQLException e) {
+                throw new RuntimeException("ERROR ejecutando el comando SQL:" + sql, e);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("ERROR preparando el comando SQL: " + sql, e);
+        }
+        return -1;
+    }
+
+    /**
+     * Método para efectuar una operación DML sobre la base de datos
+     * Para operaciones de inserción, modificación y borrado de filas
+     * En el caso de que la inserción vaya a generar un valor auto-numérico se debe
+     * usar en metodo insert en lugar de este update
+     *
+     * @param connection
+     * @param sql         comando SQL parametrizado con la operación DML a ejecutar
+     * @param paramSetter
+     * @return devuelve true si la operación ha modificado, borrado, o insertado con éxito
+     */
 
     public static boolean update(
             Connection connection,
@@ -27,7 +77,7 @@ public class JDBCQuery {
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            paramSetter.accept(stmt);
+            if (paramSetter != null) paramSetter.accept(stmt);
 
             try {
                 return stmt.executeUpdate() > 0;
@@ -46,9 +96,10 @@ public class JDBCQuery {
      * un paramSetter de tipo SQLThrowingConsumer<PreparedStatement> para establecer los valores
      * de los parámetros de la consulta SQL parametrizada
      * El ResultSet obtenido es consumido por el Consumer<ResultSet>
-     * @param connection conexión establecida con la base de datos
-     * @param sql consulta parametrizada o no que se quiere ejecutar contra la base de datos
-     * @param paramSetter establece los valores de los parámetros de la consulta SQL
+     *
+     * @param connection        conexión establecida con la base de datos
+     * @param sql               consulta parametrizada o no que se quiere ejecutar contra la base de datos
+     * @param paramSetter       establece los valores de los parámetros de la consulta SQL
      * @param resultSetConsumer consume los resultados de la consulta devueltos en el ResultSet
      */
     public static void query(
@@ -61,7 +112,7 @@ public class JDBCQuery {
 
             paramSetter.accept(stmt);
 
-            try(ResultSet rs = stmt.executeQuery()) {
+            try (ResultSet rs = stmt.executeQuery()) {
 
                 resultSetConsumer.accept(rs);
                 JDBCUtil.close(rs); // No hace falta ya que rs se define en un try-with-resources
@@ -88,13 +139,14 @@ public class JDBCQuery {
      * la operación terminal (u otra que requiera recorrer por completo los datos y cachearlos
      * como por ejemplo la operación sort() que es intermedia, pero necesita conocer todos los elementos)
      * El parámetro yieldType permite elegir el modo
-     * @param connection conexión JDBC a la base de datos
-     * @param sql la consulta SQL
+     *
+     * @param connection  conexión JDBC a la base de datos
+     * @param sql         la consulta SQL
      * @param paramSetter el establecedor de los valores de los parámetros de la consulta
-     * @param dtoMapper función que mapea los campos del ResultSet a una instancia de DTO
-     * @param yieldType permite elegir si queremos convertir los registros del ResultSet en DTOs de forma
-     *                  impaciente o de manera perezosa (cuando se realiza operación terminal sobre el Stream)
-      */
+     * @param dtoMapper   función que mapea los campos del ResultSet a una instancia de DTO
+     * @param yieldType   permite elegir si queremos convertir los registros del ResultSet en DTOs de forma
+     *                    impaciente o de manera perezosa (cuando se realiza operación terminal sobre el Stream)
+     */
     public static <T> Stream<T> query(
             Connection connection,
             String sql,
@@ -114,7 +166,7 @@ public class JDBCQuery {
                 //Muy importante, solamente podemos cerrar el ResultSet si
                 // el generador de Stream ha generado un Stream que ya ha recorrido el
                 // resultSet y creado con los resultados de dtoMapper los elementos del Stream
-                if(yieldType == Generators.Yield.EAGER) rs.close();
+                if (yieldType == Generators.Yield.EAGER) rs.close();
                 // En el caso de que el Stream se cree de manera que recorra en ResultSet
                 // de manera perezosa, es decir, en el momento justo en el que se va a
                 // invocar una operación terminal sobre el Stream, no podemos cerrar el ResultSet
@@ -152,6 +204,31 @@ public class JDBCQuery {
             DTOMapper<T> dtoMapper) {
 
         return query(connection, sql, paramSetter, dtoMapper, true);
+    }
+
+    public static <T> T queryScalar(
+            Connection connection,
+            String sql,
+            SQLThrowingConsumer<PreparedStatement> paramSetter,
+            Class<T> type) {
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            if (paramSetter != null) paramSetter.accept(stmt);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                if (rs.next()) {
+                    return rs.getObject(1, type);
+                }
+                return null;
+
+            } catch (SQLException e) {
+                throw new RuntimeException("ERROR ejecutando el comando SQL:" + sql, e);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("ERROR preparando el comando SQL: " + sql, e);
+        }
     }
 
 }

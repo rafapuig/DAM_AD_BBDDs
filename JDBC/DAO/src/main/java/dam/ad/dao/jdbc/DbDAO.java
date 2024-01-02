@@ -43,6 +43,9 @@ public abstract class DbDAO<T> implements DAO<T> {
         }
     }
 
+
+    //************** INSERT ***********************************
+
     protected abstract void setAddStatementParams(PreparedStatement stmt, T t) throws SQLException;
 
     protected abstract void setTransferObjectID(T t, int id);
@@ -55,7 +58,9 @@ public abstract class DbDAO<T> implements DAO<T> {
         try (Connection conn = getConnection();
                 PreparedStatement stmt =
                         conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
+
             setAddStatementParams(stmt, t);
+
             if (stmt.executeUpdate() != 0) {
                 ResultSet generatedKeys = stmt.getGeneratedKeys();
                 generatedKeys.next();
@@ -92,6 +97,8 @@ public abstract class DbDAO<T> implements DAO<T> {
     }*/
 
 
+    //**************** UPDATE *****************************************
+
     protected abstract void setUpdateParams(PreparedStatement stmt, T t) throws SQLException;
 
     protected String SQL_UPDATE;
@@ -102,7 +109,9 @@ public abstract class DbDAO<T> implements DAO<T> {
         try (Connection conn = getConnection();
                 PreparedStatement stmt =
                         conn.prepareStatement(SQL_UPDATE)) {
+
             setUpdateParams(stmt, t);
+
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException ex) {
@@ -110,6 +119,7 @@ public abstract class DbDAO<T> implements DAO<T> {
         }
     }
 
+    // ****************** DELETE *********************************************
 
     protected String SQL_DELETE;
 
@@ -121,24 +131,18 @@ public abstract class DbDAO<T> implements DAO<T> {
         try (Connection conn = getConnection();
                 PreparedStatement statement =
                         conn.prepareStatement(SQL_DELETE)) {
+
             setDeleteParams(statement, t);
+
             return statement.executeUpdate() > 0;
 
         } catch (SQLException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
         }
-
     }
 
 
-    private void close(ResultSet resultSet) {
-        try {
-            resultSet.close();
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex.getMessage(), ex);
-        }
-    }
-
+    //************* SELECT ALL *******************************************
 
     protected String SQL_SELECT_ALL;
 
@@ -151,18 +155,32 @@ public abstract class DbDAO<T> implements DAO<T> {
 
             ResultSet rs = stmt.executeQuery();
 
-            Stream.Builder<T> builder = Stream.builder();
-            while (rs.next())
-                builder.add(createDataTransferObject(rs));
-
-            Stream<T> stream = builder.build();
-
-            return stream.onClose(() -> close(rs));
+            return generateStream(rs);
 
         } catch (SQLException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
         }
     }
+
+    private Stream<T> generateStream(ResultSet rs) throws SQLException {
+        Stream.Builder<T> builder = Stream.builder();
+        while (rs.next())
+            builder.add(createDataTransferObject(rs));
+
+        Stream<T> stream = builder.build();
+
+        return stream.onClose(() -> close(rs));
+    }
+
+    private void close(ResultSet resultSet) {
+        try {
+            resultSet.close();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex.getMessage(), ex);
+        }
+    }
+
+    //*************** SELECT COUNT *********************************************
 
     protected  String SQL_SELECT_COUNT;
 
@@ -172,13 +190,17 @@ public abstract class DbDAO<T> implements DAO<T> {
              PreparedStatement stmt =
                      conn.prepareStatement(SQL_SELECT_COUNT)) {
 
-            ResultSet rs = stmt.executeQuery();
-
-            rs.next();
-            return rs.getLong(1);
+            try(ResultSet rs = stmt.executeQuery()) {
+                if(rs.next()) {
+                    return rs.getLong(1);
+                }
+                return 0;
+            }
 
         } catch (SQLException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
         }
     }
+
+
 }

@@ -45,7 +45,7 @@ public class PersonasDataAccess extends AbstractDataAccess {
 
     boolean addPersona(Persona persona) {
 
-        return JDBCQuery.update(
+        int personaID = JDBCQuery.insert(
                 getConnection(),
                 "INSERT INTO persona VALUES(DEFAULT, ?, ?, ?, ?, ?)",
                 stmt -> {
@@ -63,6 +63,12 @@ public class PersonasDataAccess extends AbstractDataAccess {
                         stmt.setNull(5, Types.REAL);
                     }
                 });
+
+        if(personaID >= 0) {
+            persona.setPersonaId(personaID);
+            return true;
+        }
+        return false;
     }
 
     boolean updatePersona(Persona persona) {
