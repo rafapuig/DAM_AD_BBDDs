@@ -35,7 +35,7 @@ public abstract class DbDAO3<T> implements DAO<T> {
      *
      * @return
      */
-    private Connection getConnection() {
+    protected Connection getConnection() {
         return daoManager.getConnection();
     }
 
