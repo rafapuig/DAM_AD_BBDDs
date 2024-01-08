@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 /**
  * Hereda de PersonaDA modificándola para que mediante programación funcional
  * se le pase comportamiento parametrizado a algunos métodos de la clase
- * Se utilizará la interfaz funcional Consumer
+ * Se utilizará la interfaz funcional Consumer<T>
  */
 
 public class PersonaDAConsumer extends PersonaDA {
@@ -22,8 +22,8 @@ public class PersonaDAConsumer extends PersonaDA {
 
     /**
      * Mediante un Consumer<PrepareStatement> podemos definir el código que queremos
-     * ejecutar dado un PreparedStatement, es decir, que haremos para "consumirlo"
-     * En este caso dado el PreparedStatement lo que haremos será establecer
+     * ejecutar dado un PreparedStatement, es decir, qué haremos para "consumirlo"
+     * En este caso, dado el PreparedStatement, lo que haremos será establecer
      * el parámetro de índice 1 al valor "H" y capturar las excepciones
      * Este Consumer será util cuando se quiera realizar la consulta parametrizada
      * que filtra las personas por sexo
@@ -50,9 +50,9 @@ public class PersonaDAConsumer extends PersonaDA {
     /**
      * Las dos expresiones lambda anteriores son prácticamente idénticas, salvo por el valor
      * "H" o "M" pasado como segundo argumento en la llamada a setString
-     * Para parametrizar una expresión lambda podemos escribir un método que reciba como
+     * Para parametrizar una expresión lambda podemos escribir un método que reciba, como
      * argumento en la llamada, el valor que queremos parametrizar en la expresión lambda
-     * y capturarlo en la expresión lambda,
+     * y capturarlo dentro de la expresión lambda,
      * Las expresiones lambda que utilizan variables dentro del mismo ámbito (scope) en
      * el que está definida la propia expresión lambda se denominan cierres o clousures
      * @param sexo String que debería tomar como valores "H" para hombres o "M" para mujeres
@@ -82,9 +82,9 @@ public class PersonaDAConsumer extends PersonaDA {
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            // Proporcionamos la instancia PreparedStament que el consumer necesita
+            // Proporcionamos la instancia PreparedStatement que el consumer necesita
             // al invocar al SAM accept de Consumer
-            // El Consumer<PreparedStatement> ha sido propocionado como argumento de llamada
+            // El Consumer<PreparedStatement> ha sido proporcionado como argumento de llamada
             paramSetter.accept(stmt);
 
             try {

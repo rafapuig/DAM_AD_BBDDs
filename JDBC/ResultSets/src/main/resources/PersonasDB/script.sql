@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS persona(
 
 -- Rellenarla de personas
 INSERT INTO persona VALUES (DEFAULT, 'Armando', 'Bronca Segura', 'H', '1970-08-03', 2500);
-INSERT INTO persona VALUES (DEFAULT, 'Belen', 'Tilla', 'M', '1970-08-03', 2500);
-INSERT INTO persona VALUES (DEFAULT, 'Esther', 'Malgin', 'M', '1983-12-06', 2100);
+INSERT INTO persona VALUES (DEFAULT, 'Belen', 'Tilla', 'M', '1983-12-06', 2100);
+INSERT INTO persona VALUES (DEFAULT, 'Esther', 'Malgin', 'M', '1988-07-04', 1800);
 INSERT INTO persona VALUES (DEFAULT, 'Amador', 'Denador', 'H', '1994-12-24', 1200);
 INSERT INTO persona VALUES (DEFAULT, 'Aitor', 'Tilla', 'H', '2001-01-07', 1300);
 INSERT INTO persona VALUES (DEFAULT, 'Sandra', 'Matica', 'M', '1977-02-19', 1500);

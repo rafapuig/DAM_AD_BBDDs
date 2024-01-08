@@ -47,7 +47,7 @@ public class DAODemo {
             //connection.close();
         }
 
-        DAO<Persona> personaDAO = new DbPersonaDAO(dataSource); //, true);
+        DAO<Persona> personaDAO = new PersonaDAO(dataSource); //, true);
 
         Optional<Persona> personaById = personaDAO.getById(13);
 

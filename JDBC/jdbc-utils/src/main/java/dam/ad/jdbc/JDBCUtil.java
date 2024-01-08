@@ -59,11 +59,12 @@ public class JDBCUtil {
     }
 
     /**
-     * Cierra una conexion JDBC a una base de datos
+     * Cierra una conexión JDBC a una base de datos
      */
     public static void close(Connection connection) {
         if (connection == null) return;
         try {
+            System.out.println("Cerrando la conexión JDBC a " + connection.getMetaData().getURL());
             connection.close();
         } catch (SQLException e) {
             throw new RuntimeException(

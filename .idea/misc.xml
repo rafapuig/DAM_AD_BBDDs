@@ -24,11 +24,16 @@
         <option value="$PROJECT_DIR$/JDBC/data-access/pom.xml" />
         <option value="$PROJECT_DIR$/JDBC/ResultSets/pom.xml" />
         <option value="$PROJECT_DIR$/personas-model/pom.xml" />
+        <option value="$PROJECT_DIR$/ORM/entities/pom.xml" />
+        <option value="$PROJECT_DIR$/ORM/demoEE2/pom.xml" />
       </list>
     </option>
     <option name="workspaceImportForciblyTurnedOn" value="true" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="21" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="jpab" />
   </component>
 </project>

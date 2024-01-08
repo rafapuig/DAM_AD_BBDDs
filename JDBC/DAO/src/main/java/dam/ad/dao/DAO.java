@@ -3,7 +3,7 @@ package dam.ad.dao;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public interface DAO<T> {
+public interface DAO<T> extends AutoCloseable {
     Optional<T> getById(int id);
 
     boolean add(T t);
@@ -20,4 +20,6 @@ public interface DAO<T> {
         return getAll().count();
     }
 
+    @Override
+    default void close() throws Exception { }
 }

@@ -28,7 +28,7 @@ public class PersonaDAO implements DAO<Persona> {
                 rs.getInt("personaId"),
                 rs.getString("nombre"),
                 rs.getString("apellidos"),
-                rs.getObject("sexo", Sexo.class),
+                Sexo.fromInicial(rs.getString("sexo")),
                 (LocalDate) rs.getObject("nacimiento", LocalDate.class),
                 rs.getFloat("ingresos")
         );

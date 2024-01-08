@@ -16,8 +16,8 @@ public class DataSourceFactory {
         try {
             System.out.println("Registering data source...");
             //registerDataSource();
-            registerDerbyDataSource();
-            registerHSQLDBDataSource();
+            //registerDerbyDataSource();
+            //registerHSQLDBDataSource();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -80,9 +80,38 @@ public class DataSourceFactory {
         return dataSource;
     }
 
+    public DataSource createDataSource(String url) throws Exception {
+
+        JDBCDataSource dataSource = new JDBCDataSource();
+        dataSource.setURL(url);
+        dataSource.setUser("SA");
+        dataSource.setPassword("");
+
+        Properties properties = new Properties();
+        properties.setProperty("shutdown", "true");
+
+        dataSource.setProperties(properties);
+
+        return dataSource;
+    }
+
+    public DataSource createDataSource2(String url) throws Exception {
+
+        Properties properties = new Properties();
+
+        properties.setProperty("url", url); //create=true"); // ;shutdown=true");
+        properties.setProperty("user", "SA");
+        properties.setProperty("password", "");
+        properties.setProperty("shutdown", "true");
+
+        // No tiene Connection Pool !!!!
+        return JDBCDataSourceFactory.createDataSource(properties);
+    }
+
     private static DataSourceFactory factory;
+
     public static DataSourceFactory getInstance() {
-        if(factory == null) {
+        if (factory == null) {
             factory = new DataSourceFactory();
         }
         return factory;

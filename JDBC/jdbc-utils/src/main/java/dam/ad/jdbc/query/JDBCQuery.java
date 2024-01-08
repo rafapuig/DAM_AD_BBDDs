@@ -206,6 +206,26 @@ public class JDBCQuery {
         return query(connection, sql, paramSetter, dtoMapper, true);
     }
 
+
+    static SQLThrowingConsumer<PreparedStatement> getParamSetterFromParamList(Object... params) {
+        return statement -> {
+            for (int i = 0; i < params.length; i++) {
+                statement.setObject(i + 1, params[i]);
+            }
+        };
+    }
+    public static <T> Stream<T> query(
+            Connection connection,
+            String sql,
+            DTOMapper<T> dtoMapper,
+            Object... params) {
+
+        SQLThrowingConsumer<PreparedStatement> paramSetter =
+                getParamSetterFromParamList(params);
+
+        return query(connection, sql, paramSetter, dtoMapper, true);
+    }
+
     public static <T> T queryScalar(
             Connection connection,
             String sql,

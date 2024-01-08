@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  * en un bloque try, un ThrowingConsumer<PreparedStatement, SQLException>.
  * El interface ThrowingConsumer<T,E extends Exception> lo habremos definido de manera que
  * el Single Abstract Method "void accept(T t) throws E" declare que lanza una excepción de tipo E
- * De esta manera podemos definir la expresión lambda que asigna valores a los parámetros del
+ * De esta manera, podemos definir la expresión lambda que asigna valores a los parámetros del
  * PreparedStatement sin tener que capturar las excepciones
  */
 public class PersonaDAThrowingConsumers extends PersonaDAConsumer {

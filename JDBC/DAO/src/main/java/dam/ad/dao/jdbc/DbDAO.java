@@ -1,6 +1,8 @@
 package dam.ad.dao.jdbc;
 
 import dam.ad.dao.DAO;
+import dam.ad.jdbc.stream.generation.Generators;
+import dam.ad.jdbc.stream.generation.LazyStreamGenerator;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -28,14 +30,16 @@ public abstract class DbDAO<T> implements DAO<T> {
     public Optional<T> getById(int id) {
 
         try (Connection conn = getConnection();
-                PreparedStatement stmt =
-                        conn.prepareStatement(SQL_SELECT_BY_ID)) {
+             PreparedStatement stmt = conn.prepareStatement(SQL_SELECT_BY_ID)) {
+
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return Optional.of(createDataTransferObject(rs));
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(createDataTransferObject(rs));
+                }
             }
-            close(rs);
+
             return Optional.empty();
 
         } catch (SQLException ex) {
@@ -56,8 +60,9 @@ public abstract class DbDAO<T> implements DAO<T> {
     public boolean add(T t) {
 
         try (Connection conn = getConnection();
-                PreparedStatement stmt =
-                        conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement stmt = conn.prepareStatement(
+                     SQL_INSERT,
+                     Statement.RETURN_GENERATED_KEYS)) {
 
             setAddStatementParams(stmt, t);
 
@@ -65,6 +70,7 @@ public abstract class DbDAO<T> implements DAO<T> {
                 ResultSet generatedKeys = stmt.getGeneratedKeys();
                 generatedKeys.next();
                 setTransferObjectID(t, generatedKeys.getInt(1));
+                generatedKeys.close();
             }
             return true;
         } catch (SQLException ex) {
@@ -107,8 +113,7 @@ public abstract class DbDAO<T> implements DAO<T> {
     public boolean update(T t) {
 
         try (Connection conn = getConnection();
-                PreparedStatement stmt =
-                        conn.prepareStatement(SQL_UPDATE)) {
+             PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE)) {
 
             setUpdateParams(stmt, t);
 
@@ -129,8 +134,7 @@ public abstract class DbDAO<T> implements DAO<T> {
     public boolean delete(T t) {
 
         try (Connection conn = getConnection();
-                PreparedStatement statement =
-                        conn.prepareStatement(SQL_DELETE)) {
+             PreparedStatement statement = conn.prepareStatement(SQL_DELETE)) {
 
             setDeleteParams(statement, t);
 
@@ -150,39 +154,42 @@ public abstract class DbDAO<T> implements DAO<T> {
     public Stream<T> getAll() {
 
         try (Connection conn = getConnection();
-                PreparedStatement stmt =
-                        conn.prepareStatement(SQL_SELECT_ALL)) {
+             PreparedStatement stmt = conn.prepareStatement(SQL_SELECT_ALL)) {
 
-            ResultSet rs = stmt.executeQuery();
-
-            return generateStream(rs);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return generateStream(rs);
+            }
 
         } catch (SQLException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
         }
     }
 
+    private Stream<T> generateStream2(ResultSet rs) throws SQLException {
+        return Generators
+                .<T>getStreamGenerator(Generators.Yield.LAZY)
+                .generate(rs, this::createDataTransferObject);
+    }
+
     private Stream<T> generateStream(ResultSet rs) throws SQLException {
+
         Stream.Builder<T> builder = Stream.builder();
+
         while (rs.next())
             builder.add(createDataTransferObject(rs));
 
         Stream<T> stream = builder.build();
 
-        return stream.onClose(() -> close(rs));
+        return stream;
+
+        // No es necesario pues el resultSet ya es recorrido
+        //return stream.onClose(() -> close(rs));
     }
 
-    private void close(ResultSet resultSet) {
-        try {
-            resultSet.close();
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex.getMessage(), ex);
-        }
-    }
 
     //*************** SELECT COUNT *********************************************
 
-    protected  String SQL_SELECT_COUNT;
+    protected String SQL_SELECT_COUNT;
 
     @Override
     public long getCount() {
@@ -190,8 +197,8 @@ public abstract class DbDAO<T> implements DAO<T> {
              PreparedStatement stmt =
                      conn.prepareStatement(SQL_SELECT_COUNT)) {
 
-            try(ResultSet rs = stmt.executeQuery()) {
-                if(rs.next()) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
                     return rs.getLong(1);
                 }
                 return 0;
@@ -201,6 +208,5 @@ public abstract class DbDAO<T> implements DAO<T> {
             throw new RuntimeException(ex.getMessage(), ex);
         }
     }
-
 
 }

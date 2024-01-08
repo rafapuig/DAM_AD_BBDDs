@@ -28,6 +28,7 @@ public class DbPersonaDAO extends DbDAO<Persona> {
         SQL_INSERT = "INSERT INTO persona VALUES (DEFAULT,?,?,?,?,?)";
         SQL_UPDATE = "UPDATE persona SET nombre = ?, apellidos = ?, sexo=?, NACIMIENTO=?, INGRESOS=? WHERE personaId = ?";
         SQL_DELETE = "DELETE FROM persona WHERE PERSONAID = ?";
+        SQL_SELECT_COUNT = "SELECT COUNT(*) FROM persona";
     }
 
     @Override

@@ -5,8 +5,10 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/BBDDs.iml" filepath="$PROJECT_DIR$/.idea/BBDDs.iml" />
       <module fileurl="file://$PROJECT_DIR$/JDBC/Connection/Derby Connection/Derby Connection.iml" filepath="$PROJECT_DIR$/JDBC/Connection/Derby Connection/Derby Connection.iml" />
       <module fileurl="file://$PROJECT_DIR$/JDBC/Connection/HSQLDB Connection/HSQLDB Connection.iml" filepath="$PROJECT_DIR$/JDBC/Connection/HSQLDB Connection/HSQLDB Connection.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ORM/entities/ORM-entities.iml" filepath="$PROJECT_DIR$/ORM/entities/ORM-entities.iml" />
       <module fileurl="file://$PROJECT_DIR$/JDBC/Connection/SQLite/SQLite.iml" filepath="$PROJECT_DIR$/JDBC/Connection/SQLite/SQLite.iml" />
       <module fileurl="file://$PROJECT_DIR$/JDBC/Connection/SQLite Connection/SQLite Connection.iml" filepath="$PROJECT_DIR$/JDBC/Connection/SQLite Connection/SQLite Connection.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ORM/demoEE2/demoEE2.iml" filepath="$PROJECT_DIR$/ORM/demoEE2/demoEE2.iml" />
     </modules>
   </component>
 </project>

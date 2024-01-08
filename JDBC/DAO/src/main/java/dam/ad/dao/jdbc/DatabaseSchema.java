@@ -47,6 +47,7 @@ public interface DatabaseSchema {
                 }
             }
             connection.commit();
+            connection.close();
 
         } catch (SQLException e) {
             throw new RuntimeException(e.getMessage(), e);

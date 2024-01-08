@@ -32,4 +32,14 @@ public class PersonaDTOMapper implements DTOMapper<Persona> {
                 getIngresos(rs)
         );
     }
+
+    private static PersonaDTOMapper singleton;
+
+    public static DTOMapper<Persona> getInstance() {
+        if(singleton == null) {
+            singleton = new PersonaDTOMapper();
+        }
+        return singleton;
+    }
+
 }

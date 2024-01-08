@@ -64,9 +64,13 @@ public class PersonaDATest {
         insertPersona(personaDA, 'Pedro', 'Gado', 'H', '2002-04-23', 1100);
         insertPersona(personaDA, 'Vanesa', 'Tanica', 'M', '2000-01-06', 1200);
         insertPersona(personaDA, 'Marta', 'Baco', 'M', '1970-08-03', 1700);
-        insertPersona(personaDA, 'Consuelo', 'Tería', 'M', '1992-07-08', 1900);
-        insertPersona(personaDA, 'Mercedes', 'Pacio', 'M', '1970-08-03', 2400);
-*/
+        */
+
+        insertPersona(personaDA, "Consuelo", "Tería", "M",
+                LocalDate.of(1992, 7, 8), 1900.0f);
+
+        insertPersona(personaDA, "Mercedes", "Pacio", "M",
+                LocalDate.of(1970, 8, 3), 2400.0f);
 
         insertPersona(personaDA, "Salvador", "Mido", "H",
                 LocalDate.of(2003, 12, 23), 2500.0f);

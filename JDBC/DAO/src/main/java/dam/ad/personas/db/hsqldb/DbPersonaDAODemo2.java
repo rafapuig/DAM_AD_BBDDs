@@ -26,10 +26,10 @@ public class DbPersonaDAODemo2 {
         cleanUp(dataSource, schema);
 
         System.out.println("Creando el esquema de la base de datos...");
-        createSchema(dataSource, schema);
+        generateSchema(dataSource, schema);
 
         System.out.println("Creando el DAO de personas....");
-        DAO<Persona> personaDAO = new DbPersonaDAO(dataSource);
+        DAO<Persona> personaDAO = new DbPersonaDAO2(dataSource);
 
         System.out.println("Añadiendo personas...");
         addSamplePersonas(personaDAO);
@@ -51,19 +51,47 @@ public class DbPersonaDAODemo2 {
 
         incrementarIngresos(personaDAO);
 
+        System.out.println("Cerrando la base de datos...");
+        shutdown(dataSource);   //Muy importante en HSQLDB
+
+        System.out.println("Fin de la demo");
+
     }
 
     static DataSource createDataSource() throws Exception {
         return PersonasDataSourceFactory.createDataSource(URL);
     }
 
-    static void createSchema(DataSource dataSource, DatabaseSchema dbSchema) {
+    static void generateSchema(DataSource dataSource, DatabaseSchema dbSchema) {
         dbSchema.createSchema(dataSource);
     }
 
     static void cleanUp(DataSource dataSource, DatabaseSchema dbSchema) {
         dbSchema.dropSchema(dataSource);
     }
+
+    static void shutdown(DataSource dataSource) {
+        DatabaseSchema.execute(dataSource, "SHUTDOWN");
+    }
+
+    //******************** PRINT **************************************************
+
+    private static void printPersonasHeader() {
+        System.out.println(Personas.getPersonasHeader(true));
+    }
+
+    static void printPersonas(DAO<Persona> personaDAO) {
+        printPersonasHeader();
+
+        personaDAO.getAll()
+                .map(Personas::getPersonaAsRow)
+                .forEach(System.out::println);
+
+        System.out.println();
+    }
+
+
+    //************************** TEST ********************************************
 
     static Consumer<Persona> printAddingInfo = persona ->
             System.out.println("Añadiendo a " +
@@ -77,15 +105,6 @@ public class DbPersonaDAODemo2 {
                 .forEach(personaDAO::add);
     }
 
-    static void printPersonas(DAO<Persona> personaDAO) {
-        printPersonasHeader();
-
-        personaDAO.getAll()
-                .map(Personas::getPersonaAsRow)
-                .forEach(System.out::println);
-
-        System.out.println();
-    }
 
     private static void getPersonaByIDTest(DAO<Persona> personaDAO) {
         System.out.println("Recuperado persona con ID 11...");
@@ -110,6 +129,10 @@ public class DbPersonaDAODemo2 {
         printAddingInfo.accept(persona);
 
         personaDAO.add(persona);
+
+        System.out.println(persona);
+
+        System.out.println(Personas.getPersonaAsRow(persona));
 
         printPersonas(personaDAO);
         return persona;
@@ -151,6 +174,27 @@ public class DbPersonaDAODemo2 {
         printPersonas(personaDAO);
     }
 
+
+
+    static void obtenerNacidosAntes2000(DAO<Persona> personaDAO) {
+        System.out.println("Obteniendo nacidas antes del 2000...");
+        printPersonasHeader();
+        personaDAO.getAll()
+                .filter(p -> p.getNacimiento().getYear() < 2000)
+                .map(Personas::getPersonaAsRow)
+                .forEach(System.out::println);
+        System.out.println();
+    }
+
+    private static void incrementarIngresos(DAO<Persona> personaDAO) {
+        System.out.println("Incrementando ingresos un 5% ...");
+        personaDAO.getAll()
+                .peek(p -> p.setIngresos(p.getIngresos() * 1.05f))
+                .forEach(personaDAO::update);
+
+        printPersonas(personaDAO);
+    }
+
     static void borrarHombres(DAO<Persona> personaDAO) {
         System.out.println("Filtrando personas, borrando hombres...");
         personaDAO.getAll()
@@ -168,29 +212,6 @@ public class DbPersonaDAODemo2 {
         personaDAO.getById(10).ifPresent(personaDAO::delete);
 
         printPersonas(personaDAO);
-    }
-
-    private static void incrementarIngresos(DAO<Persona> personaDAO) {
-        System.out.println("Incrementando ingresos un 5% ...");
-        personaDAO.getAll()
-                .peek(p -> p.setIngresos(p.getIngresos() * 1.05f))
-                .forEach(personaDAO::update);
-
-        printPersonas(personaDAO);
-    }
-
-    static void obtenerNacidosAntes2000(DAO<Persona> personaDAO) {
-        System.out.println("Obteniendo nacidas antes del 2000...");
-        printPersonasHeader();
-        personaDAO.getAll()
-                .filter(p -> p.getNacimiento().getYear() < 2000)
-                .map(Personas::getPersonaAsRow)
-                .forEach(System.out::println);
-        System.out.println();
-    }
-
-    private static void printPersonasHeader() {
-        System.out.println(Personas.getPersonasHeader(true));
     }
 
 }

@@ -3,7 +3,7 @@
   <component name="SqlDialectMappings">
     <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/68c9c410-0587-437b-9568-38bc2147ed4e/console.sql" dialect="HSQLDB" />
     <file url="file://$PROJECT_DIR$/JDBC/DAO/src/main/java/dam/ad/futbol/db/hsqldb/DbFutbolDAODemo.java" dialect="HSQLDB" />
-    <file url="file://$PROJECT_DIR$/JDBC/DAO/src/main/java/dam/ad/personas/db/hsqldb/DbPersonasDAODemo.java" dialect="HSQLDB" />
+    <file url="file://$PROJECT_DIR$/JDBC/DAO/src/main/java/dam/ad/personas/db/hsqldb/DbPersonaDAODemo.java" dialect="HSQLDB" />
     <file url="file://$PROJECT_DIR$/JDBC/DAO/src/main/resources/futbol/DatabaseSchema.sql" dialect="HSQLDB" />
     <file url="file://$PROJECT_DIR$/JDBC/DAO/src/main/resources/personas/PersonasSchema.sql" dialect="HSQLDB" />
     <file url="file://$PROJECT_DIR$/JDBC/ResultSets/src/main/resources/PersonasDB/script.sql" dialect="HSQLDB" />

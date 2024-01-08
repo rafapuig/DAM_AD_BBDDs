@@ -51,7 +51,27 @@ public class ResultSetPrinter implements Consumer<ResultSet> {
         return headers;
     }
 
+    record ColumnData(
+            Try columnLength,
+            Try columnAlignment
+    ){}
+
     private static String getRowStringFormat(ResultSetMetaData rsmd) throws SQLException {
+
+        String lengths = IntStream.rangeClosed(1, rsmd.getColumnCount())
+                .mapToObj(index -> new ColumnData(
+                        Try.of(() -> getColumnLength(rsmd, index)),
+                        Try.of(() -> getColumnAlignment(rsmd, index))))
+                .filter(tries -> tries.columnLength instanceof Success<?> && tries.columnAlignment instanceof Success<?>)
+                .map(tries -> (int) tries.columnLength.getResult() * (int) tries.columnAlignment.getResult())
+                .map(String::valueOf)
+                .map(s -> "%" + s + "s")
+                .collect(Collectors.joining(" ", "", "\n"));
+
+        return lengths;
+    }
+
+    private static String getRowStringFormat2(ResultSetMetaData rsmd) throws SQLException {
 
         String lengths = IntStream.rangeClosed(1, rsmd.getColumnCount())
 

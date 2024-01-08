@@ -55,13 +55,34 @@ public class Personas {
                 new Persona(11, "Consuelo", "Tería",
                         Sexo.MUJER,
                         LocalDate.of(1967, Month.APRIL, 6),
+                        1900.0f),
+                new Persona(12, "Mercedes", "Pacio",
+                        Sexo.MUJER, LocalDate.of(1970, Month.AUGUST, 3),
+                        2400.0f),
+                new Persona(13, "Lorenzo", "Penco",
+                        Sexo.HOMBRE, LocalDate.of(1968, Month.MARCH, 12),
                         1900.0f)
 
         ).toList();
     }
 
+    public static final int COLUMN_ID_LENGTH = 2;
+    public static final int COLUMN_NOMBRE_LENGTH = 20;
+    public static final int COLUMN_APELLIDOS_LENGTH = 30;
+    public static final int COLUMN_SEXO_LENGTH = 4;
+    public static final int COLUMN_NACIMIENTO_LENGTH = 10;
+    public static final int COLUMN_INGRESOS_LENGTH = 9;
+
+    private static final String ROW_FORMAT =
+            "%" + COLUMN_ID_LENGTH + "s " +
+            "%-" + COLUMN_NOMBRE_LENGTH + "s " +
+            "%-" + COLUMN_APELLIDOS_LENGTH +"s " +
+            "%" + COLUMN_SEXO_LENGTH + "s " +
+            "%-" + COLUMN_NACIMIENTO_LENGTH + "s " +
+            "%" + COLUMN_INGRESOS_LENGTH + "s";
+
     public static String getPersonaAsRow(Persona persona) {
-        return String.format("%2s %-20s %-30s %4s %-10s %9s",
+        return String.format(ROW_FORMAT, //"%2s %-20s %-30s %4s %-10s %9s",
                 persona.getPersonaId(),
                 persona.getNombre(),
                 persona.getApellidos(),
@@ -70,20 +91,30 @@ public class Personas {
                 NumberFormat.getNumberInstance().format(persona.getIngresos()));
     }
 
+    private static final String HEADER_FORMAT =
+            "%-" + COLUMN_ID_LENGTH + "s " +
+            "%-" + COLUMN_NOMBRE_LENGTH + "s " +
+            "%-" + COLUMN_APELLIDOS_LENGTH +"s " +
+            "%-" + COLUMN_SEXO_LENGTH + "s " +
+            "%-" + COLUMN_NACIMIENTO_LENGTH + "s " +
+            "%" + COLUMN_INGRESOS_LENGTH + "s";
+
     static final String[] FIELDS =
             {"ID", "NOMBRE", "APELLIDOS", "SEXO", "NACIMIENTO", "INGRESOS"};
 
     public static String getPersonasHeader(boolean withLine) {
-        String format = "%-2s %-20s %-30s %-4s %-10s %9s";
+        String format = HEADER_FORMAT; //"%-2s %-20s %-30s %-4s %-10s %9s";
         String header = String.format(format, (Object[]) FIELDS);
 
         StringJoiner stringJoiner = new StringJoiner(System.lineSeparator());
         stringJoiner.add(header);
-        if(withLine){
+        if (withLine) {
             String line = "-".repeat(header.length());
             stringJoiner.add(line);
         }
         return stringJoiner.toString();
     }
+
+
 
 }

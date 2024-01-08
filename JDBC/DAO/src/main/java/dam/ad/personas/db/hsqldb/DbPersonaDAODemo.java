@@ -14,20 +14,23 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.NumberFormat;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DbPersonasDAODemo {
+public class DbPersonaDAODemo {
 
-    public static void mainxxx(String[] args) {
-        System.out.printf("%-2s %-20s %-30s %-4s %-10s %-8s\n", "ID", "NOMBRE", "APELLIDOS", "SEXO", "NACIMIENTO", "INGRESOS");
-        System.out.printf("%2s %-20s %-30s %4s %-10s %8s", 1, "Rafa", "Puig", "H", "2000-01-01", 3450.0);
-
-    }
+    /**
+     * Si añadimos la property shutdown=true y ejecutamos la demo veremos como se ralentiza
+     * la ejecución del programa debido si añadimos esta propiedad a la configuración de
+     * la conexión, entonces cuando se cierra la última conexión abierta con la base de datos
+     * se apaga (shutdown) el servicio de base de datos.
+     * Por eso, cada vez que se ejecuta un comando con su propia conexión además se está iniciando
+     * y después cerrando el propio motor de la base de datos
+     */
+    static final String URL = "jdbc:hsqldb:C:/BBDDs/hsqldb/personas12;shutdown=true";
 
     public static void main(String[] args) throws Exception {
 
@@ -35,7 +38,7 @@ public class DbPersonasDAODemo {
         DataSource dataSource = createDataSource();
 
         System.out.println("Creando el esquema de la base de datos...");
-        createSchema(dataSource);
+        generateSchema(dataSource);
 
         System.out.println("Creando el DAO de personas....");
         DAO<Persona> personaDAO = new DbPersonaDAO(dataSource); //, false);
@@ -43,7 +46,7 @@ public class DbPersonasDAODemo {
         //DAO<Persona> personaDAO = new DbPersonaDAO(dataSource);
 
         System.out.println("Añadiendo personas...");
-        addPersonas(personaDAO);
+        addSamplePersonas(personaDAO);
 
         //personaDAO.add(generateSamplePersonas());
 
@@ -52,6 +55,7 @@ public class DbPersonasDAODemo {
 
         printMujeresIngresosSuperior1500(personaDAO);
 
+        System.out.println("Recuperando personas con sueldo superior a 2000 euros por sexo...");
         getPersonasSueldoSuperior2000GroupBySexo(personaDAO);
 
         //System.out.println("Recuperando todas las personas...");
@@ -69,7 +73,7 @@ public class DbPersonasDAODemo {
 
         incrementarIngresos(personaDAO);
 
-        obtenerNacidosAntes2000(personaDAO);
+        printNacidosAntes2000(personaDAO);
 
         printPersonas(personaDAO.getAll());
 
@@ -83,36 +87,18 @@ public class DbPersonasDAODemo {
         System.out.println("Fin de la demo");
     }
 
-    private static void getPersonasSueldoSuperior2000GroupBySexo(DAO<Persona> personaDAO) {
-        var map = personaDAO.getAll()
-                .collect(Collectors.groupingBy(
-                        Persona::getSexo,
-                        Collectors.filtering(
-                                p-> p.getIngresos() > 2000,
-                                Collectors.toList())));
-
-        map.forEach((sexo, personas) -> {
-            System.out.println(sexo);
-            printPersonasHeader();
-            personas.stream()
-                    //.filter(persona -> persona.getIngresos() > 2000)
-                    .forEach(DbPersonasDAODemo::printPersonaRow);
-        });
-    }
-
-
     static DataSource createDataSource() throws Exception {
         Properties properties = new Properties();
-        properties.setProperty("url", "jdbc:hsqldb:C:/BBDDs/hsqldb/personas12"); //create=true"); // ;shutdown=true");
+        properties.setProperty("url", URL); //create=true"); // ;shutdown=true");
         properties.setProperty("user", "SA");
         properties.setProperty("password", "");
-        properties.setProperty("shutdown", "true");
+        properties.setProperty("shutdown", "true"); //No parece hacerle caso
 
-        // No tiene Connection Pool !!!!
+        // Este DataSourceFactory no tiene Connection Pool !!!!
         return JDBCDataSourceFactory.createDataSource(properties);
     }
 
-    static void createSchema(DataSource dataSource) throws SQLException {
+    static void generateSchema(DataSource dataSource) throws SQLException {
 
         DatabaseSchema databaseSchema = new PersonasDatabaseSchema();
 
@@ -125,47 +111,6 @@ public class DbPersonasDAODemo {
         } catch (SQLException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
         }
-    }
-
-    static void addPersonas(DAO<Persona> personaDAO) {
-        Personas.generateSamplePersonas()
-                .stream()
-                .peek(persona -> System.out.println("Añadiendo a " + persona.getNombre() + " " + persona.getApellidos()))
-                .forEach(personaDAO::add);
-    }
-
-    static void printPersonaRow(Persona persona) {
-        System.out.printf("%2s %-20s %-30s %4s %-10s %9s\n",
-                persona.getPersonaId(),
-                persona.getNombre(),
-                persona.getApellidos(),
-                persona.getSexo().getInicial(),
-                persona.getNacimiento().toString(),
-                NumberFormat.getNumberInstance().format(persona.getIngresos()));
-    }
-
-    static void printPersonasHeader() {
-        System.out.printf("%-2s %-20s %-30s %-4s %-10s %9s\n", "ID", "NOMBRE", "APELLIDOS", "SEXO", "NACIMIENTO", "INGRESOS");
-        System.out.println("--------------------------------------------------------------------------------");
-    }
-
-
-    static void printPersonas(DAO<Persona> personaDAO) {
-        printPersonasHeader();
-        personaDAO.getAll().forEach(DbPersonasDAODemo::printPersonaRow);
-        System.out.println();
-    }
-
-    static void printPersonas(List<Persona> personas) {
-        printPersonasHeader();
-        personas.forEach(DbPersonasDAODemo::printPersonaRow);
-        System.out.println();
-    }
-
-    static void printPersonas(Stream<Persona> personas) {
-        printPersonasHeader();
-        personas.forEach(DbPersonasDAODemo::printPersonaRow);
-        System.out.println();
     }
 
     static void cleanUp(DataSource dataSource) throws SQLException {
@@ -187,11 +132,77 @@ public class DbPersonasDAODemo {
         try (Connection connection = dataSource.getConnection();
              Statement stmt = connection.createStatement()) {
 
-            //System.out.println(databaseSchema.getDropSchema());
             stmt.execute("SHUTDOWN");
+
         } catch (SQLException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
         }
+    }
+
+    //************** PRINT PERSONA ****************************************
+
+    static void printPersonaRow(Persona persona) {
+        System.out.printf("%2s %-20s %-30s %4s %-10s %9s\n",
+                persona.getPersonaId(),
+                persona.getNombre(),
+                persona.getApellidos(),
+                persona.getSexo().getInicial(),
+                persona.getNacimiento().toString(),
+                NumberFormat.getNumberInstance().format(persona.getIngresos()));
+    }
+
+    static void printPersonasHeader() {
+        System.out.printf("%-2s %-20s %-30s %-4s %-10s %9s\n", "ID", "NOMBRE", "APELLIDOS", "SEXO", "NACIMIENTO", "INGRESOS");
+        System.out.println("--------------------------------------------------------------------------------");
+    }
+
+
+    static void printPersonas(DAO<Persona> personaDAO) {
+        printPersonasHeader();
+        personaDAO.getAll().forEach(DbPersonaDAODemo::printPersonaRow);
+        System.out.println();
+    }
+
+    static void printPersonas(List<Persona> personas) {
+        printPersonasHeader();
+        personas.forEach(DbPersonaDAODemo::printPersonaRow);
+        System.out.println();
+    }
+
+    static void printPersonas(Stream<Persona> personas) {
+        printPersonasHeader();
+        personas.forEach(DbPersonaDAODemo::printPersonaRow);
+        System.out.println();
+    }
+
+
+    //*************** TESTS ***********************************************
+    static void addSamplePersonas(DAO<Persona> personaDAO) {
+        Personas.generateSamplePersonas()
+                .stream()
+                .peek(persona ->
+                        System.out.println("Añadiendo a " +
+                                           persona.getNombre() + " " +
+                                           persona.getApellidos() + "..."))
+                .forEach(personaDAO::add);
+    }
+
+
+    private static void getPersonasSueldoSuperior2000GroupBySexo(DAO<Persona> personaDAO) {
+        var map = personaDAO.getAll()
+                .collect(Collectors.groupingBy(
+                        Persona::getSexo,
+                        Collectors.filtering(
+                                p-> p.getIngresos() > 2000,
+                                Collectors.toList())));
+
+        map.forEach((sexo, personas) -> {
+            System.out.println(sexo);
+            printPersonasHeader();
+            personas.stream()
+                    //.filter(persona -> persona.getIngresos() > 2000)
+                    .forEach(DbPersonaDAODemo::printPersonaRow);
+        });
     }
 
 
@@ -243,6 +254,7 @@ public class DbPersonasDAODemo {
         System.out.println("Filtrando personas, borrando hombres...");
         personaDAO.getAll()
                 .filter(p -> p.getSexo() == Sexo.HOMBRE)
+                .peek(p -> System.out.println("Borrando a " + p.getNombre() + " " + p.getApellidos()))
                 .forEach(personaDAO::delete);
 
         printPersonas(personaDAO);
@@ -262,17 +274,20 @@ public class DbPersonasDAODemo {
         System.out.println("Incrementando ingresos...");
         personaDAO.getAll()
                 .peek(p -> p.setIngresos(p.getIngresos() * 1.05f))
+                .peek(p-> System.out.println("Incrementando ingresos de " +
+                                             p.getNombre() + " " + p.getApellidos() +
+                                             "a " + p.getIngresos() + "€"))
                 .forEach(personaDAO::update);
 
         printPersonas(personaDAO);
     }
 
-    private static void obtenerNacidosAntes2000(DAO<Persona> personaDAO) {
-        System.out.println("Obteniendo nacidas antes del 2000...");
+    private static void printNacidosAntes2000(DAO<Persona> personaDAO) {
+        System.out.println("Obteniendo personas nacidas antes del 2000...");
         printPersonasHeader();
         personaDAO.getAll()
                 .filter(p -> p.getNacimiento().getYear() < 2000)
-                .forEach(DbPersonasDAODemo::printPersonaRow);
+                .forEach(DbPersonaDAODemo::printPersonaRow);
         System.out.println();
     }
 }

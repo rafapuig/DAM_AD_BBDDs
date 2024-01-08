@@ -19,6 +19,7 @@ public abstract class DbDAO2<T> implements DAO<T> {
 
     public DbDAO2(DataSource dataSource) {
         this.dataSource = dataSource;
+        currentConnection = getNewConnection();
     }
 
     private Connection getNewConnection() {
@@ -29,10 +30,9 @@ public abstract class DbDAO2<T> implements DAO<T> {
         }
     }
 
-    private Connection getConnection() {
-        //return currentConnection;
-        return getNewConnection();
-    }
+    protected Connection getConnection() {
+        return currentConnection;
+        /*return getNewConnection();*/    }
 
     Connection currentConnection;
 
@@ -59,17 +59,18 @@ public abstract class DbDAO2<T> implements DAO<T> {
     @Override
     public Optional<T> getById(int id) {
 
-        try (Connection connection = getConnection()) {
+        //try (Connection connection = getConnection()) {
 
             return JDBCQuery.query(
-                    connection,
+                    getConnection(),
+                    //connection,
                     getSQLSelectByID(),
                     preparedStatement -> preparedStatement.setInt(1, id),
                     getDTOMapper()).findFirst();
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        //} catch (SQLException e) {
+        //    throw new RuntimeException(e.getMessage(), e);
+        //}
     }
 
 
@@ -143,5 +144,11 @@ public abstract class DbDAO2<T> implements DAO<T> {
                 null,
                 Long.class).longValue();
 
+    }
+
+    @Override
+    public void close() throws Exception {
+        System.out.println("Cerrando el DbDAO...");
+        JDBCUtil.close(this.currentConnection);
     }
 }
