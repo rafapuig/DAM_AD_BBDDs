@@ -9,7 +9,8 @@ import dam.ad.jdbc.query.JDBCQuery;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Objects;
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public abstract class AbstractDAOManager implements DAOManager, AutoCloseable {
@@ -17,6 +18,19 @@ public abstract class AbstractDAOManager implements DAOManager, AutoCloseable {
     protected DataSource dataSource;
     protected DatabaseSchema dbSchema;
     protected DAOFactory daoFactory;
+
+    private Map<Class<?>, Supplier<DTOMapper<?>>> dtoMappersMap;
+
+    public AbstractDAOManager() {
+        this.dtoMappersMap = getDTOMappersMap();
+    }
+
+    protected abstract Map<Class<?>, Supplier<DTOMapper<?>>> getDTOMappersMap();
+
+    @Override
+    public DAOFactory getDAOFactory() {
+        return daoFactory;
+    }
 
     public void generateSchema() {
         dbSchema.createSchema(dataSource);
@@ -43,6 +57,12 @@ public abstract class AbstractDAOManager implements DAOManager, AutoCloseable {
     }
 
     @Override
+    public final <T> DTOMapper<T> getDTOMapper(Class<T> tClass) {
+        DTOMapper<?> dtoMapper = this.dtoMappersMap.get(tClass).get();
+        return (DTOMapper<T>) dtoMapper;
+    }
+
+    @Override
     public DataSource getDataSource() {
         return this.dataSource;
     }
@@ -52,9 +72,13 @@ public abstract class AbstractDAOManager implements DAOManager, AutoCloseable {
     @Override
     public Connection getConnection() {
 
+        // Si no estamos en medio de una transacción
         if(transactionState != TransactionState.STARTED) {
-            currentConnection = getNewConnection();
+            currentConnection = getNewConnection(); //Obtenemos una nueva conexion
         }
+
+        //currentConnection.isClosed();
+
         return currentConnection;
 
         /*return Objects.requireNonNullElseGet(
@@ -77,13 +101,15 @@ public abstract class AbstractDAOManager implements DAOManager, AutoCloseable {
     @Override
     public void beginTransaction() {
         if (transactionState == TransactionState.STARTED)
-            throw new IllegalStateException("Already in a transaction");
+            throw new IllegalStateException("Already in a transaction!!!");
 
-        JDBCUtil.close(currentConnection); //Cerrar la conexion con autocommit si la hubiera
+        JDBCUtil.close(currentConnection); //Cerrar la conexión con autocommit si la hubiera
 
         System.out.println("Beginning transaction...");
         transactionState = TransactionState.STARTED;
         currentConnection = getNewConnection();
+
+        // Establecemos que la conexión no use AUTO-COMMIT
         JDBCUtil.setAutoCommit(currentConnection, false);
     }
 

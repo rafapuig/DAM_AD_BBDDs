@@ -53,7 +53,7 @@ public class DbPersonaDAO extends DbDAO<Persona> {
     }
 
     @Override
-    protected void setTransferObjectID(Persona persona, int id) {
+    protected void setDataTransferObjectID(Persona persona, int id) {
         persona.setPersonaId(id);
     }
 

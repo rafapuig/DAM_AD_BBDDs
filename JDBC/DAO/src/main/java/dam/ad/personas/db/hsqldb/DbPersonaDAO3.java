@@ -3,21 +3,19 @@ package dam.ad.personas.db.hsqldb;
 import dam.ad.dao.jdbc.DAOManager;
 import dam.ad.dao.jdbc.DbDAO3;
 import dam.ad.jdbc.query.DTOMapper;
+import dam.ad.jdbc.query.JDBCQuery;
 import dam.ad.jdbc.stream.SQLThrowingConsumer;
 import dam.ad.model.personas.Persona;
 
-import javax.sql.DataSource;
 import java.sql.PreparedStatement;
-import java.util.List;
 
 public class DbPersonaDAO3 extends DbDAO3<Persona> {
-
     DTOMapper<Persona> personaDTOMapper;
 
     public DbPersonaDAO3(DAOManager daoManager) {
         super(daoManager);
         System.out.println("Instanciando un DbPersonaDAO 3...");
-        this.personaDTOMapper = new PersonaDTOMapper();
+        this.personaDTOMapper = daoManager.getDTOMapper(Persona.class);
     }
 
     @Override
@@ -27,13 +25,21 @@ public class DbPersonaDAO3 extends DbDAO3<Persona> {
 
     @Override
     protected String getSQLSelectByID() {
-        return "SELECT * FROM persona WHERE personaId = ?";
+        return PersonaSQL.SELECT_PERSONA_BY_ID;
     }
 
     @Override
     protected SQLThrowingConsumer<PreparedStatement> getInsertParamSetter(Persona persona) {
 
-        return getParamSetterFromParamList(
+        return JDBCQuery.createParamSetterFrom(
+                persona.getNombre(),
+                persona.getApellidos(),
+                persona.getSexo().getInicial(),
+                persona.getNacimiento(),
+                persona.getIngresos()
+        );
+
+        /* return getParamSetterFromParamList(
                 List.of(
                         persona.getNombre(),
                         persona.getApellidos(),
@@ -41,7 +47,7 @@ public class DbPersonaDAO3 extends DbDAO3<Persona> {
                         persona.getNacimiento(),
                         persona.getIngresos()
                 )
-        );
+        );*/
 
         /*return statement -> {
             /*statement.setString(1, persona.getNombre());
@@ -62,7 +68,7 @@ public class DbPersonaDAO3 extends DbDAO3<Persona> {
 
     @Override
     protected String getSQLInsert() {
-        return "INSERT INTO persona VALUES (DEFAULT,?,?,?,?,?)";
+        return PersonaSQL.INSERT_PERSONA;
     }
 
     @Override
@@ -79,7 +85,7 @@ public class DbPersonaDAO3 extends DbDAO3<Persona> {
 
     @Override
     protected String getSQLUpdate() {
-        return "UPDATE persona SET nombre = ?, apellidos = ?, sexo=?, NACIMIENTO=?, INGRESOS=? WHERE personaId = ?";
+        return PersonaSQL.UPDATE_PERSONA;
     }
 
     @Override
@@ -89,17 +95,17 @@ public class DbPersonaDAO3 extends DbDAO3<Persona> {
 
     @Override
     protected String getSQLDelete() {
-        return "DELETE FROM persona WHERE personaId = ?";
+        return PersonaSQL.DELETE_PERSONA;
     }
 
     @Override
     protected String getSQLSelectAll() {
-        return "SELECT * FROM persona";
+        return PersonaSQL.SELECT_ALL_PERSONAS;
     }
 
     @Override
     protected String getSQLCount() {
-        return "SELECT COUNT(*) FROM persona";
+        return PersonaSQL.SELECT_COUNT_ALL_PERSONAS;
     }
 
 }

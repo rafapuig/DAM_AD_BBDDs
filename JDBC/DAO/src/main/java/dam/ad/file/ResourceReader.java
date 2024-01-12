@@ -15,7 +15,7 @@ public class ResourceReader {
 
             return br.lines()
                     .map(String::trim)
-                    .collect(Collectors.joining("\n"));
+                    .collect(Collectors.joining(System.lineSeparator()));
 
         } catch (IOException e) {
             throw new RuntimeException(e);

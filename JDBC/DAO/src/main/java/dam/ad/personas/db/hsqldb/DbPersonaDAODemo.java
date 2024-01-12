@@ -30,12 +30,15 @@ public class DbPersonaDAODemo {
      * Por eso, cada vez que se ejecuta un comando con su propia conexión además se está iniciando
      * y después cerrando el propio motor de la base de datos
      */
-    static final String URL = "jdbc:hsqldb:C:/BBDDs/hsqldb/personas12;shutdown=true";
+    static final String URL = "jdbc:hsqldb:C:/BBDDs/hsqldb/personas10;shutdown=true";
 
     public static void main(String[] args) throws Exception {
 
         System.out.println("Creando el DataSource...");
         DataSource dataSource = createDataSource();
+
+        System.out.println("Borrando datos...");
+        cleanUp(dataSource);
 
         System.out.println("Creando el esquema de la base de datos...");
         generateSchema(dataSource);
@@ -43,29 +46,27 @@ public class DbPersonaDAODemo {
         System.out.println("Creando el DAO de personas....");
         DAO<Persona> personaDAO = new DbPersonaDAO(dataSource); //, false);
 
-        //DAO<Persona> personaDAO = new DbPersonaDAO(dataSource);
-
         System.out.println("Añadiendo personas...");
         addSamplePersonas(personaDAO);
-
-        //personaDAO.add(generateSamplePersonas());
 
         System.out.println("Recuperando todas las personas...");
         printPersonas(personaDAO);
 
+        System.out.println("Recuperando todas las personas...");
+        personaDAO.getAll().forEach(System.out::println);
+
         printMujeresIngresosSuperior1500(personaDAO);
 
         System.out.println("Recuperando personas con sueldo superior a 2000 euros por sexo...");
-        getPersonasSueldoSuperior2000GroupBySexo(personaDAO);
+        printPersonasSueldoSuperior2000GroupBySexo(personaDAO);
 
-        //System.out.println("Recuperando todas las personas...");
-        //personaDAO.getAll().forEach(System.out::println);
-
-        getPersonaByIDTest(personaDAO);
+        printPersonaByIDTest(personaDAO);
 
         Persona persona = addNewPersona(personaDAO);
 
         updatePersona(personaDAO, persona);
+
+        printNacidosAntes2000(personaDAO);
 
         borrarHombres(personaDAO);
 
@@ -73,13 +74,7 @@ public class DbPersonaDAODemo {
 
         incrementarIngresos(personaDAO);
 
-        printNacidosAntes2000(personaDAO);
-
         printPersonas(personaDAO.getAll());
-
-
-        System.out.println("Borrando datos...");
-        cleanUp(dataSource);
 
         System.out.println("Cerrando la base de datos...");
         shutdown(dataSource);   //Muy importante en HSQLDB
@@ -98,41 +93,43 @@ public class DbPersonaDAODemo {
         return JDBCDataSourceFactory.createDataSource(properties);
     }
 
-    static void generateSchema(DataSource dataSource) throws SQLException {
+    static void generateSchema(DataSource dataSource) {
 
         DatabaseSchema databaseSchema = new PersonasDatabaseSchema();
 
         try (Connection connection = dataSource.getConnection();
              Statement stmt = connection.createStatement()) {
 
-            //System.out.println(databaseSchema.getCreateSchema());
             stmt.execute(databaseSchema.getCreateSchema());
+
             System.out.println("Base de datos generada.");
         } catch (SQLException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
         }
     }
 
-    static void cleanUp(DataSource dataSource) throws SQLException {
+    static void cleanUp(DataSource dataSource) {
 
         DatabaseSchema databaseSchema = new PersonasDatabaseSchema();
 
         try (Connection connection = dataSource.getConnection();
              Statement stmt = connection.createStatement()) {
 
-            //System.out.println(databaseSchema.getDropSchema());
             stmt.execute(databaseSchema.getDropSchema());
+            System.out.println("Base de datos eliminada.");
+
         } catch (SQLException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
         }
     }
 
-    static void shutdown(DataSource dataSource) throws SQLException {
+    static void shutdown(DataSource dataSource) {
 
         try (Connection connection = dataSource.getConnection();
              Statement stmt = connection.createStatement()) {
 
             stmt.execute("SHUTDOWN");
+            System.out.println("Motor de la base de datos apagado.");
 
         } catch (SQLException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
@@ -188,7 +185,7 @@ public class DbPersonaDAODemo {
     }
 
 
-    private static void getPersonasSueldoSuperior2000GroupBySexo(DAO<Persona> personaDAO) {
+    private static void printPersonasSueldoSuperior2000GroupBySexo(DAO<Persona> personaDAO) {
         var map = personaDAO.getAll()
                 .collect(Collectors.groupingBy(
                         Persona::getSexo,
@@ -200,7 +197,7 @@ public class DbPersonaDAODemo {
             System.out.println(sexo);
             printPersonasHeader();
             personas.stream()
-                    //.filter(persona -> persona.getIngresos() > 2000)
+                    //.filter(persona -> persona.getIngresos() > 2000) ya no es necesario aquí
                     .forEach(DbPersonaDAODemo::printPersonaRow);
         });
     }
@@ -217,17 +214,21 @@ public class DbPersonaDAODemo {
         printPersonas(getMujeresIngresosSuperior1500(personaDAO));
     }
 
-    private static void getPersonaByIDTest(DAO<Persona> personaDAO) {
+    private static void printPersonaByIDTest(DAO<Persona> personaDAO) {
         System.out.println("Recuperado persona con ID 11");
         Optional<Persona> personaById = personaDAO.getById(11);
 
-        personaById.ifPresent(System.out::println);
+        personaById.ifPresentOrElse(
+                System.out::println,
+                () -> System.out.println("No existe una persona con ese ID")
+        );
     }
 
     private static Persona addNewPersona(DAO<Persona> personaDAO) {
 
         Persona persona = new Persona(0, "Perico", "Palotes",
                 Sexo.HOMBRE, LocalDate.parse("1977-02-10"), 2300.0f);
+
         System.out.println("Añadiendo persona " + persona.getNombre());
 
         personaDAO.add(persona);
@@ -244,7 +245,9 @@ public class DbPersonaDAODemo {
         persona.setSexo(Sexo.MUJER);
         persona.setIngresos(2600.0f);
 
-        System.out.println("Actualizando persona " + persona.getNombre());
+        System.out.println("Actualizando persona " +
+                           persona.getNombre() + " " + persona.getApellidos() + "...");
+
         personaDAO.update(persona);
 
         printPersonas(personaDAO);
@@ -254,9 +257,11 @@ public class DbPersonaDAODemo {
         System.out.println("Filtrando personas, borrando hombres...");
         personaDAO.getAll()
                 .filter(p -> p.getSexo() == Sexo.HOMBRE)
-                .peek(p -> System.out.println("Borrando a " + p.getNombre() + " " + p.getApellidos()))
+                .peek(p -> System.out.println("Borrando a " +
+                                              p.getNombre() + " " + p.getApellidos() + "..."))
                 .forEach(personaDAO::delete);
 
+        System.out.println("Resultado del borrado todos los hombres:");
         printPersonas(personaDAO);
     }
 
@@ -267,6 +272,7 @@ public class DbPersonaDAODemo {
         personaDAO.getById(7).ifPresent(personaDAO::delete);
         personaDAO.getById(10).ifPresent(personaDAO::delete);
 
+        System.out.println("Resultado del borrado:");
         printPersonas(personaDAO);
     }
 
@@ -284,10 +290,12 @@ public class DbPersonaDAODemo {
 
     private static void printNacidosAntes2000(DAO<Persona> personaDAO) {
         System.out.println("Obteniendo personas nacidas antes del 2000...");
+
         printPersonasHeader();
         personaDAO.getAll()
                 .filter(p -> p.getNacimiento().getYear() < 2000)
                 .forEach(DbPersonaDAODemo::printPersonaRow);
+
         System.out.println();
     }
 }

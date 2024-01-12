@@ -37,13 +37,13 @@ public class DbPersonaDAODemo2 {
         System.out.println("Recuperando todas las personas...");
         printPersonas(personaDAO);
 
-        getPersonaByIDTest(personaDAO);
+        printPersonaByIDTest(personaDAO);
 
         Persona persona = addNewPersona(personaDAO);
 
         updatePersona(personaDAO, persona);
 
-        obtenerNacidosAntes2000(personaDAO);
+        printNacidosAntes2000(personaDAO);
 
         borrarHombres(personaDAO);
 
@@ -58,18 +58,41 @@ public class DbPersonaDAODemo2 {
 
     }
 
+    /**
+     * En esta segunda versión de la demo el método createDataSource delega
+     * en la clase DataSourceFactory, que consta de un método factoría
+     * que crea una instancia de DataSource a partir de una URL
+     */
     static DataSource createDataSource() throws Exception {
-        return PersonasDataSourceFactory.createDataSource(URL);
+        return DataSourceFactory.createDataSource(URL);
     }
 
+    /**
+     * En esta segunda versión de la demo, el método generateSchema delega
+     * en el método createSchema de la interface DatabaseSchema, el cual necesita
+     * como argumento un DataSource para poder establecer la conexión con la BD
+     * y enviarle el comando SQL DDL CREATE TABLE que crea la tabla
+     */
     static void generateSchema(DataSource dataSource, DatabaseSchema dbSchema) {
         dbSchema.createSchema(dataSource);
     }
 
+    /**
+     * En esta segunda versión de la demo, el método cleanUP delega
+     * en el método dropSchema de la interface DatabaseSchema, el cual necesita
+     * como argumento un DataSource para poder establecer la conexión con la BD
+     * y enviarle el comando SQL DDL DROP TABLE que elimina la tabla de la BD
+     */
     static void cleanUp(DataSource dataSource, DatabaseSchema dbSchema) {
         dbSchema.dropSchema(dataSource);
     }
 
+    /**
+     * En esta segunda versión de la demo, el método shutdown delega
+     * en el método estático execute de la interface DatabaseSchema, el cual necesita
+     * como argumento un DataSource para poder establecer la conexión con la BD
+     * y enviarle el comando SHUTDOWN
+     */
     static void shutdown(DataSource dataSource) {
         DatabaseSchema.execute(dataSource, "SHUTDOWN");
     }
@@ -106,7 +129,7 @@ public class DbPersonaDAODemo2 {
     }
 
 
-    private static void getPersonaByIDTest(DAO<Persona> personaDAO) {
+    private static void printPersonaByIDTest(DAO<Persona> personaDAO) {
         System.out.println("Recuperado persona con ID 11...");
 
         Optional<Persona> personaById = personaDAO.getById(11);
@@ -176,7 +199,7 @@ public class DbPersonaDAODemo2 {
 
 
 
-    static void obtenerNacidosAntes2000(DAO<Persona> personaDAO) {
+    static void printNacidosAntes2000(DAO<Persona> personaDAO) {
         System.out.println("Obteniendo nacidas antes del 2000...");
         printPersonasHeader();
         personaDAO.getAll()

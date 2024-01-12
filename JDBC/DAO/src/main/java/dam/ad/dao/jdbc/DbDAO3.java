@@ -4,7 +4,6 @@ import dam.ad.dao.DAO;
 import dam.ad.jdbc.query.DTOMapper;
 import dam.ad.jdbc.query.JDBCQuery;
 import dam.ad.jdbc.stream.SQLThrowingConsumer;
-import dam.ad.stream.Try;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 
@@ -20,8 +18,6 @@ import java.util.stream.Stream;
  * DbDao3 está pensada para funcionar en cooperación con un DAOManager
  * El DAOManager se encarga de gestionar las conexiones y transacciones
  * Por tanto, el DbDAO3 no administra ningún recurso y no necesita ser Autocloseable
- *
- * @param <T>
  */
 public abstract class DbDAO3<T> implements DAO<T> {
     DAOManager daoManager;
@@ -32,8 +28,6 @@ public abstract class DbDAO3<T> implements DAO<T> {
 
     /**
      * Devuelve la conexión que es a su vez obtenida a través del DAOManager
-     *
-     * @return
      */
     protected Connection getConnection() {
         return daoManager.getConnection();

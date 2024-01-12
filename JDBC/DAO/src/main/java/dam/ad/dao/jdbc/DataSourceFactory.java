@@ -17,7 +17,7 @@ public class DataSourceFactory {
             System.out.println("Registering data source...");
             //registerDataSource();
             //registerDerbyDataSource();
-            //registerHSQLDBDataSource();
+            registerHSQLDBDataSource();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

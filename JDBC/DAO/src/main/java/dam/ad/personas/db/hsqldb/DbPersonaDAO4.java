@@ -1,7 +1,5 @@
 package dam.ad.personas.db.hsqldb;
 
-import dam.ad.dao.jdbc.DAOManager;
-import dam.ad.dao.jdbc.DbDAO3;
 import dam.ad.dao.jdbc.DbDAO4;
 import dam.ad.jdbc.query.DTOMapper;
 import dam.ad.jdbc.stream.SQLThrowingConsumer;

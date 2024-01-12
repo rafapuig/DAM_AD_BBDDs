@@ -2,19 +2,23 @@ package dam.ad.dao.jdbc;
 
 import dam.ad.dao.DAO;
 import dam.ad.jdbc.stream.generation.Generators;
-import dam.ad.jdbc.stream.generation.LazyStreamGenerator;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public abstract class DbDAO<T> implements DAO<T> {
 
     protected final DataSource dataSource;
 
+    Supplier<Connection> connectionSupplier;
+
     public DbDAO(DataSource dataSource) {
         this.dataSource = dataSource;
+        //connectionSupplier = this::getConnection();
+
     }
 
     private Connection getConnection() throws SQLException {
@@ -52,7 +56,7 @@ public abstract class DbDAO<T> implements DAO<T> {
 
     protected abstract void setAddStatementParams(PreparedStatement stmt, T t) throws SQLException;
 
-    protected abstract void setTransferObjectID(T t, int id);
+    protected abstract void setDataTransferObjectID(T t, int id);
 
     protected String SQL_INSERT;
 
@@ -69,7 +73,7 @@ public abstract class DbDAO<T> implements DAO<T> {
             if (stmt.executeUpdate() != 0) {
                 ResultSet generatedKeys = stmt.getGeneratedKeys();
                 generatedKeys.next();
-                setTransferObjectID(t, generatedKeys.getInt(1));
+                setDataTransferObjectID(t, generatedKeys.getInt(1));
                 generatedKeys.close();
             }
             return true;

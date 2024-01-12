@@ -36,7 +36,7 @@ public class DbEquipoDAO extends DbDAO<Equipo> {
     }
 
     @Override
-    protected void setTransferObjectID(Equipo equipo, int id) {
+    protected void setDataTransferObjectID(Equipo equipo, int id) {
         equipo.setEquipoId(id);
     }
 

@@ -29,30 +29,39 @@ public class DbPersonaDAO2 extends DbDAO2<Persona> {
     }
 
     @Override
-    protected SQLThrowingConsumer<PreparedStatement> getInsertParamSetter(Persona persona) {
-        return statement -> {
-            /*statement.setString(1, persona.getNombre());
-            statement.setString(2, persona.getApellidos());
-            statement.setString(3, persona.getSexo().getInicial());
-            statement.setObject(4, persona.getNacimiento(), Types.DATE);
-            statement.setDouble(5, persona.getIngresos());*/
-
-            statement.setObject(1,persona.getNombre());
-            statement.setObject(2, persona.getApellidos());
-            statement.setObject(3, persona.getSexo().getInicial());
-            statement.setObject(4,persona.getNacimiento());
-            statement.setObject(5, persona.getIngresos());
-        };
+    protected String getSQLInsert() {
+        return "INSERT INTO persona VALUES (DEFAULT, ?, ?, ?, ?, ?)";
     }
 
     @Override
-    protected String getSQLInsert() {
-        return "INSERT INTO persona VALUES (DEFAULT,?,?,?,?,?)";
+    protected SQLThrowingConsumer<PreparedStatement> getInsertParamSetter(Persona persona) {
+        return statement -> {
+            statement.setString(1, persona.getNombre());
+            statement.setString(2, persona.getApellidos());
+            statement.setString(3, persona.getSexo().getInicial());
+            statement.setObject(4, persona.getNacimiento(), Types.DATE);
+            statement.setDouble(5, persona.getIngresos());
+
+            /*statement.setObject(1,persona.getNombre());
+            statement.setObject(2, persona.getApellidos());
+            statement.setObject(3, persona.getSexo().getInicial());
+            statement.setObject(4,persona.getNacimiento());
+            statement.setObject(5, persona.getIngresos());*/
+        };
     }
+
 
     @Override
     protected void setDataTransferObjectID(Persona persona, int id) {
         persona.setPersonaId(id);
+    }
+
+    @Override
+    protected String getSQLUpdate() {
+        return """
+                  UPDATE persona
+                  SET nombre = ?, apellidos = ?, sexo=?, NACIMIENTO=?, INGRESOS=?
+                  WHERE personaId = ?""";
     }
 
     @Override
@@ -62,9 +71,10 @@ public class DbPersonaDAO2 extends DbDAO2<Persona> {
                         preparedStatement.setInt(6, persona.getPersonaId()));
     }
 
+
     @Override
-    protected String getSQLUpdate() {
-        return "UPDATE persona SET nombre = ?, apellidos = ?, sexo=?, NACIMIENTO=?, INGRESOS=? WHERE personaId = ?";
+    protected String getSQLDelete() {
+        return "DELETE FROM persona WHERE personaId = ?";
     }
 
     @Override
@@ -72,10 +82,6 @@ public class DbPersonaDAO2 extends DbDAO2<Persona> {
         return preparedStatement -> preparedStatement.setInt(1, persona.getPersonaId());
     }
 
-    @Override
-    protected String getSQLDelete() {
-        return "DELETE FROM persona WHERE personaId = ?";
-    }
 
     @Override
     protected String getSQLSelectAll() {
@@ -86,6 +92,5 @@ public class DbPersonaDAO2 extends DbDAO2<Persona> {
     protected String getSQLCount() {
         return "SELECT COUNT(*) FROM persona";
     }
-
 
 }
