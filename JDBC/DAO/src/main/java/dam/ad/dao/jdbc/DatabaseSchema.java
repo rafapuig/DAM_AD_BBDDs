@@ -3,13 +3,17 @@ package dam.ad.dao.jdbc;
 import dam.ad.jdbc.query.JDBCQuery;
 
 import javax.sql.DataSource;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -79,5 +83,23 @@ public interface DatabaseSchema {
             throw new RuntimeException(e);
         }
     }
+
+
+    //Otra forma de implementar el método
+    default String getCreateSchemaFrom2(URL url) {
+        try (InputStream input = Objects.requireNonNull(url).openStream();
+             InputStreamReader isr = new InputStreamReader(input);
+             BufferedReader br = new BufferedReader(isr)) {
+
+            return br.lines().reduce("",
+                    (text, line) -> text + line + System.lineSeparator(),
+                    String::concat);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 
 }

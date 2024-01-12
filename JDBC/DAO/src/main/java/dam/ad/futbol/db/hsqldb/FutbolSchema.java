@@ -1,12 +1,15 @@
 package dam.ad.futbol.db.hsqldb;
 
+import dam.ad.dao.jdbc.AbstractDatabaseSchema;
 import dam.ad.dao.jdbc.DatabaseSchema;
 import dam.ad.file.ResourceReader;
 
-public class FutbolSchema implements DatabaseSchema {
+import java.net.URL;
+
+public class FutbolSchema extends AbstractDatabaseSchema {
     @Override
-    public String getCreateSchema() {
-        return ResourceReader.getSQL("/futbol/DatabaseSchema.sql");
+    protected String getResourceName() {
+        return "/futbol/DatabaseSchema.sql";
     }
 
     @Override

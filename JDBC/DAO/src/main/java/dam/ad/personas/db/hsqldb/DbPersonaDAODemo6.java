@@ -11,15 +11,7 @@ public class DbPersonaDAODemo6 {
 
         PersonasDAOManager manager = new PersonasDAO4Manager(URL);
 
-        //testWithManager(manager);
-
-        Stream<String> nombres = manager
-                .query("SELECT nombre + ' ' + apellidos AS nombre_completo FROM persona",
-                        resultSet -> resultSet.getObject(1, String.class));
-
-        nombres.forEach(System.out::println);
-
-        manager.close();
+        testWithManager(manager);
 
     }
 
