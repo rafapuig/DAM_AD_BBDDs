@@ -1,4 +1,4 @@
-package dao;
+package dam.ad.personas.db.hsqldb.version1;
 
 import dam.ad.dao.DAO;
 import dam.ad.model.personas.Persona;
@@ -29,22 +29,26 @@ public class PersonaDAO implements DAO<Persona> {
                 rs.getString("nombre"),
                 rs.getString("apellidos"),
                 Sexo.fromInicial(rs.getString("sexo")),
-                (LocalDate) rs.getObject("nacimiento", LocalDate.class),
+                rs.getObject("nacimiento", LocalDate.class),
                 rs.getFloat("ingresos")
         );
     }
 
     @Override
     public Optional<Persona> getById(int id) {
+
         try (Connection connection = getConnection();
-             PreparedStatement stmt =
-                     connection.prepareStatement("SELECT * FROM persona WHERE personaId = ?")) {
+             PreparedStatement stmt = connection.prepareStatement(
+                     "SELECT * FROM persona WHERE personaId = ?")) {
+
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return Optional.of(createPersona(rs));
+
+            try(ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(createPersona(rs));
+                }
+                return Optional.empty();
             }
-            return Optional.empty();
 
         } catch (SQLException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
@@ -53,39 +57,59 @@ public class PersonaDAO implements DAO<Persona> {
 
     @Override
     public boolean add(Persona persona) {
+
         try (Connection connection = getConnection();
              PreparedStatement stmt = connection.prepareStatement(
                      "INSERT INTO persona VALUES (DEFAULT,?,?,?,?,?)")) {
+
             stmt.setString(1, persona.getNombre());
             stmt.setString(2, persona.getApellidos());
             stmt.setString(3, persona.getSexo().getInicial());
             stmt.setObject(4, persona.getNacimiento(), Types.DATE);
             stmt.setDouble(5, persona.getIngresos());
-            stmt.execute();
-            return true;
+
+            return stmt.executeUpdate() > 0;
+
         } catch (SQLException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
         }
     }
 
-    /*@Override
-    public boolean add(Collection<Persona> collection) {
-        return false;
-    }*/
 
     @Override
     public boolean update(Persona persona) {
-        return false;
+
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(
+                     """
+                             UPDATE persona 
+                             SET nombre = ?, apellidos = ?, sexo = ?, nacimiento = ?, ingresos = ?
+                             WHERE personaId = ?""")) {
+
+            stmt.setString(1, persona.getNombre());
+            stmt.setString(2, persona.getApellidos());
+            stmt.setString(3, persona.getSexo().getInicial());
+            stmt.setObject(4, persona.getNacimiento(), Types.DATE);
+            stmt.setDouble(5, persona.getIngresos());
+            stmt.setInt(6, persona.getPersonaId());
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex.getMessage(), ex);
+        }
     }
 
     @Override
     public boolean delete(Persona persona) {
-        return false;
-    }
+        try (Connection connection = getConnection();
+             PreparedStatement stmt = connection.prepareStatement(
+                     "DELETE FROM persona WHERE personaId = ?")) {
 
-    private void close(ResultSet resultSet) {
-        try {
-            resultSet.close();
+            stmt.setInt(1, persona.getPersonaId());
+
+            return stmt.executeUpdate() > 0;
+
         } catch (SQLException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
         }
@@ -96,37 +120,15 @@ public class PersonaDAO implements DAO<Persona> {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM persona")) {
 
-            ResultSet rs = stmt.executeQuery();
+            try (ResultSet rs = stmt.executeQuery()) {
 
-            Stream.Builder<Persona> builder = Stream.builder();
-            while (rs.next())
-                builder.add(createPersona(rs));
+                Stream.Builder<Persona> builder = Stream.builder();
 
-            Stream<Persona> stream = builder.build();
+                while (rs.next())
+                    builder.add(createPersona(rs));
 
-            return stream.onClose(() -> close(rs));
-
-            /*return StreamSupport.stream(new Spliterators.AbstractSpliterator<Persona>(
-                    Long.MAX_VALUE,
-                    Spliterator.ORDERED) {
-                @Override
-                public boolean tryAdvance(Consumer<? super Persona> action) {
-                    try {
-                        if (!rs.next()) return false;
-                        action.accept(createPersona(rs));
-                        return true;
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-            }, false).onClose(() -> {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            });*/
+                return builder.build();
+            }
 
         } catch (SQLException ex) {
             throw new RuntimeException(ex.getMessage(), ex);

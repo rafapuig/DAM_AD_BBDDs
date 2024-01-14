@@ -14,6 +14,6 @@ public class FutbolSchema extends AbstractDatabaseSchema {
 
     @Override
     public String getDropSchema() {
-        return "DROP TABLE jugador;DROP TABLE equipo";
+        return "DROP TABLE IF EXISTS jugador; DROP TABLE IF EXISTS equipo";
     }
 }

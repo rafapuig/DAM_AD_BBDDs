@@ -174,7 +174,7 @@ public abstract class DbDAO2<T> implements DAO<T> {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         System.out.println("Cerrando el DbDAO...");
         JDBCUtil.close(this.currentConnection);
     }

@@ -26,6 +26,7 @@
         <option value="$PROJECT_DIR$/personas-model/pom.xml" />
         <option value="$PROJECT_DIR$/ORM/entities/pom.xml" />
         <option value="$PROJECT_DIR$/ORM/demoEE2/pom.xml" />
+        <option value="$PROJECT_DIR$/entity-utils/pom.xml" />
       </list>
     </option>
     <option name="workspaceImportForciblyTurnedOn" value="true" />

@@ -6,8 +6,8 @@ import java.util.stream.Stream;
 public interface DAO<T> extends AutoCloseable {
 
     /**
-     * Recupera del origen de datos un DTO a partir de un identificador que identifica
-     * de manera unívoca a un solo elemento dentro del conjunto
+     * Recupera del origen de datos un DTO del modelo de datos a partir de un identificador
+     * que identifica de manera unívoca a un solo elemento dentro del conjunto
      * Dependiendo del valor proporcionado como ID se puede devolver un Optional vacío
      * o uno que contenga el objeto DTO identificado con la ID proporcionada
      * @param id identificador del elemento DTO dentro del conjunto (su clave)
@@ -35,5 +35,5 @@ public interface DAO<T> extends AutoCloseable {
     }
 
     @Override
-    default void close() throws Exception { }
+    default void close() { }
 }

@@ -1,7 +1,7 @@
 package dam.ad.personas.db.hsqldb;
 
 import dam.ad.dao.jdbc.DAOManager;
-import dam.ad.dao.jdbc.GenericDTOMapper;
+import dam.ad.dao.jdbc.BasicDTOMapper;
 import dam.ad.model.personas.Persona;
 import dam.ad.model.personas.PersonasPrinter;
 
@@ -80,7 +80,7 @@ public class PersonasDAOManagerTester {
     public static void testQueryGenericMapper(DAOManager manager) {
         Stream<List<Object>> list = manager.query(
                 "SELECT * FROM persona",
-                new GenericDTOMapper());
+                new BasicDTOMapper());
 
         list.forEach(System.out::println);
     }

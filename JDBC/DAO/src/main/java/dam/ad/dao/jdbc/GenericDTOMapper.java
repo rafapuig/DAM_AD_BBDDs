@@ -1,42 +1,44 @@
 package dam.ad.dao.jdbc;
 
 import dam.ad.jdbc.query.DTOMapper;
-import dam.ad.stream.Failure;
-import dam.ad.stream.Success;
-import dam.ad.stream.Try;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.Arrays;
 
-public class GenericDTOMapper implements DTOMapper<List<Object>> {
-    @Override
-    public List<Object> apply(ResultSet resultSet) throws SQLException {
+public class GenericDTOMapper<T> implements DTOMapper<T> {
+    Class<T> type;
+    Field[] fields;
 
-        return IntStream.rangeClosed(1, resultSet.getMetaData().getColumnCount())
-                .mapToObj(index -> Try.of(()-> resultSet.getObject(index)))
-                .map(objectTry -> switch (objectTry) {
-                    case Success(Object result) -> result;
-                    case Failure(Throwable throwable) -> Optional.empty();
-                })
-                .collect(Collectors.toList());
-
-        /*List<Object> list = new ArrayList<>();
-        for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++) {
-            list.add(resultSet.getObject(i+1));
+    public GenericDTOMapper(Class<T> type) {
+        this.type = type;
+        fields = type.getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
         }
-        return list;*/
     }
 
-    private static GenericDTOMapper singleton;
+    @Override
+    public T apply(ResultSet resultSet) throws SQLException {
 
-    public static GenericDTOMapper getInstance() {
-        if(singleton == null) {
-            singleton = new GenericDTOMapper();
+        Object[] values = new Object[resultSet.getMetaData().getColumnCount()];
+
+        for (int i = 0; i < resultSet.getMetaData().getColumnCount(); i++) {
+            values[i] = resultSet.getObject(i+1);
         }
-        return singleton;
+
+        try {
+            Constructor<T> constructor = type.getDeclaredConstructor(
+                    Arrays.stream(type.getDeclaredFields())
+                            .map(Field::getType).toArray(Class[]::new));
+
+            return constructor.newInstance(values);
+
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

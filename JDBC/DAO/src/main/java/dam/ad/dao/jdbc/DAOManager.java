@@ -2,16 +2,12 @@ package dam.ad.dao.jdbc;
 
 import dam.ad.dao.DAO;
 import dam.ad.dao.DAOFactory;
-import dam.ad.dao.jdbc.GenericDTOMapper;
 import dam.ad.jdbc.query.DTOMapper;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public interface DAOManager {
@@ -42,7 +38,7 @@ public interface DAOManager {
         return query(SQL, getDTOMapper(tClass), params);
     }
     default Stream<List<Object>> query(String SQL, Object... params) {
-        return query(SQL, GenericDTOMapper.getInstance(), params);
+        return query(SQL, BasicDTOMapper.getInstance(), params);
     }
 
     default <T> Optional<T> querySingleResult(String SQL, Class<T> tClass, Object... params) {

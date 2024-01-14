@@ -201,7 +201,7 @@ public abstract class DbDAOAutoCloseable<T> implements DAO<T>, AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close()  {
         System.out.println("Autoclosing DAO");
         closeConnection(connection);
     }

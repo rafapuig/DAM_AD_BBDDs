@@ -58,8 +58,9 @@ public abstract class AbstractDAOManager implements DAOManager, AutoCloseable {
 
     @Override
     public final <T> DTOMapper<T> getDTOMapper(Class<T> tClass) {
-        DTOMapper<?> dtoMapper = this.dtoMappersMap.get(tClass).get();
-        return (DTOMapper<T>) dtoMapper;
+        Supplier<DTOMapper<?>> supplier =  this.dtoMappersMap.get(tClass);
+        DTOMapper<?> dtoMapper = supplier != null ? supplier.get() : null;
+        return  dtoMapper != null ? (DTOMapper<T>) dtoMapper : new GenericDTOMapper<>(tClass);
     }
 
     @Override

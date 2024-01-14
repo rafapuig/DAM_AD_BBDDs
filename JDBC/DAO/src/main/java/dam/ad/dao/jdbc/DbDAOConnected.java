@@ -26,8 +26,12 @@ public abstract class DbDAOConnected<T> implements DAO<T>, AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
-        this.connection.close();
+    public void close()  {
+        try {
+            this.connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
     protected abstract T createDataTransferObject(ResultSet resultSet) throws SQLException;
 

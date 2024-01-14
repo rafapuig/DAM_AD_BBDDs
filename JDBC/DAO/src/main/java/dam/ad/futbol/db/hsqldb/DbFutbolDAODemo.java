@@ -408,7 +408,7 @@ public class DbFutbolDAODemo {
     }
 
 
-    static void printBoundEquiposJugadores(List<Equipo> equipos, List<Jugador> jugadores) {
+    public static void printBoundEquiposJugadores(List<Equipo> equipos, List<Jugador> jugadores) {
         System.out.println("Equipos enlazados con jugadores:");
         // Imprimir resultados
         equipos.forEach(

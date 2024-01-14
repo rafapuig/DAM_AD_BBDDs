@@ -64,7 +64,7 @@ public abstract class DbDAOUnconnected<T> extends DbDAOConnected<T> {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         closeConnection();
     }
 }

@@ -15,6 +15,7 @@
         <module name="jdbc.maven.derby-connection" />
         <module name="demoEE2" />
         <module name="ResultSets" />
+        <module name="entity-utils" />
         <module name="Pruebas" />
         <module name="data-access" />
         <module name="jdbc.maven.HSQLDB-Connection" />
