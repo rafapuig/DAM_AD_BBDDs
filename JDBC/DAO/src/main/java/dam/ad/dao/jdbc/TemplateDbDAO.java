@@ -52,6 +52,14 @@ public abstract class TemplateDbDAO<T> implements DAO<T> {
 
     protected abstract void setAddStatementParams(PreparedStatement stmt, T t) throws SQLException;
 
+    /**
+     * La clase que extiende esta clase base debe implementar este método para que asigne
+     * el valor de ID, que ha sido autogenerado al insertar el nuevo registro en la tabla
+     * de la base de datos, al atributo que es identificador entero del DTO
+     *
+     * @param t  DTO al cual se asigna el valor del ID autogenerado
+     * @param id valor de la clave primaria autogenerada por la base de datos
+     */
     protected abstract void setDataTransferObjectID(T t, int id);
 
     protected String SQL_INSERT;

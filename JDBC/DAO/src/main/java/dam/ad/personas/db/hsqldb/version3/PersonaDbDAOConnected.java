@@ -1,19 +1,21 @@
-package dam.ad.personas.db.hsqldb;
+package dam.ad.personas.db.hsqldb.version3;
 
-import dam.ad.dao.jdbc.DbDAO2;
+import dam.ad.dao.jdbc.FunctionalDbDAOConnected;
 import dam.ad.jdbc.query.DTOMapper;
 import dam.ad.jdbc.stream.SQLThrowingConsumer;
 import dam.ad.model.personas.Persona;
+import dam.ad.personas.db.hsqldb.PersonaDTOMapper;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.Types;
+import java.util.function.Consumer;
 
-public class DbPersonaDAO2 extends DbDAO2<Persona> {
+public class PersonaDbDAOConnected extends FunctionalDbDAOConnected<Persona> {
 
     DTOMapper<Persona> personaDTOMapper;
 
-    public DbPersonaDAO2(DataSource dataSource) {
+    public PersonaDbDAOConnected(DataSource dataSource) {
         super(dataSource);
         this.personaDTOMapper = new PersonaDTOMapper();
     }
@@ -51,16 +53,21 @@ public class DbPersonaDAO2 extends DbDAO2<Persona> {
     }
 
 
-    @Override
+    /*@Override
     protected void setDataTransferObjectID(Persona persona, int id) {
         persona.setPersonaId(id);
+    }*/
+
+    @Override
+    protected Consumer<Persona> getDataTransferObjectIDSetter(int id) {
+        return persona -> persona.setPersonaId(id);
     }
 
     @Override
     protected String getSQLUpdate() {
         return """
                   UPDATE persona
-                  SET nombre = ?, apellidos = ?, sexo=?, NACIMIENTO=?, INGRESOS=?
+                  SET nombre = ?, apellidos = ?, sexo = ?, nacimiento = ?, ingresos = ?
                   WHERE personaId = ?""";
     }
 

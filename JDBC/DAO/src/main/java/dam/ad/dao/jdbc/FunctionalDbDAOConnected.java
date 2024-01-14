@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
@@ -24,12 +25,12 @@ import java.util.stream.Stream;
  * del ResultSet en una instancia de tipo T. Las clases concretas que extienden esta clase
  * deben proporcionar el DTOMapper<T> concreto implementando el método abstracto getDTOMapper()
  */
-public abstract class DbDAO2<T> implements DAO<T> {
+public abstract class FunctionalDbDAOConnected<T> implements DAO<T> {
 
     protected final DataSource dataSource;
     Connection currentConnection;
 
-    public DbDAO2(DataSource dataSource) {
+    public FunctionalDbDAOConnected(DataSource dataSource) {
         this.dataSource = dataSource;
         currentConnection = getNewConnection();
     }
@@ -98,15 +99,10 @@ public abstract class DbDAO2<T> implements DAO<T> {
      */
     protected abstract String getSQLInsert();
 
-    /**
-     * La clase que extiende esta clase base debe implementar este método para que asigne
-     * el valor de ID, que ha sido autogenerado al insertar el nuevo registro en la tabla
-     * de la base de datos, al atributo que es identificador entero del DTO
-     *
-     * @param t  DTO al cual se asigna el valor del ID autogenerado
-     * @param id valor de la clave primaria autogenerada por la base de datos
-     */
-    protected abstract void setDataTransferObjectID(T t, int id);
+
+    //protected abstract void setDataTransferObjectID(T t, int id);
+
+    protected abstract Consumer<T> getDataTransferObjectIDSetter(int id);
 
     @Override
     public boolean add(T t) {
@@ -115,7 +111,8 @@ public abstract class DbDAO2<T> implements DAO<T> {
                 getSQLInsert(),
                 getInsertParamSetter(t));
         if (id >= 0) {
-            setDataTransferObjectID(t, id);
+            getDataTransferObjectIDSetter(id).accept(t);
+            //setDataTransferObjectID(t, id);
             return true;
         }
         return false;

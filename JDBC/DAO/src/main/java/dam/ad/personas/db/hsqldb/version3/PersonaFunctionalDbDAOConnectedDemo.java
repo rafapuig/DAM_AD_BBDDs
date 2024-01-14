@@ -1,17 +1,19 @@
-package dam.ad.personas.db.hsqldb;
+package dam.ad.personas.db.hsqldb.version3;
 
 import dam.ad.dao.DAO;
 import dam.ad.dao.jdbc.DatabaseSchema;
 import dam.ad.model.personas.Persona;
 import dam.ad.model.personas.Personas;
 import dam.ad.model.personas.Sexo;
+import dam.ad.personas.db.hsqldb.DataSourceFactory;
+import dam.ad.personas.db.hsqldb.PersonasDatabaseSchema;
 
 import javax.sql.DataSource;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class DbPersonaDAODemo2 {
+public class PersonaFunctionalDbDAOConnectedDemo {
 
     static final String URL = "jdbc:hsqldb:C:/BBDDs/hsqldb/personas20";
 
@@ -29,7 +31,7 @@ public class DbPersonaDAODemo2 {
         generateSchema(dataSource, schema);
 
         System.out.println("Creando el DAO de personas....");
-        DAO<Persona> personaDAO = new DbPersonaDAO2(dataSource);
+        DAO<Persona> personaDAO = new PersonaDbDAOConnected(dataSource);
 
         System.out.println("Añadiendo personas...");
         addSamplePersonas(personaDAO);
