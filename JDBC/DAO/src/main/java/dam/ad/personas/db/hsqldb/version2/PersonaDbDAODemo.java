@@ -1,4 +1,4 @@
-package dam.ad.personas.db.hsqldb;
+package dam.ad.personas.db.hsqldb.version2;
 
 import dam.ad.dao.DAO;
 import dam.ad.dao.jdbc.DatabaseSchema;
@@ -6,6 +6,7 @@ import dam.ad.dao.jdbc.DatabaseSchema;
 import dam.ad.model.personas.Persona;
 import dam.ad.model.personas.Personas;
 import dam.ad.model.personas.Sexo;
+import dam.ad.personas.db.hsqldb.PersonasDatabaseSchema;
 import org.hsqldb.jdbc.JDBCDataSourceFactory;
 
 import javax.sql.DataSource;
@@ -20,7 +21,7 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DbPersonaDAODemo {
+public class PersonaDbDAODemo {
 
     /**
      * Si añadimos la property shutdown=true y ejecutamos la demo veremos como se ralentiza
@@ -156,19 +157,19 @@ public class DbPersonaDAODemo {
 
     static void printPersonas(DAO<Persona> personaDAO) {
         printPersonasHeader();
-        personaDAO.getAll().forEach(DbPersonaDAODemo::printPersonaRow);
+        personaDAO.getAll().forEach(PersonaDbDAODemo::printPersonaRow);
         System.out.println();
     }
 
     static void printPersonas(List<Persona> personas) {
         printPersonasHeader();
-        personas.forEach(DbPersonaDAODemo::printPersonaRow);
+        personas.forEach(PersonaDbDAODemo::printPersonaRow);
         System.out.println();
     }
 
     static void printPersonas(Stream<Persona> personas) {
         printPersonasHeader();
-        personas.forEach(DbPersonaDAODemo::printPersonaRow);
+        personas.forEach(PersonaDbDAODemo::printPersonaRow);
         System.out.println();
     }
 
@@ -198,7 +199,7 @@ public class DbPersonaDAODemo {
             printPersonasHeader();
             personas.stream()
                     //.filter(persona -> persona.getIngresos() > 2000) ya no es necesario aquí
-                    .forEach(DbPersonaDAODemo::printPersonaRow);
+                    .forEach(PersonaDbDAODemo::printPersonaRow);
         });
     }
 
@@ -294,7 +295,7 @@ public class DbPersonaDAODemo {
         printPersonasHeader();
         personaDAO.getAll()
                 .filter(p -> p.getNacimiento().getYear() < 2000)
-                .forEach(DbPersonaDAODemo::printPersonaRow);
+                .forEach(PersonaDbDAODemo::printPersonaRow);
 
         System.out.println();
     }

@@ -1,4 +1,4 @@
-package dam.ad.personas.db.hsqldb;
+package dam.ad.personas.db.hsqldb.version2;
 
 import dam.ad.dao.jdbc.TemplateDbDAO;
 import dam.ad.model.personas.Persona;
