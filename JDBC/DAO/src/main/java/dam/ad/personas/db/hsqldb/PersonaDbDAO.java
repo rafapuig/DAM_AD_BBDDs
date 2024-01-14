@@ -11,23 +11,19 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDate;
 
-public class DbPersonaDAO extends TemplateDbDAO<Persona> {
+public class PersonaDbDAO extends TemplateDbDAO<Persona> {
 
-    public DbPersonaDAO(DataSource dataSource) {
+    public PersonaDbDAO(DataSource dataSource) {
         super(dataSource);
         initSQLs();
     }
-    /*public DbPersonaDAO(DataSource dataSource, boolean keepConnected) {
-        super(dataSource, keepConnected);
-        initSQLs();
-    }*/
 
     private void initSQLs() {
         SQL_SELECT_ALL = "SELECT * FROM persona";
         SQL_SELECT_BY_ID = "SELECT * FROM persona WHERE personaId = ?";
         SQL_INSERT = "INSERT INTO persona VALUES (DEFAULT,?,?,?,?,?)";
-        SQL_UPDATE = "UPDATE persona SET nombre = ?, apellidos = ?, sexo=?, NACIMIENTO=?, INGRESOS=? WHERE personaId = ?";
-        SQL_DELETE = "DELETE FROM persona WHERE PERSONAID = ?";
+        SQL_UPDATE = "UPDATE persona SET nombre = ?, apellidos = ?, sexo=?, nacimiento=?, ingresos=? WHERE personaId = ?";
+        SQL_DELETE = "DELETE FROM persona WHERE personaId = ?";
         SQL_SELECT_COUNT = "SELECT COUNT(*) FROM persona";
     }
 

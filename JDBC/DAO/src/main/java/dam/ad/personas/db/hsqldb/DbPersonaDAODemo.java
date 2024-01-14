@@ -44,7 +44,7 @@ public class DbPersonaDAODemo {
         generateSchema(dataSource);
 
         System.out.println("Creando el DAO de personas....");
-        DAO<Persona> personaDAO = new DbPersonaDAO(dataSource); //, false);
+        DAO<Persona> personaDAO = new PersonaDbDAO(dataSource); //, false);
 
         System.out.println("Añadiendo personas...");
         addSamplePersonas(personaDAO);
