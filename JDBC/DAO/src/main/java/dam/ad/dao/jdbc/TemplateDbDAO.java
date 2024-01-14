@@ -6,19 +6,14 @@ import dam.ad.jdbc.stream.generation.Generators;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public abstract class DbDAO<T> implements DAO<T> {
+public abstract class TemplateDbDAO<T> implements DAO<T> {
 
     protected final DataSource dataSource;
 
-    Supplier<Connection> connectionSupplier;
-
-    public DbDAO(DataSource dataSource) {
+    public TemplateDbDAO(DataSource dataSource) {
         this.dataSource = dataSource;
-        //connectionSupplier = this::getConnection();
-
     }
 
     private Connection getConnection() throws SQLException {
@@ -40,7 +35,8 @@ public abstract class DbDAO<T> implements DAO<T> {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return Optional.of(createDataTransferObject(rs));
+                    T t = createDataTransferObject(rs);
+                    return Optional.of(t);
                 }
             }
 
@@ -71,40 +67,16 @@ public abstract class DbDAO<T> implements DAO<T> {
             setAddStatementParams(stmt, t);
 
             if (stmt.executeUpdate() != 0) {
-                ResultSet generatedKeys = stmt.getGeneratedKeys();
-                generatedKeys.next();
-                setDataTransferObjectID(t, generatedKeys.getInt(1));
-                generatedKeys.close();
+                try(ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    generatedKeys.next();
+                    setDataTransferObjectID(t, generatedKeys.getInt(1));
+                }
             }
             return true;
         } catch (SQLException ex) {
             throw new RuntimeException(ex.getMessage(), ex);
         }
     }
-
-    /*@Override
-    public boolean add(Collection<T> collection) {
-        Connection conn = getConnection();
-        try (
-             PreparedStatement stmt =
-                     conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
-
-            for (T item : collection) {
-                setAddStatementParams(stmt, item);
-                if (stmt.executeUpdate() != 0) {
-                    ResultSet generatedKeys = stmt.getGeneratedKeys();
-                    generatedKeys.next();
-                    setTransferObjectID(item, generatedKeys.getInt(1));
-                }
-            }
-
-            return true;
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex.getMessage(), ex);
-        } finally {
-            if(!keepConnected) closeConnection(conn);
-        }
-    }*/
 
 
     //**************** UPDATE *****************************************
@@ -179,15 +151,14 @@ public abstract class DbDAO<T> implements DAO<T> {
 
         Stream.Builder<T> builder = Stream.builder();
 
-        while (rs.next())
-            builder.add(createDataTransferObject(rs));
+        while (rs.next()) {
+            T t = createDataTransferObject(rs);
+            builder.add(t);
+        }
 
         Stream<T> stream = builder.build();
 
         return stream;
-
-        // No es necesario pues el resultSet ya es recorrido
-        //return stream.onClose(() -> close(rs));
     }
 
 

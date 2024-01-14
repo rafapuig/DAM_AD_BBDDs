@@ -1,6 +1,6 @@
 package dam.ad.personas.db.hsqldb;
 
-import dam.ad.dao.jdbc.DbDAO;
+import dam.ad.dao.jdbc.TemplateDbDAO;
 import dam.ad.model.personas.Persona;
 import dam.ad.model.personas.Sexo;
 
@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDate;
 
-public class DbPersonaDAO extends DbDAO<Persona> {
+public class DbPersonaDAO extends TemplateDbDAO<Persona> {
 
     public DbPersonaDAO(DataSource dataSource) {
         super(dataSource);

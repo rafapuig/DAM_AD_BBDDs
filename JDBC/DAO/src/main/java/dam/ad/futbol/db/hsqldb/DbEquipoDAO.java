@@ -1,6 +1,6 @@
 package dam.ad.futbol.db.hsqldb;
 
-import dam.ad.dao.jdbc.DbDAO;
+import dam.ad.dao.jdbc.TemplateDbDAO;
 import dam.ad.model.futbol.Equipo;
 
 
@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DbEquipoDAO extends DbDAO<Equipo> {
+public class DbEquipoDAO extends TemplateDbDAO<Equipo> {
     public DbEquipoDAO(DataSource dataSource) {
         super(dataSource);
         SQL_INSERT = "INSERT INTO equipo VALUES (DEFAULT, ?, ?)";
