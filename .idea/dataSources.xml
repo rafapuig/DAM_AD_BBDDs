@@ -120,5 +120,16 @@
       <working-dir>$ProjectFileDir$</working-dir>
       <auto-close enable="true" timeout="3" />
     </data-source>
+    <data-source source="LOCAL" name="audiovisuales" uuid="02bf8dc7-c9a5-4108-bc32-242cce7156d5">
+      <driver-ref>hsqldb.local</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.hsqldb.jdbc.JDBCDriver</jdbc-driver>
+      <jdbc-url>jdbc:hsqldb:file:$PROJECT_DIR$/../../../../BBDDs/hsqldb/audiovisuales</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
+      </jdbc-additional-properties>
+      <working-dir>$ProjectFileDir$</working-dir>
+      <auto-close enable="true" timeout="3" />
+    </data-source>
   </component>
 </project>

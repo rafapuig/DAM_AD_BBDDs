@@ -12,4 +12,5 @@ module dam.ad.jdbc.DAO {
     exports dam.ad.file;
 
     opens dam.ad.futbol.db.hsqldb.version2;
+    exports dam.ad.dao;
 }

@@ -21,6 +21,7 @@
         <module name="jdbc.maven.HSQLDB-Connection" />
         <module name="jdbc.maven.sqlite-connection" />
         <module name="futbol-model" />
+        <module name="audiovisuales-repository" />
         <module name="jdbc.Metadatos" />
       </profile>
     </annotationProcessing>

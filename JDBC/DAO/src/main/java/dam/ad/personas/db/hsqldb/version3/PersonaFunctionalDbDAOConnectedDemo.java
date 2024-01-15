@@ -31,29 +31,30 @@ public class PersonaFunctionalDbDAOConnectedDemo {
         generateSchema(dataSource, schema);
 
         System.out.println("Creando el DAO de personas....");
-        DAO<Persona> personaDAO = new PersonaDbDAOConnected(dataSource);
+        try(DAO<Persona> personaDAO = new PersonaDbDAOConnected(dataSource)) {
 
-        System.out.println("Añadiendo personas...");
-        addSamplePersonas(personaDAO);
+            System.out.println("Añadiendo personas...");
+            addSamplePersonas(personaDAO);
 
-        System.out.println("Recuperando todas las personas...");
-        printPersonas(personaDAO);
+            System.out.println("Recuperando todas las personas...");
+            printPersonas(personaDAO);
 
-        printPersonaByIDTest(personaDAO);
+            printPersonaByIDTest(personaDAO);
 
-        Persona persona = addNewPersona(personaDAO);
+            Persona persona = addNewPersona(personaDAO);
 
-        updatePersona(personaDAO, persona);
+            updatePersona(personaDAO, persona);
 
-        printNacidosAntes2000(personaDAO);
+            printNacidosAntes2000(personaDAO);
 
-        borrarHombres(personaDAO);
+            borrarHombres(personaDAO);
 
-        borrarPersonas(personaDAO);
+            borrarPersonas(personaDAO);
 
-        incrementarIngresos(personaDAO);
+            incrementarIngresos(personaDAO);
+        }
 
-        System.out.println("Cerrando la base de datos...");
+        System.out.println("Apagando el motor de la base de datos...");
         shutdown(dataSource);   //Muy importante en HSQLDB
 
         System.out.println("Fin de la demo");

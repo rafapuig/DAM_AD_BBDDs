@@ -11,6 +11,7 @@ public class Main {
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("ORM-entities");
         EntityManager manager = factory.createEntityManager();
 
+
         manager.getTransaction().begin();
 
         Persona persona = new Persona();

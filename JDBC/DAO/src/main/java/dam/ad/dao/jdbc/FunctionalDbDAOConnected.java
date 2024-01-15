@@ -47,7 +47,7 @@ public abstract class FunctionalDbDAOConnected<T> implements DAO<T> {
      * Proporciona la conexión que necesitan el resto de métodos sobre la cual ejecutar
      * el comando que deben enviar a la base de datos.
      */
-    protected Connection getConnection() {
+    private Connection getConnection() {
             return currentConnection;
     }
 
@@ -172,7 +172,7 @@ public abstract class FunctionalDbDAOConnected<T> implements DAO<T> {
 
     @Override
     public void close() {
-        System.out.println("Cerrando el DbDAO...");
+        System.out.println("Cerrando el FunctionalDbDAOConnected...");
         JDBCUtil.close(this.currentConnection);
     }
 }

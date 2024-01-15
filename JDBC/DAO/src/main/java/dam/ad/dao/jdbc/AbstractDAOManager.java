@@ -19,7 +19,7 @@ public abstract class AbstractDAOManager implements DAOManager, AutoCloseable {
     protected DatabaseSchema dbSchema;
     protected DAOFactory daoFactory;
 
-    private Map<Class<?>, Supplier<DTOMapper<?>>> dtoMappersMap;
+    private final Map<Class<?>, Supplier<DTOMapper<?>>> dtoMappersMap;
 
     public AbstractDAOManager() {
         this.dtoMappersMap = getDTOMappersMap();
