@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 
 public class Main {
 
-    static String URL = "jdbc:hsqldb:file:C:/BBDDs/hsqldb/audiovisuales";
+    static String URL = "jdbc:hsqldb:file:BBDDs/hsqldb/audiovisuales";
 
     public static void main(String[] args) {
 

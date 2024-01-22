@@ -131,5 +131,27 @@
       <working-dir>$ProjectFileDir$</working-dir>
       <auto-close enable="true" timeout="3" />
     </data-source>
+    <data-source source="LOCAL" name="jpa-futbol" uuid="0dd650ad-7204-4e6e-a326-f19d4886541b">
+      <driver-ref>hsqldb.local</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.hsqldb.jdbc.JDBCDriver</jdbc-driver>
+      <jdbc-url>jdbc:hsqldb:file:$PROJECT_DIR$/BBDDs/hsqldb/jpa-futbol;ifexists=true</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
+      </jdbc-additional-properties>
+      <working-dir>$ProjectFileDir$</working-dir>
+      <auto-close enable="true" timeout="3" />
+    </data-source>
+    <data-source source="LOCAL" name="JPA Persona" uuid="ed6071e6-9c2a-4d40-a7af-7c8efef7c102">
+      <driver-ref>hsqldb.local</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.hsqldb.jdbc.JDBCDriver</jdbc-driver>
+      <jdbc-url>jdbc:hsqldb:file:$PROJECT_DIR$/BBDDs/hsqldb/jpa-personas;ifexists=true</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
+      </jdbc-additional-properties>
+      <working-dir>$ProjectFileDir$</working-dir>
+      <auto-close enable="true" timeout="3" />
+    </data-source>
   </component>
 </project>

@@ -1,90 +1,46 @@
 package dam.ad.jpa.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
+@ToString
+@Getter
+@Setter
 @Entity
+@SecondaryTable(name = Direccion.DIRECCION,
+        pkJoinColumns = @PrimaryKeyJoinColumn(name = "persona_id"))
 public class Persona {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "PERSONAID")
-    private int personaid;
-    @Basic
-    @Column(name = "NOMBRE")
+    private int id;
+
     private String nombre;
-    @Basic
-    @Column(name = "APELLIDOS")
+
     private String apellidos;
-    @Basic
-    @Column(name = "SEXO")
-    private String sexo;
-    @Basic
-    @Column(name = "NACIMIENTO")
-    private Date nacimiento;
-    @Basic
-    @Column(name = "INGRESOS")
+
+    @Column(columnDefinition = "CHAR(1)")
+    private Sexo sexo;
+
+    private LocalDate nacimiento;
+
+    //@Column(scale = 2, precision = 7)
+    @Column(columnDefinition = "NUMERIC(7,2)")
     private Double ingresos;
 
-    public int getPersonaid() {
-        return personaid;
-    }
+//    @Column(precision = 7, scale = 2)
+//    private Double ingresos;
 
-    public void setPersonaid(int personaid) {
-        this.personaid = personaid;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getApellidos() {
-        return apellidos;
-    }
-
-    public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
-    }
-
-    public String getSexo() {
-        return sexo;
-    }
-
-    public void setSexo(String sexo) {
-        this.sexo = sexo;
-    }
-
-    public Date getNacimiento() {
-        return nacimiento;
-    }
-
-    public void setNacimiento(Date nacimiento) {
-        this.nacimiento = nacimiento;
-    }
-
-    public Double getIngresos() {
-        return ingresos;
-    }
-
-    public void setIngresos(Double ingresos) {
-        this.ingresos = ingresos;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Persona persona = (Persona) o;
-        return personaid == persona.personaid && Objects.equals(nombre, persona.nombre) && Objects.equals(apellidos, persona.apellidos) && Objects.equals(sexo, persona.sexo) && Objects.equals(nacimiento, persona.nacimiento) && Objects.equals(ingresos, persona.ingresos);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(personaid, nombre, apellidos, sexo, nacimiento, ingresos);
-    }
+//    static final String DIRECCION = "persona_DIRECCION";
+//    @Embedded
+//    @AttributeOverrides({
+//            @AttributeOverride(name = "via",
+//                    column = @Column(table = DIRECCION))})
+    Direccion direccion;
 }

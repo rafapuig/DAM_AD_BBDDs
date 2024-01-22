@@ -28,6 +28,13 @@
         <option value="$PROJECT_DIR$/ORM/demoEE2/pom.xml" />
         <option value="$PROJECT_DIR$/entity-utils/pom.xml" />
         <option value="$PROJECT_DIR$/audiovisuales-repository/pom.xml" />
+        <option value="$PROJECT_DIR$/ORM/relationships/pom.xml" />
+        <option value="$PROJECT_DIR$/JDBC/jdbc-DAO/pom.xml" />
+        <option value="$PROJECT_DIR$/futbol-dao/pom.xml" />
+        <option value="$PROJECT_DIR$/personas-dao/pom.xml" />
+        <option value="$PROJECT_DIR$/JDBC/DAO/jdbc-DAO/pom.xml" />
+        <option value="$PROJECT_DIR$/JDBC/DAO/personas-dao/pom.xml" />
+        <option value="$PROJECT_DIR$/JDBC/DAO/futbol-dao/pom.xml" />
       </list>
     </option>
     <option name="workspaceImportForciblyTurnedOn" value="true" />

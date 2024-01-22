@@ -9,6 +9,7 @@
       <module fileurl="file://$PROJECT_DIR$/JDBC/Connection/SQLite/SQLite.iml" filepath="$PROJECT_DIR$/JDBC/Connection/SQLite/SQLite.iml" />
       <module fileurl="file://$PROJECT_DIR$/JDBC/Connection/SQLite Connection/SQLite Connection.iml" filepath="$PROJECT_DIR$/JDBC/Connection/SQLite Connection/SQLite Connection.iml" />
       <module fileurl="file://$PROJECT_DIR$/ORM/demoEE2/demoEE2.iml" filepath="$PROJECT_DIR$/ORM/demoEE2/demoEE2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ORM/relationships/orm-relationships.iml" filepath="$PROJECT_DIR$/ORM/relationships/orm-relationships.iml" />
     </modules>
   </component>
 </project>

@@ -8,10 +8,10 @@
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:hsqldb:file:C:/BBDDs/hsqldb/personas20;shutdown=true"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:hsqldb:file:BBDDs/hsqldb/jpa-personas;shutdown=true"/>
             <property name="jakarta.persistence.jdbc.user" value="sa"/>
             <property name="jakarta.persistence.jdbc.password" value=""/>
-            <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
+            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
         </properties>
     </persistence-unit>
 </persistence>

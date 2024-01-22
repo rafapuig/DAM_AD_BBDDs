@@ -7,8 +7,12 @@
     <file url="file://$PROJECT_DIR$/JDBC/Connection/Maven-HSQLDB Connection/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/JDBC/Connection/Maven-SQLite Connection/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/JDBC/Connection/Maven-SQLite Connection/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/JDBC/DAO/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/JDBC/DAO/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/JDBC/DAO/futbol-dao/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/JDBC/DAO/futbol-dao/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/JDBC/DAO/jdbc-DAO/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/JDBC/DAO/jdbc-DAO/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/JDBC/DAO/personas-dao/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/JDBC/DAO/personas-dao/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/JDBC/Metadatos/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/JDBC/Metadatos/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/JDBC/ResultSets/src/main/java" charset="UTF-8" />
@@ -23,6 +27,8 @@
     <file url="file://$PROJECT_DIR$/ORM/demoEE2/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ORM/entities/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ORM/entities/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ORM/relationships/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ORM/relationships/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Pruebas/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Pruebas/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/audiovisuales-repository/src/main/java" charset="UTF-8" />
