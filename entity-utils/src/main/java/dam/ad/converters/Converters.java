@@ -5,6 +5,7 @@ import java.util.Map;
 
 /**
  * Será un conversor de conversores
+ * Podrá registrar conversiones por la anotacion RowConvertible
  */
 public class Converters {
     private static final Map<Class<?>, RowConverter<?>> converterMap =
@@ -18,8 +19,23 @@ public class Converters {
         converterMap.put(type, converter);
     }
 
-    public static  String convert(Object object) {
-        RowConverter rowConverter = converterMap.get(object.getClass());
+    public static <T> RowConverter<T> getConverter(T t) {
+        RowConverter<T> rowConverter = (RowConverter<T>) converterMap.get(t.getClass());
+        return rowConverter;
+    }
+
+    public static <T> String getAsRow(T t) {
+        RowConverter<T> rowConverter = getConverter(t);
+        if(rowConverter != null) {
+            return rowConverter.getAsRow(t);
+        }
+        return t.toString();
+    }
+
+
+
+    public static String convert(Object object) {
+        RowConverter rowConverter = getConverter(object);  // converterMap.get(object.getClass());
         if(rowConverter != null) {
             return rowConverter.getAsRow(object);
         }

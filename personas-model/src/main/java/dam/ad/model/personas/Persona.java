@@ -1,11 +1,18 @@
 package dam.ad.model.personas;
 
+import dam.ad.dto.annotations.RowConvertible;
+import dam.ad.dto.annotations.RowField;
+
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.StringJoiner;
 
+@RowConvertible
 public class Persona {
+    @RowField(label = "ID", columnLength = 2)
     private int personaId;
+
+    @RowField(label = "Nombre", columnLength = 20)
     private String nombre;
     private String apellidos;
     private Sexo sexo;
