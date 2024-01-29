@@ -12,7 +12,7 @@ import dam.ad.model.futbol.Equipo;
 import dam.ad.presenter.futbol.EquipoPrinter;
 import dam.ad.model.futbol.Jugador;
 import dam.ad.presenter.futbol.JugadorPrinter;
-import dam.ad.printers.GenericEntityPrinter;
+import dam.ad.printers.GenericDTOPrinter;
 
 import java.util.List;
 import java.util.Optional;
@@ -118,7 +118,7 @@ public class DbFutbolDAODemo2 {
                         FROM jugador ORDER BY edad DESC""",
                 JugadorNombreEdad.class);
 
-        GenericEntityPrinter.print(query.toList(), 20, 4);
+        GenericDTOPrinter.print(query.toList(), 20, 4);
     }
 
     private static void testGenericDTOMapper2(FutbolDAOManager manager) {
@@ -134,7 +134,7 @@ public class DbFutbolDAODemo2 {
 
         System.out.println(equipoNumJugadoresList);
 
-        GenericEntityPrinter.print(equipoNumJugadoresList, 2, 30, 4, 9);
+        GenericDTOPrinter.print(equipoNumJugadoresList, 2, 30, 4, 9);
     }
 
     public record JugadorNombreEdad(String nombre, int edad) {

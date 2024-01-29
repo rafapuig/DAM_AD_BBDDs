@@ -1,5 +1,7 @@
 package dam.ad.jpa.entities;
 
+import dam.ad.dto.annotations.RowConvertible;
+import dam.ad.dto.annotations.RowField;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,12 +14,16 @@ import java.util.StringJoiner;
 @ToString
 @Entity
 public class Entrenador {
+
+    @RowField(columnLength = 4, label = "ID")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @RowField(columnLength = 30, label = "NOMBRE")
     private String nombre;
 
+    @RowField(columnLength = 20, label = "PAIS", expression = "nombre")
     @ManyToOne
     @JoinColumn(name = "pais_iso3", nullable = false)
     private Pais pais;

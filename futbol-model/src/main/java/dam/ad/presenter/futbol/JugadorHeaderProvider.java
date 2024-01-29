@@ -1,10 +1,10 @@
 package dam.ad.presenter.futbol;
 
-import dam.ad.printers.EntityHeaderProvider;
+import dam.ad.headers.HeaderProvider;
 
 import static dam.ad.presenter.futbol.JugadorRowConverter.*;
 
-public class JugadorHeaderProvider implements EntityHeaderProvider {
+public class JugadorHeaderProvider implements HeaderProvider {
     private static final String HEADER_FORMAT =
             "%" + COLUMN_ID_LENGTH + "s " +
             "%-" + COLUMN_NOMBRE_LENGTH + "s " +

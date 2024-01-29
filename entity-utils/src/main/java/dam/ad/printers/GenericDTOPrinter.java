@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class GenericEntityPrinter {
+public class GenericDTOPrinter {
 
     public static <T> void print(List<T> list, int... lengths) {
         if (list.isEmpty()) return;

@@ -1,18 +1,24 @@
 package dam.ad.jpa;
 
+import dam.ad.consumers.DtoPrinter;
 import dam.ad.converters.Converters;
 import dam.ad.converters.DefaultDTORowConverter;
 import dam.ad.converters.ObjectArrayRowConverter;
+import dam.ad.headers.DefaultDTOHeaderProvider;
+import dam.ad.headers.GenericHeaderProvider;
+import dam.ad.headers.HeaderColumn;
 import dam.ad.jpa.dto.EquipoNumJugadoresDTO;
+import dam.ad.jpa.dto.JugadorNacionalidadDTO;
 import dam.ad.jpa.entities.*;
-import dam.ad.printers.DefaultDTOHeaderProvider;
-import dam.ad.printers.DefaultDTOPrinter;
-import dam.ad.printers.GenericEntityPrinter;
+import dam.ad.printers.*;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FutbolDemo {
 
@@ -27,7 +33,7 @@ public class FutbolDemo {
 
         // -------- Consultas con resultado entidad
 
-        //queryAllEntitiesEntrenador(manager);
+        queryAllEntitiesEntrenador(manager);
 
         //querySimpleAttributeFromEntityEntrenador(manager);
 
@@ -35,20 +41,23 @@ public class FutbolDemo {
 
         //queryCollectionSimpleAttribute(manager);
 
+        //query1(manager);
+
         // ---------- Consultas con filtro WHERE
 
-        //queryWhereExpresion(manager);
+        //queryWhereExpression(manager);
+
         //queryWhereExpresion2(manager);
 
         //queryFilterWhereAndSubquery(manager);
 
-        // query1(manager);
 
         //-------- Consultas de proyección (devuelven DTOs, Object[], o Tuple)
 
         //queryProjectionObjectArray(manager);
 
         //queryProjectionTuple(manager);
+
 
         // ----------------- Join
 
@@ -60,14 +69,14 @@ public class FutbolDemo {
 
         //queryJoinProjection2(manager);
 
-        //queryJoinProjectionFilter(manager);
+        queryJoinProjection3(manager);
 
+        //queryJoinProjectionFilter(manager);
 
 
         //-------- Agregados
 
         //queryAggregate(manager);
-
 
 
         //----------------- Parámetros
@@ -76,32 +85,9 @@ public class FutbolDemo {
 
         //----------------- Proyección a DTO
 
-        String jpql = """
-                SELECT new dam.ad.jpa.dto.EquipoNumJugadoresDTO(e, COUNT(j))
-                FROM Equipo e INNER JOIN e.jugadores j 
-                GROUP BY e    
-                """;
+        //queryDTO(manager);
 
-        TypedQuery<EquipoNumJugadoresDTO> getEquiposNumJugadores =
-                manager.createQuery(jpql, EquipoNumJugadoresDTO.class);
-
-
-        Converters.registerConverter(Equipo.class,
-                new DefaultDTORowConverter<>(Equipo.class,2, 30, 20));
-
-        Converters.registerConverter(Pais.class,
-                new DefaultDTORowConverter<>(Pais.class,0, 20));
-
-        DefaultDTOPrinter<EquipoNumJugadoresDTO> printer =
-                new DefaultDTOPrinter<>(EquipoNumJugadoresDTO.class, 60, 10);
-
-        printer.print(getEquiposNumJugadores.getResultStream());
-
-
-       /* getJugadoresEquipos.getResultStream()
-                .map(converter::getAsRow)
-                .forEach(System.out::println);*/
-
+        queryDTO2(manager);
 
         String jpql2 = """
                 SELECT e.id, e.nombre, e.pais.nombre, e.entrenador.nombre, count(e.id)
@@ -115,141 +101,70 @@ public class FutbolDemo {
         //testAddEquipo3(manager);
         //testAddJugador(manager);
 
+
+        String jpql = "SELECT c FROM Competicion c";
+
+        TypedQuery<Competicion> query = manager.createQuery(jpql, Competicion.class);
+
+        query.getResultStream().forEach(new DtoPrinter<>());
+
+        Printers.print(query.getResultStream());
+
+        print(query.getResultStream());
+
+        queryAndprint(query);
+
         manager.close();
         factory.close();
     }
 
-    private static void queryJoinProjectionFilterParameters(EntityManager manager) {
-        String jpql = """
-                SELECT j, e.nombre
-                FROM Equipo e INNER JOIN e.jugadores j  
-                WHERE e.nombre LIKE :nombre AND j.demarcacion = :demarcacion
-                """;
-
-        TypedQuery<Tuple> getJugadoresEquipos =
-                manager.createQuery(jpql, Tuple.class);
-
-        getJugadoresEquipos.setParameter("nombre", "Real%");
-        getJugadoresEquipos.setParameter("demarcacion", Demarcacion.DELANTERO);
-
-        DefaultDTORowConverter<Jugador> jugadorDefaultDTORowConverter =
-                new DefaultDTORowConverter<>(Jugador.class, 2, 30, 11, 15);
-
-        getJugadoresEquipos.getResultStream()
-                .map(tuple -> jugadorDefaultDTORowConverter.getAsRow((Jugador) tuple.get(0)) + " " + tuple.get(1))
-                .forEach(System.out::println);
+    static void queryAndprint(TypedQuery<?> query) {
+        query.getResultStream().forEach(new DtoPrinter<>());
     }
 
-    private static void queryAggregate(EntityManager manager) {
-        String jpql = """
-                SELECT e.nombre, count(j), MIN(j.nacimiento), MAX(j.nacimiento)
-                FROM Equipo e INNER JOIN e.jugadores j     
-                GROUP BY e  
-                HAVING COUNT(j) > 1  
-                """;
-
-        TypedQuery<Tuple> getJugadoresEquipos =
-                manager.createQuery(jpql, Tuple.class);
-
-        ObjectArrayRowConverter converter = new ObjectArrayRowConverter(30, 4, 11, 11);
-
-        getJugadoresEquipos.getResultStream()
-                .map(Tuple::toArray)
-                .map(converter::getAsRow)
-                .forEach(System.out::println);
+    static void print(Stream<?> queryResult) {
+        Printers.print(queryResult);
+        //queryResult.forEach(new DtoPrinter<>());
     }
 
-    private static void queryJoinProjectionFilter(EntityManager manager) {
+
+    private static void queryAllEntitiesEntrenador(EntityManager manager) {
         String jpql = """
-                SELECT j, e.nombre
-                FROM Equipo e INNER JOIN e.jugadores j  
-                WHERE e.nombre LIKE 'Real%' AND j.demarcacion = dam.ad.jpa.entities.Demarcacion.CENTROCAMPISTA
+                SELECT e
+                FROM Entrenador e
                 """;
 
-        TypedQuery<Tuple> getJugadoresEquipos =
-                manager.createQuery(jpql, Tuple.class);
+        TypedQuery<Entrenador> getAllEntrenadores =
+                manager.createQuery(jpql, Entrenador.class);
 
-        DefaultDTORowConverter<Jugador> jugadorDefaultDTORowConverter =
-                new DefaultDTORowConverter<>(Jugador.class, 2, 30, 11, 15);
-
-        getJugadoresEquipos.getResultStream()
-                .map(tuple -> jugadorDefaultDTORowConverter.getAsRow((Jugador) tuple.get(0)) + " " + tuple.get(1))
-                .forEach(System.out::println);
+        print(getAllEntrenadores.getResultStream());
     }
 
-    private static void queryJoinProjection2(EntityManager manager) {
+    private static void querySimpleAttributeFromEntityEntrenador(EntityManager manager) {
         String jpql = """
-                SELECT j, e.nombre
-                FROM Equipo e INNER JOIN e.jugadores j  
+                SELECT e.nombre
+                FROM Entrenador e
                 """;
 
-        TypedQuery<Tuple> getJugadoresEquipos =
-                manager.createQuery(jpql, Tuple.class);
+        TypedQuery<String> getNombresEntrenadores =
+                manager.createQuery(jpql, String.class);
 
-        ObjectArrayRowConverter converter = new ObjectArrayRowConverter(30, 30);
-
-        getJugadoresEquipos.getResultStream()
-                .map(Tuple::toArray)
-                .map(converter::getAsRow)
-                .forEach(System.out::println);
-
-
-        DefaultDTOPrinter<Jugador> jugadorDefaultDTOPrinter =
-                new DefaultDTOPrinter<>(Jugador.class, 2, 30, 11, 15);
-
-        jugadorDefaultDTOPrinter.print(
-                getJugadoresEquipos.getResultStream()
-                        .map(tuple -> (Jugador) tuple.get(0)));
-
-
-        DefaultDTORowConverter<Jugador> jugadorDefaultDTORowConverter =
-                new DefaultDTORowConverter<>(Jugador.class, 2, 30, 11, 15);
-
-        getJugadoresEquipos.getResultStream()
-                .map(tuple -> jugadorDefaultDTORowConverter.getAsRow((Jugador) tuple.get(0)) + " " + tuple.get(1))
-                .forEach(System.out::println);
+        getNombresEntrenadores.getResultStream().forEach(System.out::println);
     }
 
-    private static void queryJoinProjection(EntityManager manager) {
+    private static void queryEntityRelationshipAttribute(EntityManager manager) {
         String jpql = """
-                SELECT j.nombre, e.nombre
-                FROM Equipo e INNER JOIN e.jugadores j  
+                SELECT DISTINCT j.equipo
+                FROM Jugador j
                 """;
 
-        TypedQuery<Tuple> getJugadoresEquipos =
-                manager.createQuery(jpql, Tuple.class);
+        TypedQuery<Equipo> getEquipoJugador =
+                manager.createQuery(jpql, Equipo.class);
 
-        ObjectArrayRowConverter converter = new ObjectArrayRowConverter(30, 30);
+        //getEquipoJugador.getResultStream().forEach(System.out::println);
 
-        getJugadoresEquipos.getResultStream()
-                .map(Tuple::toArray)
-                .map(converter::getAsRow)
-                .forEach(System.out::println);
-
-
-        DefaultDTOPrinter<Jugador> jugadorDefaultDTOPrinter =
-                new DefaultDTOPrinter<>(Jugador.class, 2, 30, 11, 15);
-
-        jugadorDefaultDTOPrinter.print(
-                getJugadoresEquipos.getResultStream()
-                        .map(tuple -> (Jugador) tuple.get(0)));
-    }
-
-    private static void queryJoin1(EntityManager manager) {
-        String jpql = """
-                SELECT j
-                FROM Equipo e INNER JOIN e.jugadores j      
-                """;
-
-        TypedQuery<Tuple> getJugadoresEquipos =
-                manager.createQuery(jpql, Tuple.class);
-
-        DefaultDTOPrinter<Jugador> jugadorDefaultDTOPrinter =
-                new DefaultDTOPrinter<>(Jugador.class, 2, 30, 11, 15);
-
-        jugadorDefaultDTOPrinter.print(
-                getJugadoresEquipos.getResultStream()
-                        .map(tuple -> (Jugador) tuple.get(0)));
+        new DefaultDTOPrinter<Equipo>(Equipo.class)
+                .print(getEquipoJugador.getResultStream());
     }
 
     private static void queryCollectionSimpleAttribute(EntityManager manager) {
@@ -297,59 +212,44 @@ public class FutbolDemo {
                         .map(tuple -> tuple.get(0))
                         .map(o -> (Jugador) o)
         );
+
+        System.out.println("=====================================================================");
+
+        new DefaultDTOPrinter<>(Jugador.class).print(
+                getJugadoresEquipos.getResultStream().map(tuple -> (Jugador) tuple.get(0))
+        );
     }
 
-    private static void queryProjectionTuple(EntityManager manager) {
+    private static void query1(EntityManager manager) {
         String jpql = """
-                SELECT e.id, e.nombre, e.pais.nombre, e.entrenador.nombre
-                FROM Equipo e                    
+                SELECT e.jugadores
+                FROM Equipo e
                 """;
 
-        TypedQuery<Tuple> getEquipoInfo =
-                manager.createQuery(jpql, Tuple.class);
 
-        getEquipoInfo.getResultStream()
-                .forEach(tuple -> System.out.println(tuple.get(0) + " " + tuple.get(1) + " " + tuple.get(2)));
+        TypedQuery<Jugador> getJugadoresEquipos =
+                manager.createQuery(jpql, Jugador.class);
 
-
-        ObjectArrayRowConverter converter = new ObjectArrayRowConverter(2, -25, -15, -30);
-
-        getEquipoInfo.getResultStream()
-                .map(Tuple::toArray)
-                .map(converter::getAsRow)
-                .forEach(System.out::println);
+        GenericDTOPrinter.print(
+                getJugadoresEquipos.getResultList(), 2, 20, 10, 15, 20, 20, 6);
     }
 
-    private static void queryProjectionObjectArray(EntityManager manager) {
-        String jpql = """
-                SELECT e.id, e.nombre, e.pais.nombre, e.entrenador.nombre
-                FROM Equipo e                      
-                """;
-
-        TypedQuery<Object[]> getEquipoInfo =
-                manager.createQuery(jpql, Object[].class);
-
-        getEquipoInfo.getResultStream()
-                .forEach(System.out::println);
-
-        ObjectArrayRowConverter converter = new ObjectArrayRowConverter(2, -25, -15, -30);
-
-        getEquipoInfo.getResultStream()
-                .map(converter::getAsRow)
-                .forEach(System.out::println);
-    }
-
-    private static void queryWhereExpresion(EntityManager manager) {
+    private static void queryWhereExpression(EntityManager manager) {
         String jpql = """
                 SELECT j
                 FROM Jugador j
                 WHERE j.equipo.nombre LIKE 'Real Madrid%'
                 """;
 
-        TypedQuery<Jugador> getJugadoresEquiposESP =
+        TypedQuery<Jugador> getJugadoresRM =
                 manager.createQuery(jpql, Jugador.class);
 
-        getJugadoresEquiposESP.getResultStream().forEach(System.out::println);
+        //getJugadoresEquiposESP.getResultStream().forEach(System.out::println);
+
+        new DefaultDTOPrinter<>(Jugador.class).print(
+                getJugadoresRM.getResultStream()
+        );
+
     }
 
     private static void queryWhereExpresion2(EntityManager manager) {
@@ -362,7 +262,9 @@ public class FutbolDemo {
         TypedQuery<Jugador> getJugadoresEquiposESP =
                 manager.createQuery(jpql, Jugador.class);
 
-        getJugadoresEquiposESP.getResultStream().forEach(System.out::println);
+        //getJugadoresEquiposESP.getResultStream().forEach(System.out::println);
+
+        new DefaultDTOPrinter<>(Jugador.class).print(getJugadoresEquiposESP.getResultStream());
     }
 
     private static void queryFilterWhereAndSubquery(EntityManager manager) {
@@ -376,86 +278,280 @@ public class FutbolDemo {
         TypedQuery<Jugador> getJugadoresBrasilRealMadrid =
                 manager.createQuery(jpql, Jugador.class);
 
-        getJugadoresBrasilRealMadrid.getResultStream().forEach(System.out::println);
+        //getJugadoresBrasilRealMadrid.getResultStream().forEach(System.out::println);
+
+        new DefaultDTOPrinter<>(Jugador.class).print(getJugadoresBrasilRealMadrid.getResultStream());
     }
 
-    private static void queryEntityRelationshipAttribute(EntityManager manager) {
+
+    private static void queryProjectionObjectArray(EntityManager manager) {
         String jpql = """
-                SELECT j.equipo
-                FROM Jugador j
+                SELECT e.id, e.nombre, e.pais.nombre, e.entrenador.nombre
+                FROM Equipo e                      
                 """;
 
-        TypedQuery<Equipo> getEquipoJugador =
-                manager.createQuery(jpql, Equipo.class);
+        TypedQuery<Object[]> getEquipoInfo =
+                manager.createQuery(jpql, Object[].class);
 
-        getEquipoJugador.getResultStream().forEach(System.out::println);
+        getEquipoInfo.getResultStream()
+                .forEach(System.out::println);
+
+        ObjectArrayRowConverter converter = new ObjectArrayRowConverter(2, 25, 15, 30);
+
+        getEquipoInfo.getResultStream()
+                .map(converter::getAsRow)
+                .forEach(System.out::println);
     }
 
-    private static void querySimpleAttributeFromEntityEntrenador(EntityManager manager) {
+    private static void queryProjectionTuple(EntityManager manager) {
         String jpql = """
-                SELECT e.nombre
-                FROM Entrenador e
+                SELECT e.id, e.nombre, e.pais.nombre, e.entrenador.nombre
+                FROM Equipo e                
                 """;
 
-        TypedQuery<String> getNombresEntrenadores =
-                manager.createQuery(jpql, String.class);
+        TypedQuery<Tuple> getEquipoInfo =
+                manager.createQuery(jpql, Tuple.class);
 
-        getNombresEntrenadores.getResultStream().forEach(System.out::println);
+        getEquipoInfo.getResultStream()
+                .forEach(tuple -> System.out.println(tuple.get(0) + " " + tuple.get(1) + " " + tuple.get(2)));
+
+        ObjectArrayRowConverter converter = new ObjectArrayRowConverter(2, 25, 15, 30);
+
+        getEquipoInfo.getResultStream()
+                .map(Tuple::toArray)
+                .map(converter::getAsRow)
+                .forEach(System.out::println);
     }
 
-    private static void queryAllEntitiesEntrenador(EntityManager manager) {
+    private static void queryJoin1(EntityManager manager) {
         String jpql = """
-                SELECT e
-                FROM Entrenador e
+                SELECT j
+                FROM Equipo e INNER JOIN e.jugadores j      
                 """;
 
-        TypedQuery<Entrenador> getAllEntrenadores =
-                manager.createQuery(jpql, Entrenador.class);
+        TypedQuery<Tuple> getJugadoresEquipos =
+                manager.createQuery(jpql, Tuple.class);
 
-        getAllEntrenadores.getResultStream().forEach(System.out::println);
 
-        GenericEntityPrinter.print(getAllEntrenadores.getResultList(), 2, 30, 3, 10);
+        new DefaultDTOPrinter<>(Jugador.class).print(
+                getJugadoresEquipos.getResultStream()
+                        .map(tuple -> (Jugador) tuple.get(0)));
     }
 
-    private static void query1(EntityManager manager) {
+    private static void queryJoinProjection(EntityManager manager) {
         String jpql = """
-                SELECT e.jugadores
-                FROM Equipo e
+                SELECT j.nombre, e.nombre
+                FROM Equipo e INNER JOIN e.jugadores j  
                 """;
 
+        TypedQuery<Tuple> getJugadoresEquipos =
+                manager.createQuery(jpql, Tuple.class);
 
-        TypedQuery<Jugador> getJugadoresEquipos =
-                manager.createQuery(jpql, Jugador.class);
+        ObjectArrayRowConverter converter = new ObjectArrayRowConverter(30, 30);
 
-        GenericEntityPrinter.print(
-                getJugadoresEquipos.getResultList(), 2, 20, 10, 15, 20, 20, 6);
+        getJugadoresEquipos.getResultStream()
+                .map(Tuple::toArray)
+                .map(converter::getAsRow)
+                .forEach(System.out::println);
+    }
+
+    private static void queryJoinProjection2(EntityManager manager) {
+        String jpql = """
+                SELECT j, e.nombre
+                FROM Equipo e INNER JOIN e.jugadores j  
+                """;
+
+        TypedQuery<Tuple> getJugadoresEquipos =
+                manager.createQuery(jpql, Tuple.class);
+
+        ObjectArrayRowConverter converter = new ObjectArrayRowConverter(30, 30);
+
+        getJugadoresEquipos.getResultStream()
+                .map(Tuple::toArray)
+                .map(converter::getAsRow)
+                .forEach(System.out::println);
+
+
+        new DefaultDTOPrinter<>(Jugador.class).print(
+                getJugadoresEquipos.getResultStream()
+                        .map(tuple -> (Jugador) tuple.get(0)));
+
+        DefaultDTORowConverter<Jugador> jugadorDTORowConverter =
+                new DefaultDTORowConverter<>(Jugador.class);
+
+        getJugadoresEquipos.getResultStream()
+                .map(tuple -> jugadorDTORowConverter.getAsRow((Jugador) tuple.get(0)) + " " + tuple.get(1))
+                .forEach(System.out::println);
+    }
+
+    private static void queryJoinProjection3(EntityManager manager) {
+        String jpql = """
+                SELECT j, e
+                FROM Equipo e INNER JOIN e.jugadores j  
+                """;
+
+        TypedQuery<Tuple> getJugadoresEquipos =
+                manager.createQuery(jpql, Tuple.class);
+
+        ObjectArrayRowConverter converter = new ObjectArrayRowConverter(30, 30);
+
+        getJugadoresEquipos.getResultStream()
+                .map(Tuple::toArray)
+                .map(converter::getAsRow)
+                .forEach(System.out::println);
+
+        Converters.registerConverter(Jugador.class);
+        Converters.registerConverter(Equipo.class);
+
+        getJugadoresEquipos.getResultStream()
+                .map(Tuple::toArray)
+
+                .map(objects -> Arrays.stream(objects)
+                        .map(Converters::getAsRow)
+                        .collect(Collectors.joining(" ")))
+                .forEach(System.out::println);
+    }
+
+    private static void queryJoinProjectionFilter(EntityManager manager) {
+        String jpql = """
+                SELECT j, e.nombre
+                FROM Equipo e INNER JOIN e.jugadores j  
+                WHERE e.nombre LIKE 'Real%' AND j.demarcacion = dam.ad.jpa.entities.Demarcacion.CENTROCAMPISTA
+                """;
+
+        TypedQuery<Tuple> getJugadoresEquipos =
+                manager.createQuery(jpql, Tuple.class);
+
+        DefaultDTORowConverter<Jugador> jugadorDTORowConverter =
+                new DefaultDTORowConverter<>(Jugador.class, 2, 30, 11, 15);
+
+        getJugadoresEquipos.getResultStream()
+                .map(tuple -> jugadorDTORowConverter.getAsRow((Jugador) tuple.get(0)) + " " + tuple.get(1))
+                .forEach(System.out::println);
+    }
+
+    private static void queryAggregate(EntityManager manager) {
+        String jpql = """
+                SELECT e.nombre, count(j), MIN(j.nacimiento), MAX(j.nacimiento)
+                FROM Equipo e INNER JOIN e.jugadores j     
+                GROUP BY e  
+                HAVING COUNT(j) > 1  
+                """;
+
+        TypedQuery<Tuple> getJugadoresEquipos =
+                manager.createQuery(jpql, Tuple.class);
+
+        GenericHeaderProvider headerProvider = new GenericHeaderProvider(
+                new HeaderColumn("Equipo", 30),
+                new HeaderColumn("jugadores", 9),
+                new HeaderColumn("+veterano", 11),
+                new HeaderColumn("+joven", 11)
+        );
+
+        System.out.println(headerProvider.getHeader(true));
+
+        ObjectArrayRowConverter converter = new ObjectArrayRowConverter(30, 9, 11, 11);
+
+        getJugadoresEquipos.getResultStream()
+                .map(Tuple::toArray)
+                .map(converter::getAsRow)
+                .forEach(System.out::println);
+    }
+
+
+    private static void queryJoinProjectionFilterParameters(EntityManager manager) {
+        String jpql = """
+                SELECT j, e.nombre
+                FROM Equipo e INNER JOIN e.jugadores j  
+                WHERE e.nombre LIKE :nombre AND j.demarcacion = :demarcacion
+                """;
+
+        TypedQuery<Tuple> getJugadoresEquipos =
+                manager.createQuery(jpql, Tuple.class);
+
+        getJugadoresEquipos.setParameter("nombre", "Real%");
+        getJugadoresEquipos.setParameter("demarcacion", Demarcacion.DELANTERO);
+
+        DefaultDTORowConverter<Jugador> jugadorDefaultDTORowConverter =
+                new DefaultDTORowConverter<>(Jugador.class, 2, 30, 11, 15);
+
+        getJugadoresEquipos.getResultStream()
+                .map(tuple -> jugadorDefaultDTORowConverter.getAsRow((Jugador) tuple.get(0)) + " " + tuple.get(1))
+                .forEach(System.out::println);
+    }
+
+    private static void queryDTO(EntityManager manager) {
+        String jpql = """
+                SELECT new dam.ad.jpa.dto.EquipoNumJugadoresDTO(e, COUNT(j))
+                FROM Equipo e INNER JOIN e.jugadores j 
+                GROUP BY e    
+                """;
+
+        TypedQuery<EquipoNumJugadoresDTO> getEquiposNumJugadores =
+                manager.createQuery(jpql, EquipoNumJugadoresDTO.class);
+
+
+        Converters.registerConverter(Equipo.class,
+                new DefaultDTORowConverter<>(Equipo.class, 2, 30, 20));
+
+        Converters.registerConverter(Pais.class,
+                new DefaultDTORowConverter<>(Pais.class, 0, 20));
+
+        DefaultDTOPrinter<EquipoNumJugadoresDTO> printer =
+                new DefaultDTOPrinter<>(EquipoNumJugadoresDTO.class, 60, 10);
+
+        printer.print(getEquiposNumJugadores.getResultStream());
+    }
+
+
+
+    private static void queryDTO2(EntityManager manager) {
+
+        String jpql = """
+                SELECT NEW dam.ad.jpa.dto.JugadorNacionalidadDTO(j, n.nombre)
+                FROM Jugador j INNER JOIN j.nacionalidades n                 
+                """;
+
+        TypedQuery<JugadorNacionalidadDTO> query =
+                manager.createQuery(jpql, JugadorNacionalidadDTO.class);
+
+        query.getResultStream().forEach(new DtoPrinter<>());
+
+
     }
 
     private static void testAllEntities(EntityManager manager) {
+
         TypedQuery<Pais> paises = manager
                 .createQuery("select p from Pais p order by p.nombre", Pais.class);
 
-        paises.getResultStream()
-                .forEach(System.out::println);
+        paises.getResultStream().forEach(new DtoPrinter<>());
+
+
+        TypedQuery<Competicion> query = manager
+                .createQuery("SELECT c FROM Competicion c", Competicion.class);
+
+        query.getResultStream().forEach(new DtoPrinter<>());
+        //Printers.print(query.getResultStream());
 
 
         TypedQuery<Entrenador> entrenadores = manager
                 .createQuery("select e from Entrenador e", Entrenador.class);
 
         entrenadores.getResultList() // Como cambia entre List y Stream
-                .forEach(System.out::println);
+                .forEach(new DtoPrinter<>());
+
 
         TypedQuery<Equipo> equipos = manager
                 .createQuery("select e from Equipo e", Equipo.class);
 
-        equipos.getResultList() // Como cambia entre List y Stream
-                .forEach(System.out::println);
+        equipos.getResultStream().forEach(new DtoPrinter<>());
+
 
         TypedQuery<Jugador> jugadores = manager
                 .createQuery("select j from Jugador j", Jugador.class);
 
-        jugadores.getResultList() // Como cambia entre List y Stream
-                .forEach(System.out::println);
+        jugadores.getResultStream().forEach(new DtoPrinter<>());
     }
 
     private static void testAddJugador(EntityManager manager) {

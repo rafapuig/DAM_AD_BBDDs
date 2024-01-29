@@ -2,15 +2,15 @@ package dam.ad.presenter.futbol;
 
 import dam.ad.converters.RowConverter;
 import dam.ad.model.futbol.Jugador;
-import dam.ad.printers.EntityHeaderProvider;
-import dam.ad.printers.EntityPrinter;
+import dam.ad.headers.HeaderProvider;
+import dam.ad.printers.StreamPrinter;
 
 import java.io.PrintWriter;
 
-public class JugadorPrinter implements EntityPrinter<Jugador> {
+public class JugadorPrinter implements StreamPrinter<Jugador> {
 
     PrintWriter writer;
-    EntityHeaderProvider headerProvider;
+    HeaderProvider headerProvider;
 
     RowConverter<Jugador> rowConverter;
 
@@ -21,7 +21,7 @@ public class JugadorPrinter implements EntityPrinter<Jugador> {
     }
 
     @Override
-    public EntityHeaderProvider getHeaderProvider() {
+    public HeaderProvider getHeaderProvider() {
         return headerProvider;
     }
 

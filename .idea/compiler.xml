@@ -7,6 +7,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="jpa-intro" />
         <module name="ORM-entities" />
         <module name="jdbc.statements" />
         <module name="personas-dao" />
@@ -28,12 +29,5 @@
         <module name="jdbc.Metadatos" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="dam.ad.jdbc.derby-connection" target="21" />
-      <module name="dam.ad.jdbc.maven.derby-connection" target="21" />
-      <module name="futbol-dao" target="21" />
-      <module name="Maven-HSQLDB-Connection" target="21" />
-      <module name="Maven-SQLite" target="21" />
-    </bytecodeTargetLevel>
   </component>
 </project>
