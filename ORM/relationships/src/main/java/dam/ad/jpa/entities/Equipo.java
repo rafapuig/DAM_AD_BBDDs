@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Collection;
 import java.util.List;
 
 @Getter
@@ -36,4 +37,5 @@ public class Equipo {
     @ToString.Exclude
     @OneToMany(mappedBy = "equipo")
     private List<Jugador> jugadores;
+
 }
