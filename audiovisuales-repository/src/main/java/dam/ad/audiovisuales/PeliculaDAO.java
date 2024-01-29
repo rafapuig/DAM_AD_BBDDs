@@ -18,7 +18,8 @@ public class PeliculaDAO implements DAO<Pelicula> {
     }
 
     private Connection getConnection() {
-        return this.connection;
+        //return getNewConnection();
+       return this.connection;
     }
 
     private Connection getNewConnection() {

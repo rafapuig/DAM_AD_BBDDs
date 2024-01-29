@@ -11,7 +11,10 @@ import jakarta.persistence.TypedQuery;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Properties;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class PersonaDemo {
     public static void main(String[] args) {
@@ -50,7 +53,16 @@ public class PersonaDemo {
         TypedQuery<Persona> query = manager
                 .createQuery(jpql, Persona.class);
 
+        Persona p1 = manager.find(Persona.class, 1);
+        p1.setNombre("Fofo");
+
         query.getResultStream().forEach(System.out::println);
+
+
+        query.getResultStream().forEach(p -> p.setIngresos(p.getIngresos() * 1.05));
+
+
+
 
         manager.getTransaction().commit();
         manager.close();
