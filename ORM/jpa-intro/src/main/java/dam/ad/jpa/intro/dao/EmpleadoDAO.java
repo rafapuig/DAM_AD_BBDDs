@@ -1,4 +1,4 @@
-package dam.ad.jpa.intro;
+package dam.ad.jpa.intro.dao;
 
 import dam.ad.jpa.intro.entities.Empleado;
 import jakarta.persistence.EntityManager;
