@@ -6,11 +6,17 @@ import dam.ad.headers.DefaultDTOHeaderProvider;
 import dam.ad.headers.HeaderProvider;
 
 import java.io.PrintWriter;
+import java.io.Writer;
 
 public class DefaultDTOPrinter<T> implements StreamPrinter<T> {
 
     HeaderProvider headerProvider;
     RowConverter<T> rowConverter;
+
+    //Writer writer = new PrintWriter(System.out, true);
+    /*public void setWriter(Writer writer) {
+        this.writer = writer;
+    }*/
 
     public DefaultDTOPrinter(Class<T> type) {
         this(
@@ -26,7 +32,7 @@ public class DefaultDTOPrinter<T> implements StreamPrinter<T> {
         );
     }
 
-    private DefaultDTOPrinter(HeaderProvider headerProvider, RowConverter<T> rowConverter) {
+    protected DefaultDTOPrinter(HeaderProvider headerProvider, RowConverter<T> rowConverter) {
         this.headerProvider = headerProvider;
         this.rowConverter = rowConverter;
     }
@@ -41,10 +47,13 @@ public class DefaultDTOPrinter<T> implements StreamPrinter<T> {
         return rowConverter;
     }
 
-    PrintWriter writer = new PrintWriter(System.out, true);
+
 
     @Override
-    public PrintWriter getWriter() {
-        return writer;
+    public Writer getWriter() {
+        //return writer;
+        //Estamos obteniendo el writer desde fuera (vigilar este acoplamiento)
+        return Printers.writer;
     }
+
 }

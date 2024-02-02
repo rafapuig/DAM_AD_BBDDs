@@ -36,6 +36,7 @@ public class Converters {
     }
 
     public static <T> String getAsRow(T t) {
+        if(!t.getClass().isAnnotationPresent(RowConvertible.class)) return t.toString();
         RowConverter<T> rowConverter = getConverter(t);
         if (rowConverter != null) {
             return rowConverter.getAsRow(t);

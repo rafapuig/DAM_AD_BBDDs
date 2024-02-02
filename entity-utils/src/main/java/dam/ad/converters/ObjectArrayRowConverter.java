@@ -18,7 +18,7 @@ public class ObjectArrayRowConverter implements RowConverter<Object[]> {
         for (int i = 0; i< objects.length; i++) {
             int align =  Number.class.isAssignableFrom(objects[i].getClass()) ? 1 : -1;
             String format = "%" + (columnLengths[i] * align) + "s";
-            String column = String.format(format, objects[i]);
+            String column = String.format(format,Converters.getAsRow(objects[i])); //String.format(format, objects[i]);
             sj.add(column);
         }
         return sj.toString();

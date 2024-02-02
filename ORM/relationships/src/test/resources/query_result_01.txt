@@ -1,0 +1,15 @@
+ID  NOMBRE                         NACIMIENTO  DEMARCACION     DORSAL ALTURA EQUIPO
+------------------------------------------------------------------------------------------------------
+  6 Antoine Griezmann              1991-03-21  DELANTERO            7   1.76 Atlético de Madrid
+  4 Robert Lewandowski             1998-08-21  DELANTERO            9   1.85 F.C. Barcelona
+ 14 Ederson Moraes                 1993-08-17  PORTERO             22   1.88 Manchester City
+ 15 Joško Gvardiol                 2002-01-23  DEFENSA             24   1.85 Manchester City
+ 16 Kevin De Bruyne                1991-06-21  CENTROCAMPISTA       7   1.81 Manchester City
+  8 Erling Haalland                2000-07-21  DELANTERO            9   1.94 Manchester City
+  9 Thibaut Courtois               1992-05-11  PORTERO              1    2.0 Real Madrid C.F.
+  1 Luka Modric                    1985-09-09  CENTROCAMPISTA      10   1.72 Real Madrid C.F.
+  2 Jude Bellingham                2003-06-29  CENTROCAMPISTA       5   1.86 Real Madrid C.F.
+  7 Eduardo Camavinga              2001-11-10  CENTROCAMPISTA      12   1.82 Real Madrid C.F.
+ 10 Toni Kroos                     1990-01-04  CENTROCAMPISTA       8   1.83 Real Madrid C.F.
+  5 Rodrygo                        2001-01-09  DELANTERO           11   1.74 Real Madrid C.F.
+ 11 Vinícius Júnior                2000-07-12  DELANTERO            7   1.76 Real Madrid C.F.

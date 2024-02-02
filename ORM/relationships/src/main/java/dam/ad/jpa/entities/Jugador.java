@@ -31,6 +31,13 @@ public class Jugador {
     @RowField(columnLength = 15)
     private Demarcacion demarcacion;
 
+    @RowField(columnLength = 6)
+    private int dorsal;
+
+    @RowField(columnLength = 6)
+    @Column(columnDefinition = "NUMERIC(3,2)")
+    private Float altura;
+
     //@RowField(columnLength = 9)
     @ManyToMany()
     @JoinTable(name = "nacionalidades",
@@ -44,6 +51,5 @@ public class Jugador {
     @JoinColumn(name = "equipo_id")
     private Equipo equipo;
 
-    @RowField(columnLength = 6)
-    private int dorsal;
+
 }

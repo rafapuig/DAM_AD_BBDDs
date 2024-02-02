@@ -16,7 +16,7 @@ public class DefaultDTOHeaderProvider<T> extends GenericHeaderProvider {
     }
 
     private static <T> Stream<HeaderColumn> getHeaders(Class<T> type) {
-        System.out.println("Obteniendo headers del tipo " + type.getName() + "...");
+        //System.out.println("Obteniendo headers del tipo " + type.getName() + "...");
 
         Field[] fields = type.getDeclaredFields();  //Campos del tipo T
 
@@ -30,7 +30,7 @@ public class DefaultDTOHeaderProvider<T> extends GenericHeaderProvider {
     }
 
     private static <T> Stream<HeaderColumn> getHeaders(Class<T> type, int[] columnLengths) {
-        System.out.println("Obteniendo headers del tipo " + type.getName() + " con longitud personalizada ...");
+        //System.out.println("Obteniendo headers del tipo " + type.getName() + " con longitud personalizada ...");
         Field[] fields = type.getDeclaredFields();
 
         int maxLength = Integer.min(columnLengths.length, fields.length);
