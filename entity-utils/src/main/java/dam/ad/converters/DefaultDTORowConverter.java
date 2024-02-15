@@ -9,7 +9,7 @@ import java.util.StringJoiner;
 
 public class DefaultDTORowConverter<T> implements RowConverter<T> {
     Class<T> type;
-    Field[] fields;
+    Field[] fields; //TODO obtener todos los campos, en la jerarquia de herencia
     int[] columnLengths; //La idea es obtenerlas por anotaciones en runtime
     String[] formats;
 
