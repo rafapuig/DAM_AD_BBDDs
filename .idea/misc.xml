@@ -36,11 +36,17 @@
         <option value="$PROJECT_DIR$/JDBC/DAO/personas-dao/pom.xml" />
         <option value="$PROJECT_DIR$/JDBC/DAO/futbol-dao/pom.xml" />
         <option value="$PROJECT_DIR$/ORM/jpa-intro/pom.xml" />
+        <option value="$PROJECT_DIR$/ORM/relationships2/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/ORM/demoEE2/pom.xml" />
+      </set>
     </option>
     <option name="workspaceImportForciblyTurnedOn" value="true" />
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="18" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="21" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="ProjectType">

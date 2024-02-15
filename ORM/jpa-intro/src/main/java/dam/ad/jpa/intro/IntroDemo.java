@@ -18,7 +18,9 @@ public class IntroDemo {
         EntityManager manager = managerFactory.createEntityManager();
 
         manager.getTransaction().begin();
+
         testEntityManager(manager);
+
         manager.getTransaction().commit();
         manager.close();
         managerFactory.close();
@@ -76,7 +78,7 @@ public class IntroDemo {
         manager.persist(belen);
         //No se realiza el INSERT simplemente por hacer el persist
 
-        //Ahora que vamos a consultar el ORM sabe que hay un empleado que no esta aun en la BD
+        //Ahora que vamos a consultar el ORM sabe que hay un empleado que no está aún en la BD
         //Y lo inserta para que se pueda recuperar en la consulta SELECT
         System.out.println("\nVolvemos a consultar...");
         manager.createQuery("SELECT e FROM Empleado e", Empleado.class)

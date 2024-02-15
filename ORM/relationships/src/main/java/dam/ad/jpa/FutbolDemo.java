@@ -114,9 +114,22 @@ public class FutbolDemo {
 
         queryAndprint(query);
 
+
+
+        queryEquipoJugadores(manager);
+
         manager.close();
         factory.close();
     }
+
+    static void queryEquipoJugadores(EntityManager manager) {
+
+        Equipo equipo = manager.find(Equipo.class, 1);
+        equipo.getJugadores().forEach(System.out::println);
+
+    }
+
+
 
     static void queryAndprint(TypedQuery<?> query) {
         query.getResultStream().forEach(new DtoPrinter<>());

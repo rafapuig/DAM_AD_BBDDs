@@ -56,6 +56,7 @@ public interface StreamPrinter<T> {
 
         elements
                 .map(getRowConverter()::getAsRow)
+                //.peek(System.out::println)
                 .forEach(this::println);
         //.forEach(getWriter()::println);
 

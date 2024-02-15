@@ -16,6 +16,7 @@ public class Printers {
 
     static final Writer CONSOLE = new PrintWriter(System.out, true);
     static Writer writer = CONSOLE;
+
     public static void setWriter(Writer writer) {
         Printers.writer = writer;
     }
@@ -37,7 +38,7 @@ public class Printers {
 
     public static <T> StreamPrinter<T> getPrinter(Class<T> type) {
         //System.out.println("Obteniendo un printer para el tipo " + type.getName());
-        if(!map.containsKey(type)) {
+        if (!map.containsKey(type)) {
             //System.out.println("No registrado!");
             registerPrinter(type);
         }
@@ -72,7 +73,7 @@ public class Printers {
                         first.set(false);
                     }
                 })
-                .forEach(t ->  printer.get().printRow(t));
+                .forEach(t -> printer.get().printRow(t));
     }
 
     public static void print(Stream<Object[]> rowValues, String[] labels, int[] lengths) {
@@ -82,6 +83,50 @@ public class Printers {
 
     public static void print(Stream<Object[]> rowValues, String label1, int length1, String label2, int length2) {
         ObjectArrayPrinter printer = new ObjectArrayPrinter(label1, length1, label2, length2);
+        printer.print(rowValues);
+    }
+
+    public static void print(Stream<Object[]> rowValues, String label1, int length1, String label2, int length2, String label3, int length3) {
+        ObjectArrayPrinter printer = new ObjectArrayPrinter(label1, length1, label2, length2, label3, length3);
+        printer.print(rowValues);
+    }
+
+    public static void print(Stream<Object[]> rowValues,
+                             String label1, int length1,
+                             String label2, int length2,
+                             String label3, int length3,
+                             String label4, int length4) {
+        ObjectArrayPrinter printer = new ObjectArrayPrinter(
+                new String[]{label1, label2, label3, label4},
+                new int[]{length1, length2, length3, length4});
+
+        printer.print(rowValues);
+    }
+
+    public static void print(Stream<Object[]> rowValues,
+                             String label1, int length1,
+                             String label2, int length2,
+                             String label3, int length3,
+                             String label4, int length4,
+                             String label5, int length5) {
+        ObjectArrayPrinter printer = new ObjectArrayPrinter(
+                new String[]{label1, label2, label3, label4, label5},
+                new int[]{length1, length2, length3, length4, length5});
+
+        printer.print(rowValues);
+    }
+
+    public static void print(Stream<Object[]> rowValues,
+                             String label1, int length1,
+                             String label2, int length2,
+                             String label3, int length3,
+                             String label4, int length4,
+                             String label5, int length5,
+                             String label6, int length6) {
+        ObjectArrayPrinter printer = new ObjectArrayPrinter(
+                new String[]{label1, label2, label3, label4, label5, label6},
+                new int[]{length1, length2, length3, length4, length5, length6});
+
         printer.print(rowValues);
     }
 

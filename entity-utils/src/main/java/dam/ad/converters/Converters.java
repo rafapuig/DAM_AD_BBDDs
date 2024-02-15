@@ -1,9 +1,8 @@
 package dam.ad.converters;
 
 import dam.ad.dto.annotations.RowConvertible;
-import dam.ad.dto.annotations.RowField;
 
-import java.lang.reflect.Field;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,8 +11,15 @@ import java.util.Map;
  * Podrá registrar conversiones por la anotación RowConvertible
  */
 public class Converters {
-    private static final Map<Class<?>, RowConverter<?>> converterMap =
-            new HashMap<>();
+
+    static {
+        converterMap = new HashMap<>();
+        registerConverter(Float.class, new FloatRowConverter());
+    }
+
+
+    private static final Map<Class<?>, RowConverter<?>> converterMap;
+
 
     public static <T> void registerConverter(Class<T> type) {
         RowConverter<T> converter = new DefaultDTORowConverter<>(type);
@@ -21,6 +27,7 @@ public class Converters {
     }
 
     public static <T> void registerConverter(Class<T> type, RowConverter<T> converter) {
+        //System.out.println("Registering RowConverter for class " + type.getName());
         converterMap.putIfAbsent(type, converter);
     }
 
@@ -29,6 +36,11 @@ public class Converters {
     }
 
     public static <T> RowConverter<T> getConverter(Class<T> tClass) {
+
+
+        //System.out.println("Obteniendo el conversor de " + tClass.getName());
+
+
         if (!converterMap.containsKey(tClass)) {
             registerConverter(tClass);
         }
@@ -36,29 +48,26 @@ public class Converters {
     }
 
     public static <T> String getAsRow(T t) {
-        if(!t.getClass().isAnnotationPresent(RowConvertible.class)) return t.toString();
-        RowConverter<T> rowConverter = getConverter(t);
+
+        Class<?> type = t.getClass();
+
+        while (!type.isAnnotationPresent(RowConvertible.class) && type.getSuperclass() != Object.class) {
+
+            type = type.getSuperclass();
+            // System.out.println("Tipo... " + type.getName());
+        }
+
+       if (!type.isAnnotationPresent(RowConvertible.class)) {
+           if(t instanceof Double) return new DecimalFormat("#,##0.000").format(t);
+           if(t instanceof Long) return new DecimalFormat("#,##0").format(t);
+            return t.toString();
+        }
+
+        RowConverter<T> rowConverter = (RowConverter<T>) getConverter(type); // antes getConverter(t);
         if (rowConverter != null) {
             return rowConverter.getAsRow(t);
         }
         return t.toString();
-    }
-
-    public static <T> int[] getColumnLengths(Class<T> type) {
-
-        Field[] fields = type.getDeclaredFields();
-
-        int[] columnLengths = new int[fields.length];
-
-        //RowConvertible[] rca = type.getAnnotationsByType(RowConvertible.class);
-        //if(rca.length == 0) return columnLengths;
-
-        for (int i = 0; i < fields.length; i++) {
-            fields[i].setAccessible(true);
-            RowField[] rowFields = fields[i].getAnnotationsByType(RowField.class);
-            columnLengths[i] = rowFields.length > 0 ? rowFields[0].columnLength() : 0;
-        }
-        return columnLengths;
     }
 
 

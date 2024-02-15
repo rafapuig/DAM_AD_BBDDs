@@ -9,13 +9,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="jpa-intro" />
         <module name="ORM-entities" />
+        <module name="relationships2" />
         <module name="jdbc.statements" />
         <module name="personas-dao" />
         <module name="personas-model" />
         <module name="jdbc-utils" />
         <module name="jdbc-DAO" />
         <module name="jdbc.maven.derby-connection" />
-        <module name="demoEE2" />
         <module name="ResultSets" />
         <module name="futbol-jdbc-dao" />
         <module name="orm-relationships" />
@@ -29,5 +29,8 @@
         <module name="jdbc.Metadatos" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="demoEE2" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>

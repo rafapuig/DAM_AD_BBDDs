@@ -56,7 +56,7 @@ public class DefaultDTOHeaderProvider<T> extends GenericHeaderProvider {
 
         //Si se ha marcado el campo como complejo (es un tipo con sus propios campos)
         if (rowField.asComplex()) {
-            System.out.println("El campo '" + field.getName() + "' es complejo, hay que registrar un " + field.getType().getName() + "...");
+            //System.out.println("El campo '" + field.getName() + "' es complejo, hay que registrar un " + field.getType().getName() + "...");
             columnLabel = Printers.getPrinter(field.getType()).getHeaderProvider().getHeader();
         }
         return columnLabel;

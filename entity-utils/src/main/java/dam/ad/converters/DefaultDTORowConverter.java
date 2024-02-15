@@ -1,10 +1,10 @@
 package dam.ad.converters;
 
 import dam.ad.dto.annotations.RowField;
-import dam.ad.printers.Printers;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.StringJoiner;
 
 public class DefaultDTORowConverter<T> implements RowConverter<T> {
@@ -16,8 +16,26 @@ public class DefaultDTORowConverter<T> implements RowConverter<T> {
     int maxLength;
 
     public DefaultDTORowConverter(Class<T> type) {
-        this(type, Converters.getColumnLengths(type));
+        this(type, getColumnLengths(type));
     }
+
+    public static <T> int[] getColumnLengths(Class<T> type) {
+
+        Field[] fields = type.getDeclaredFields();
+
+        int[] columnLengths = new int[fields.length];
+
+        //RowConvertible[] rca = type.getAnnotationsByType(RowConvertible.class);
+        //if(rca.length == 0) return columnLengths;
+
+        for (int i = 0; i < fields.length; i++) {
+            fields[i].setAccessible(true);
+            RowField[] rowFields = fields[i].getAnnotationsByType(RowField.class);
+            columnLengths[i] = rowFields.length > 0 ? rowFields[rowFields.length - 1].columnLength() : 0;
+        }
+        return columnLengths;
+    }
+
 
    /* private static <T> int[] getColumnLengths(Class<T> type) {
         Field[] fields = type.getDeclaredFields();
@@ -33,13 +51,14 @@ public class DefaultDTORowConverter<T> implements RowConverter<T> {
     }*/
 
     public DefaultDTORowConverter(Class<T> type, int... columnLengths) {
-        this.columnLengths = columnLengths;
         this.type = type;
+        this.columnLengths = columnLengths;
         fields = this.type.getDeclaredFields();
 
         for (Field field : fields) {
             field.setAccessible(true);
         }
+
         maxLength = Integer.min(columnLengths.length, fields.length);
         formats = new String[maxLength];
 
@@ -58,44 +77,31 @@ public class DefaultDTORowConverter<T> implements RowConverter<T> {
         return -1;
     }
 
-    public <T> T castear(Class<T> clazz, Object value) {
-        return clazz.cast(value);
-    }
+
 
     @Override
     public String getAsRow(T t) {
-        try {
-            StringJoiner sj = new StringJoiner(" ");
+        //System.out.println("Conversor para tipo " + this.type.getName());
+        //System.out.println("Getting row for " + t + " of type " +  t.getClass().getName());
 
-            for (int i = 0; i < maxLength; i++) {
-                if (columnLengths[i] > 0) {
-                    Object fieldValue = fields[i].get(t);
-                    RowField[] rowFields = fields[i].getAnnotationsByType(RowField.class);
-                    fields[i].setAccessible(true);
+        StringJoiner sj = new StringJoiner(" ");
 
-                    String text = fieldValue.toString(); //Por defecto es el toString del campo
-                    if (rowFields.length > 0) { //Sí está anotado el campo
-                        RowField rowField = rowFields[rowFields.length - 1];
-                        if(rowField.asComplex()) {
-                            text = Converters.getAsRow(fieldValue); // Converters.convertToRow(fieldValue);
-                        } else {
-                            try {
-                                String fieldName = rowField.expression();
-                                Field field = fields[i].getType().getDeclaredField(fieldName);
-                                field.setAccessible(true);
-                                text = field.get(fieldValue).toString();
-                            } catch (NoSuchFieldException e) { //Si no se ha encontrado el campo
-                                text = fieldValue.toString();  // Converters.convertToRow(fieldValue);
-                            }
-                        }
-                    }
-                    sj.add(String.format(formats[i], text));
-                }
-            }
-            return sj.toString();
+        for (int i = 0; i < maxLength; i++) {
 
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            if (columnLengths[i] <= 0) continue;
+
+            Field field = fields[i];
+
+            //fields[i].setAccessible(true);
+
+            String fieldText = new FieldToTextConverter().convert(field, t);
+
+            sj.add(String.format(formats[i], fieldText));
         }
+        return sj.toString();
     }
+
+
+
+
 }

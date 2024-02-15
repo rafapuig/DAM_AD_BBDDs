@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
 public @interface RowField {
     int columnLength() default 0;
     String label() default "";
+    String numericFormat() default "";
     String expression() default "";
     boolean asComplex() default false;
 }
