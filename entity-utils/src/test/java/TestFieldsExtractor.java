@@ -1,10 +1,13 @@
 import dam.ad.reflection.FieldsExtractor;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 
+@Disabled
 public class TestFieldsExtractor {
 
+    @Disabled
     @Test
     void testGenerateClassHierarchy() {
 

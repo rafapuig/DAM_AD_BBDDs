@@ -1,6 +1,7 @@
 package dam.ad.converters;
 
 import dam.ad.dto.annotations.RowField;
+import dam.ad.reflection.FieldsExtractor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -15,13 +16,15 @@ public class DefaultDTORowConverter<T> implements RowConverter<T> {
 
     int maxLength;
 
+    FieldsExtractor fieldsExtractor;
+
     public DefaultDTORowConverter(Class<T> type) {
         this(type, getColumnLengths(type));
     }
 
     public static <T> int[] getColumnLengths(Class<T> type) {
 
-        Field[] fields = type.getDeclaredFields();
+        Field[] fields = FieldsExtractor.getFields(type).toArray(new Field[0]);  //type.getDeclaredFields();
 
         int[] columnLengths = new int[fields.length];
 
@@ -36,24 +39,13 @@ public class DefaultDTORowConverter<T> implements RowConverter<T> {
         return columnLengths;
     }
 
-
-   /* private static <T> int[] getColumnLengths(Class<T> type) {
-        Field[] fields = type.getDeclaredFields();
-
-        int[] columnLengths = new int[fields.length];
-
-        for (int i = 0; i < fields.length; i++) {
-            fields[i].setAccessible(true);
-            RowField[] rowFields = fields[i].getAnnotationsByType(RowField.class);
-            columnLengths[i] = rowFields.length > 0 ? rowFields[0].columnLength() : 0;
-        }
-        return columnLengths;
-    }*/
-
     public DefaultDTORowConverter(Class<T> type, int... columnLengths) {
         this.type = type;
         this.columnLengths = columnLengths;
-        fields = this.type.getDeclaredFields();
+
+        fieldsExtractor = new FieldsExtractor(type);
+
+        fields = fieldsExtractor.getFields().toArray(new Field[0]); // this.type.getDeclaredFields();
 
         for (Field field : fields) {
             field.setAccessible(true);

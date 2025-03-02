@@ -1,5 +1,7 @@
 package dam.ad.reflection;
 
+
+
 import lombok.Getter;
 
 import java.lang.reflect.Field;
@@ -36,6 +38,7 @@ public class FieldsExtractor {
 
     @Getter
     private List<Field> fields;
+    //TODO: necesaria cambiar por Member para tener en cuenta los getter
 
 
     public static List<Field> getFields(Class<?> aClass) {
